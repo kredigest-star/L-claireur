@@ -134,3 +134,124 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Éclaireur | Journal d'information</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="container">
+            <span class="date" id="current-date"></span>
+            <span class="separator">|</span>
+            <span class="edition">Édition Francophone</span>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="menu-btn"><i class="fas fa-bars"></i></button>
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-center">
+                    <a href="index.html" class="logo">
+                        <span class="logo-text">L'Éclaireur</span>
+                    </a>
+                    <p class="tagline">La lumière sur l'actualité</p>
+                </div>
+                <div class="header-right" id="auth-buttons">
+                    <a href="login.html" class="btn-auth">Connexion</a>
+                    <a href="register.html" class="btn-subscribe">S'abonner</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-link active">Accueil</a></li>
+                <li><a href="#" class="nav-link">Politique</a></li>
+                <li><a href="#" class="nav-link">Monde</a></li>
+                <li><a href="#" class="nav-link">Économie</a></li>
+                <li><a href="#" class="nav-link">Sciences</a></li>
+                <li><a href="#" class="nav-link">Culture</a></li>
+                <li><a href="#" class="nav-link">Sports</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <section class="hero-section">
+                <article class="hero-article">
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200" alt="Article principal">
+                    </div>
+                    <div class="hero-content">
+                        <span class="category-tag">À la Une</span>
+                        <h1 class="hero-title">Bienvenue sur L'Éclaireur, votre nouvelle source d'information</h1>
+                        <p class="hero-excerpt">Découvrez une plateforme de presse moderne, où l'information de qualité rencontre l'élégance éditoriale. Notre mission : éclairer votre compréhension du monde.</p>
+                        <div class="hero-meta">
+                            <span class="author">Par la Rédaction</span>
+                            <span>Aujourd'hui</span>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="news-section">
+                <div class="section-header">
+                    <h2 class="section-title">Actualités</h2>
+                </div>
+                <div class="articles-grid" id="articles-container"></div>
+            </section>
+        </div>
+    </main>
+
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content">
+                <div class="newsletter-text">
+                    <h3>Restez éclairé</h3>
+                    <p>Recevez l'essentiel de l'actualité chaque matin.</p>
+                </div>
+                <form class="newsletter-form" id="newsletter-form">
+                    <input type="email" placeholder="Votre email" required>
+                    <button type="submit">S'inscrire</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-brand">
+                <span class="footer-logo">L'Éclaireur</span>
+                <p>La lumière sur l'actualité</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 L'Éclaireur. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        firebase.initializeApp(firebaseConfig);
+    </script>
+</body>
+</html>
