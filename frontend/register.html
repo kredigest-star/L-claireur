@@ -63,3 +63,85 @@
                     <input type="password" id="password-confirm" placeholder="••••••••" required>
                 </div>
                 <label class="terms">
+                    <input type="checkbox" id="terms" required>
+                    <span>J'accepte les <a href="#">conditions d'utilisation</a></span>
+                </label>
+                <button type="submit" class="btn-submit" id="btn-register">Créer mon compte</button>
+            </form>
+            <div class="divider"><span>ou</span></div>
+            <button class="btn-google" id="btn-google">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                S'inscrire avec Google
+            </button>
+            <p class="footer-text">Déjà un compte ? <a href="login.html">Se connecter</a></p>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="js/config.js"></script>
+    <script>
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = 'alert alert-' + type;
+            alert.style.display = 'block';
+        }
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-register');
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('password-confirm').value;
+
+            if (password !== passwordConfirm) {
+                showAlert('Les mots de passe ne correspondent pas', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Création...';
+
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ displayName: name });
+                showAlert('Compte créé avec succès !', 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } catch (error) {
+                let message = 'Erreur lors de la création du compte';
+                if (error.code === 'auth/email-already-in-use') {
+                    message = 'Cet email est déjà utilisé';
+                } else if (error.code === 'auth/weak-password') {
+                    message = 'Le mot de passe doit contenir au moins 6 caractères';
+                }
+                showAlert(message, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Créer mon compte';
+            }
+        });
+
+        document.getElementById('btn-google').addEventListener('click', async () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                await auth.signInWithPopup(provider);
+                showAlert('Inscription réussie !', 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } catch (error) {
+                showAlert('Erreur de connexion Google', 'error');
+            }
+        });
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>
