@@ -23,6 +23,7 @@
         .forgot { color: #326891; text-decoration: none; }
         .btn-submit { width: 100%; padding: 1rem; background: #121212; color: #fff; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; }
         .btn-submit:hover { background: #333; }
+        .btn-submit:disabled { background: #999; cursor: not-allowed; }
         .divider { display: flex; align-items: center; margin: 1.5rem 0; color: #999; font-size: 0.875rem; }
         .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e5e5e5; }
         .divider span { padding: 0 1rem; }
@@ -31,6 +32,9 @@
         .btn-google img { width: 20px; height: 20px; }
         .footer-text { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5; color: #666; }
         .footer-text a { color: #326891; font-weight: 600; text-decoration: none; }
+        .alert { padding: 1rem; margin-bottom: 1rem; border-radius: 4px; display: none; }
+        .alert-error { background: #fee; border: 1px solid #fcc; color: #c00; }
+        .alert-success { background: #efe; border: 1px solid #cfc; color: #060; }
     </style>
 </head>
 <body>
@@ -41,36 +45,83 @@
         <div class="login-box">
             <h1>Connexion</h1>
             <p class="subtitle">Accédez à votre compte</p>
+            <div id="alert" class="alert"></div>
             <form id="login-form">
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" placeholder="votre@email.com" required>
+                    <input type="email" id="email" placeholder="votre@email.com" required>
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
-                    <input type="password" placeholder="••••••••" required>
+                    <input type="password" id="password" placeholder="••••••••" required>
                 </div>
                 <div class="form-options">
                     <label class="remember">
-                        <input type="checkbox">
+                        <input type="checkbox" id="remember">
                         <span>Se souvenir</span>
                     </label>
                     <a href="#" class="forgot">Mot de passe oublié ?</a>
                 </div>
-                <button type="submit" class="btn-submit">Se connecter</button>
+                <button type="submit" class="btn-submit" id="btn-login">Se connecter</button>
             </form>
             <div class="divider"><span>ou</span></div>
-            <button class="btn-google">
+            <button class="btn-google" id="btn-google">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
                 Continuer avec Google
             </button>
             <p class="footer-text">Pas de compte ? <a href="register.html">Créer un compte</a></p>
         </div>
     </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="js/config.js"></script>
     <script>
-        document.getElementById('login-form').addEventListener('submit', function(e) {
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = 'alert alert-' + type;
+            alert.style.display = 'block';
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            alert('Connexion - À configurer avec Firebase');
+            const btn = document.getElementById('btn-login');
+            btn.disabled = true;
+            btn.textContent = 'Connexion...';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showAlert('Connexion réussie !', 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } catch (error) {
+                showAlert('Email ou mot de passe incorrect', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Se connecter';
+            }
+        });
+
+        document.getElementById('btn-google').addEventListener('click', async () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                await auth.signInWithPopup(provider);
+                showAlert('Connexion réussie !', 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
+            } catch (error) {
+                showAlert('Erreur de connexion Google', 'error');
+            }
+        });
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = 'index.html';
+            }
         });
     </script>
 </body>
