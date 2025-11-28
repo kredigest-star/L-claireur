@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+.env
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Firebase
+firebase-credentials.json
+*-firebase-adminsdk-*.json
+
+# Logs
+*.log
+logs/
+
+# Node (si utilisé)
+node_modules/
+
+# Local
+.local/
+*.local
+
+# Backend
+backend/.env
