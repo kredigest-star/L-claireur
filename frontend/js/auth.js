@@ -52,35 +52,116 @@ function updateUI(user) {
 
         let buttons = '';
         
-        // Bouton Admin (rouge)
+        // Bouton Admin (rouge) - seulement pour admin
         if (role === 'admin') {
-            buttons += `<a href="admin.html" class="btn-admin">Admin</a>`;
+            buttons += `
+                <div class="dropdown">
+                    <button class="btn-admin dropdown-toggle">
+                        <i class="fas fa-crown"></i> Admin
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="admin.html"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a>
+                        <a href="admin.html#users"><i class="fas fa-users"></i> Utilisateurs</a>
+                        <a href="admin.html#requests"><i class="fas fa-user-clock"></i> Demandes</a>
+                        <a href="admin.html#articles"><i class="fas fa-newspaper"></i> Articles</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="admin-settings.html"><i class="fas fa-cog"></i> Paramètres site</a>
+                    </div>
+                </div>
+            `;
         }
         
         // Bouton Éditeur (vert) - pour admin ET editor
         if (role === 'admin' || role === 'editor') {
-            buttons += `<a href="editor.html" class="btn-editor">Éditeur</a>`;
+            buttons += `
+                <div class="dropdown">
+                    <button class="btn-editor dropdown-toggle">
+                        <i class="fas fa-pen"></i> Éditeur
+                    </button>
+                    <div class="dropdown-menu">
+                        <a href="editor.html"><i class="fas fa-plus"></i> Nouvel article</a>
+                        <a href="editor.html#my-articles"><i class="fas fa-file-alt"></i> Mes articles</a>
+                        <a href="editor.html#drafts"><i class="fas fa-save"></i> Brouillons</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="editor-settings.html"><i class="fas fa-cog"></i> Paramètres éditeur</a>
+                    </div>
+                </div>
+            `;
         }
 
-        // Nom utilisateur
-        buttons += `<a href="profile.html" class="user-name">${displayName}</a>`;
-
-        // Badge de rôle
-        let badgeClass = 'badge-subscriber';
-        let badgeText = 'Abonné';
-        if (role === 'admin') { badgeClass = 'badge-admin'; badgeText = 'Admin'; }
-        if (role === 'editor') { badgeClass = 'badge-editor'; badgeText = 'Éditeur'; }
-        
-        buttons += `<span class="user-badge ${badgeClass}">${badgeText}</span>`;
-        buttons += `<button onclick="logout()" class="btn-logout">Déconnexion</button>`;
+        // Nom utilisateur avec dropdown
+        buttons += `
+            <div class="dropdown">
+                <button class="btn-user dropdown-toggle">
+                    <span class="user-avatar">${getInitials(displayName)}</span>
+                    ${displayName}
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <div class="dropdown-header">
+                        <strong>${displayName}</strong>
+                        <span class="user-role-badge ${role}">${getRoleName(role)}</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="profile.html"><i class="fas fa-user"></i> Mon profil</a>
+                    <a href="profile.html#favorites"><i class="fas fa-heart"></i> Favoris</a>
+                    <a href="profile.html#comments"><i class="fas fa-comments"></i> Mes commentaires</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" onclick="logout(); return false;" class="logout-link">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </div>
+            </div>
+        `;
 
         authButtons.innerHTML = buttons;
+        
+        // Activer les dropdowns
+        initDropdowns();
+        
     } else {
+        // Non connecté
         authButtons.innerHTML = `
             <a href="login.html" class="btn-login">Connexion</a>
             <a href="register.html" class="btn-subscribe">S'abonner</a>
         `;
     }
+}
+
+function initDropdowns() {
+    document.querySelectorAll('.dropdown-toggle').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = this.parentElement;
+            
+            // Fermer les autres dropdowns
+            document.querySelectorAll('.dropdown.active').forEach(d => {
+                if (d !== dropdown) d.classList.remove('active');
+            });
+            
+            dropdown.classList.toggle('active');
+        });
+    });
+
+    // Fermer quand on clique ailleurs
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.dropdown.active').forEach(d => {
+            d.classList.remove('active');
+        });
+    });
+}
+
+function getRoleName(role) {
+    const names = {
+        'admin': 'Admin',
+        'editor': 'Éditeur',
+        'subscriber': 'Abonné'
+    };
+    return names[role] || 'Visiteur';
+}
+
+function getInitials(name) {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 }
 
 function logout() {
