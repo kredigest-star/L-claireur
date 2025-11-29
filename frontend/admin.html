@@ -118,6 +118,55 @@
             cursor: not-allowed;
         }
 
+        /* Share Section */
+        .share-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 12px;
+        }
+        .share-title {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #333;
+        }
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .share-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        .share-btn.facebook { background: #1877F2; }
+        .share-btn.twitter { background: #000000; }
+        .share-btn.whatsapp { background: #25D366; }
+        .share-btn.linkedin { background: #0A66C2; }
+        .share-btn.telegram { background: #0088cc; }
+        .share-btn.copy { background: #666; }
+        .share-btn.copy.copied { background: #27ae60; }
+
         /* Comments */
         .comments-section {
             margin-top: 3rem;
@@ -283,18 +332,21 @@
 
             <div class="article-content" id="article-body"></div>
 
-            <!-- Actions: Like, Share, Save -->
+            <!-- Actions: Like, Save -->
             <div class="article-actions">
                 <button class="action-btn" id="like-btn" onclick="toggleLike()">
                     <i class="far fa-heart" id="like-icon"></i>
                     <span id="like-count">0</span> J'aime
                 </button>
-                <button class="action-btn" onclick="shareArticle()">
-                    <i class="fas fa-share-alt"></i> Partager
-                </button>
                 <button class="action-btn" id="bookmark-btn" onclick="toggleBookmark()">
                     <i class="far fa-bookmark" id="bookmark-icon"></i> Sauvegarder
                 </button>
+            </div>
+
+            <!-- Share Section -->
+            <div class="share-section" id="share-section">
+                <div class="share-title"><i class="fas fa-share-alt"></i> Partager cet article</div>
+                <div class="share-buttons" id="share-buttons"></div>
             </div>
 
             <!-- Comments Section -->
@@ -321,6 +373,9 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+
+        // URL du Worker Cloudflare pour le partage
+        const SHARE_WORKER_URL = 'https://leclaireur-share.kredigest.workers.dev';
 
         let currentUser = null;
         let currentUserData = null;
@@ -368,6 +423,7 @@
                 }
 
                 displayArticle();
+                setupShareButtons();
 
                 // Increment views
                 await db.collection('articles').doc(articleId).update({
@@ -431,6 +487,49 @@
 
             document.getElementById('article-body').innerHTML = articleData.content;
             document.getElementById('like-count').textContent = articleData.likes || 0;
+        }
+
+        function setupShareButtons() {
+            // URL du Worker pour le partage (avec image)
+            const shareUrl = SHARE_WORKER_URL + '/' + articleId;
+            const shareUrlEncoded = encodeURIComponent(shareUrl);
+            const titleEncoded = encodeURIComponent(articleData.title);
+            const excerptEncoded = encodeURIComponent(articleData.excerpt || articleData.title);
+
+            const container = document.getElementById('share-buttons');
+            container.innerHTML = `
+                <a href="https://www.facebook.com/sharer/sharer.php?u=${shareUrlEncoded}" target="_blank" rel="noopener" class="share-btn facebook">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </a>
+                <a href="https://twitter.com/intent/tweet?url=${shareUrlEncoded}&text=${titleEncoded}" target="_blank" rel="noopener" class="share-btn twitter">
+                    <i class="fab fa-x-twitter"></i> Twitter
+                </a>
+                <a href="https://api.whatsapp.com/send?text=${titleEncoded}%20${shareUrlEncoded}" target="_blank" rel="noopener" class="share-btn whatsapp">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=${shareUrlEncoded}" target="_blank" rel="noopener" class="share-btn linkedin">
+                    <i class="fab fa-linkedin-in"></i> LinkedIn
+                </a>
+                <a href="https://t.me/share/url?url=${shareUrlEncoded}&text=${titleEncoded}" target="_blank" rel="noopener" class="share-btn telegram">
+                    <i class="fab fa-telegram-plane"></i> Telegram
+                </a>
+                <button class="share-btn copy" onclick="copyShareLink()">
+                    <i class="fas fa-link"></i> Copier
+                </button>
+            `;
+        }
+
+        function copyShareLink() {
+            const shareUrl = SHARE_WORKER_URL + '/' + articleId;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                const btn = document.querySelector('.share-btn.copy');
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fas fa-link"></i> Copier';
+                }, 2000);
+            });
         }
 
         function updateCommentForm() {
@@ -619,15 +718,6 @@
             }
         }
 
-        function shareArticle() {
-            if (navigator.share) {
-                navigator.share({ title: articleData.title, url: window.location.href });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Lien copié !');
-            }
-        }
-
         // Helpers
         function getInitials(name) {
             if (!name) return '?';
@@ -657,49 +747,3 @@
     <script src="js/auth.js"></script>
 </body>
 </html>
-```
-
-4. **Commit changes**
-
----
-
-# Étape 2 : Mettre à jour les règles Firestore
-
-Va dans **Firebase Console** → **Firestore Database** → **Rules** et remplace par :
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == userId;
-      
-      match /bookmarks/{bookmarkId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-    }
-    
-    match /editorRequests/{requestId} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null;
-    }
-    
-    match /articles/{articleId} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null;
-      
-      match /likes/{likeId} {
-        allow read: if true;
-        allow write: if request.auth != null;
-      }
-      
-      match /comments/{commentId} {
-        allow read: if true;
-        allow create: if request.auth != null;
-        allow update, delete: if request.auth != null;
-      }
-    }
-  }
-}
