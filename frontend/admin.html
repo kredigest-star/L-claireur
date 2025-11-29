@@ -3,492 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration | L'Éclaireur</title>
+    <title>Article | L'Éclaireur</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .admin-container {
-            max-width: 1200px;
+        .article-container {
+            max-width: 800px;
             margin: 0 auto;
             padding: 2rem 1rem;
         }
-        .admin-header {
-            margin-bottom: 2rem;
-        }
-        .admin-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #121212;
-            margin-bottom: 0.5rem;
-        }
-        .admin-subtitle {
-            font-family: 'Source Sans Pro', sans-serif;
-            color: #666;
-        }
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        @media (max-width: 992px) {
-            .admin-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (max-width: 576px) {
-            .admin-stats {
-                grid-template-columns: 1fr;
-            }
-        }
-        .stat-card {
-            background: white;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-        }
-        .stat-card.pending {
-            border-color: #f39c12;
-            background: #fffbf0;
-        }
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .stat-icon.blue { color: #326891; }
-        .stat-icon.green { color: #27ae60; }
-        .stat-icon.orange { color: #f39c12; }
-        .stat-icon.red { color: #e74c3c; }
-        .stat-value {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #121212;
-        }
-        .stat-label {
+        .article-category {
             font-family: 'Source Sans Pro', sans-serif;
             font-size: 0.875rem;
-            color: #666;
-        }
-        .admin-tabs {
-            display: flex;
-            border-bottom: 2px solid #e5e5e5;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .admin-tab {
-            padding: 1rem 1.5rem;
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.9375rem;
             font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .admin-tab:hover {
+            text-transform: uppercase;
             color: #326891;
+            letter-spacing: 1px;
         }
-        .admin-tab.active {
-            color: #326891;
-            border-bottom-color: #326891;
-        }
-        .admin-tab .badge {
-            background: #e74c3c;
-            color: white;
-            font-size: 0.75rem;
-            padding: 0.125rem 0.5rem;
-            border-radius: 50px;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .admin-section {
-            background: white;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .admin-section-title {
+        .article-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.25rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            line-height: 1.2;
+            margin: 1rem 0;
+            color: #121212;
         }
-        .admin-section-title i {
-            color: #326891;
+        .article-excerpt {
+            font-family: 'Source Serif Pro', serif;
+            font-size: 1.25rem;
+            color: #555;
+            font-style: italic;
+            line-height: 1.6;
         }
-        
-        /* Tables */
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .admin-table th, .admin-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e5e5;
-            font-family: 'Source Sans Pro', sans-serif;
-        }
-        .admin-table th {
-            font-weight: 600;
-            color: #333;
-            background: #f9f9f9;
-        }
-        .admin-table tr:hover {
-            background: #f9f9f9;
-        }
-        
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .badge-admin { background: #e74c3c; color: white; }
-        .badge-editor { background: #3498db; color: white; }
-        .badge-subscriber { background: #27ae60; color: white; }
-        .badge-pending { background: #f39c12; color: white; }
-        .badge-published { background: #27ae60; color: white; }
-        .badge-draft { background: #95a5a6; color: white; }
-        
-        /* Buttons */
-        .btn-sm {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.8125rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Source Sans Pro', sans-serif;
-            font-weight: 600;
-            border: none;
-            transition: all 0.2s;
-        }
-        .btn-approve {
-            background: #27ae60;
-            color: white;
-        }
-        .btn-approve:hover {
-            background: #1e8449;
-        }
-        .btn-reject {
-            background: #e74c3c;
-            color: white;
-        }
-        .btn-reject:hover {
-            background: #c0392b;
-        }
-        .btn-edit {
-            background: #3498db;
-            color: white;
-        }
-        .btn-edit:hover {
-            background: #2980b9;
-        }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
-        }
-        .btn-delete:hover {
-            background: #c0392b;
-        }
-        .btn-view {
-            background: #326891;
-            color: white;
-        }
-        .btn-view:hover {
-            background: #1d4f73;
-        }
-        .btn-group {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        
-        /* Editor Request Card */
-        .request-card {
-            background: white;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .request-card.pending {
-            border-left: 4px solid #f39c12;
-        }
-        .request-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-        .request-user {
+        .article-meta {
             display: flex;
             align-items: center;
             gap: 1rem;
+            margin-top: 1.5rem;
+            padding: 1rem 0;
+            border-top: 1px solid #e5e5e5;
+            border-bottom: 1px solid #e5e5e5;
+            font-family: 'Source Sans Pro', sans-serif;
+            color: #666;
         }
-        .request-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        .author-avatar {
+            width: 48px;
+            height: 48px;
             background: #326891;
+            color: white;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
-        .request-name {
-            font-family: 'Source Sans Pro', sans-serif;
             font-weight: 600;
+        }
+        .article-image {
+            width: 100%;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        .article-content {
+            font-family: 'Source Serif Pro', Georgia, serif;
             font-size: 1.125rem;
+            line-height: 1.9;
+            color: #333;
+        }
+        .article-content p {
+            margin-bottom: 1.5rem;
+        }
+        .article-content p:first-of-type::first-letter {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            float: left;
+            line-height: 0.8;
+            margin: 0.1rem 0.5rem 0 0;
             color: #121212;
         }
-        .request-email {
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.875rem;
-            color: #666;
+
+        /* Actions */
+        .article-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid #e5e5e5;
+            border-bottom: 1px solid #e5e5e5;
+            margin: 2rem 0;
+            flex-wrap: wrap;
         }
-        .request-date {
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            background: white;
             font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.8125rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-btn:hover { background: #f5f5f5; }
+        .action-btn.liked {
+            background: #fee2e2;
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        .action-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Comments */
+        .comments-section {
+            margin-top: 3rem;
+        }
+        .comments-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .comments-count {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            color: #666;
+            font-weight: normal;
+        }
+        .comment-form {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .comment-form textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: #326891;
+        }
+        .comment-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        .btn-comment {
+            padding: 10px 24px;
+            background: #326891;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-comment:hover { background: #1d4f73; }
+        .login-prompt {
+            text-align: center;
+            padding: 2rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        .login-prompt a { color: #326891; font-weight: 600; }
+        .comment-list { list-style: none; padding: 0; margin: 0; }
+        .comment-item {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0.75rem;
+        }
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            background: #27ae60;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .comment-author {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
+        }
+        .comment-date {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.8rem;
             color: #999;
         }
-        .request-motivation {
-            background: #f9f9f9;
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-        }
-        .request-motivation-label {
+        .comment-body {
             font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
+            line-height: 1.6;
+            margin-left: 52px;
         }
-        .request-motivation-text {
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.9375rem;
-            color: #333;
-            line-height: 1.5;
-        }
-        .request-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-        
-        /* Empty State */
-        .empty-state {
+        .no-comments {
             text-align: center;
             padding: 3rem;
             color: #999;
-        }
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        .empty-state p {
             font-family: 'Source Sans Pro', sans-serif;
         }
-        
-        /* Loading */
+        .no-comments i { font-size: 3rem; margin-bottom: 1rem; display: block; }
         .loading {
             text-align: center;
-            padding: 2rem;
-            color: #999;
+            padding: 3rem;
         }
         .loading i {
             font-size: 2rem;
+            color: #326891;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        
-        /* Role Select */
-        .role-select {
-            padding: 0.375rem 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.875rem;
-            cursor: pointer;
-        }
-        .role-select:focus {
-            outline: none;
-            border-color: #326891;
-        }
     </style>
 </head>
 <body>
-    <div class="top-bar">
-        <div class="container">
-            <span class="date" id="current-date"></span>
-            <span class="separator">|</span>
-            <span class="edition">Administration</span>
-        </div>
-    </div>
-
     <header class="main-header">
         <div class="container">
             <div class="header-content">
                 <div class="header-left">
-                    <a href="index.html" class="btn-auth"><i class="fas fa-arrow-left"></i> Retour au site</a>
+                    <a href="index.html" class="btn-auth"><i class="fas fa-arrow-left"></i> Retour</a>
                 </div>
                 <div class="header-center">
                     <a href="index.html" class="logo">
                         <span class="logo-text">L'Éclaireur</span>
                     </a>
-                    <p class="tagline">Panneau d'administration</p>
                 </div>
                 <div class="header-right" id="auth-buttons"></div>
             </div>
         </div>
     </header>
 
-    <main class="admin-container">
-        <div class="admin-header">
-            <h1 class="admin-title">Administration</h1>
-            <p class="admin-subtitle">Gérez votre journal en toute simplicité</p>
+    <main class="article-container">
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner"></i>
+            <p>Chargement...</p>
         </div>
 
-        <!-- Stats -->
-        <div class="admin-stats">
-            <div class="stat-card">
-                <div class="stat-icon blue"><i class="fas fa-newspaper"></i></div>
-                <div class="stat-value" id="stat-articles">0</div>
-                <div class="stat-label">Articles publiés</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green"><i class="fas fa-users"></i></div>
-                <div class="stat-value" id="stat-users">0</div>
-                <div class="stat-label">Utilisateurs</div>
-            </div>
-            <div class="stat-card pending">
-                <div class="stat-icon orange"><i class="fas fa-user-edit"></i></div>
-                <div class="stat-value" id="stat-requests">0</div>
-                <div class="stat-label">Demandes éditeur</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon red"><i class="fas fa-eye"></i></div>
-                <div class="stat-value" id="stat-views">0</div>
-                <div class="stat-label">Vues totales</div>
-            </div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="admin-tabs">
-            <div class="admin-tab active" onclick="showTab('requests')">
-                <i class="fas fa-user-edit"></i> Demandes d'éditeur
-                <span class="badge" id="requests-badge" style="display: none;">0</span>
-            </div>
-            <div class="admin-tab" onclick="showTab('articles')">
-                <i class="fas fa-newspaper"></i> Articles
-            </div>
-            <div class="admin-tab" onclick="showTab('users')">
-                <i class="fas fa-users"></i> Utilisateurs
-            </div>
-            <div class="admin-tab" onclick="showTab('comments')">
-                <i class="fas fa-comments"></i> Commentaires
-            </div>
-        </div>
-
-        <!-- Tab: Editor Requests -->
-        <div class="tab-content active" id="tab-requests">
-            <div class="admin-section">
-                <h2 class="admin-section-title">
-                    <i class="fas fa-user-edit"></i> Demandes pour devenir éditeur
-                </h2>
-                <div id="requests-list">
-                    <div class="loading"><i class="fas fa-spinner"></i></div>
+        <article id="article-content" style="display: none;">
+            <header>
+                <span class="article-category" id="article-category"></span>
+                <h1 class="article-title" id="article-title"></h1>
+                <p class="article-excerpt" id="article-excerpt"></p>
+                <div class="article-meta">
+                    <div class="author-avatar" id="author-avatar">?</div>
+                    <div>
+                        <div id="author-name" style="font-weight: 600;"></div>
+                        <div id="author-title" style="font-size: 0.875rem;"></div>
+                    </div>
+                    <div style="margin-left: auto;" id="article-date"></div>
                 </div>
-            </div>
-        </div>
+            </header>
 
-        <!-- Tab: Articles -->
-        <div class="tab-content" id="tab-articles">
-            <div class="admin-section">
-                <h2 class="admin-section-title">
-                    <i class="fas fa-newspaper"></i> Tous les articles
-                </h2>
-                <div style="overflow-x: auto;">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Titre</th>
-                                <th>Auteur</th>
-                                <th>Catégorie</th>
-                                <th>Status</th>
-                                <th>Vues</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="articles-list">
-                            <tr><td colspan="7" class="loading"><i class="fas fa-spinner"></i></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+            <img class="article-image" id="article-image" style="display: none;">
 
-        <!-- Tab: Users -->
-        <div class="tab-content" id="tab-users">
-            <div class="admin-section">
-                <h2 class="admin-section-title">
-                    <i class="fas fa-users"></i> Gestion des utilisateurs
-                </h2>
-                <div style="overflow-x: auto;">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Nom</th>
-                                <th>Email</th>
-                                <th>Rôle</th>
-                                <th>Inscription</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-list">
-                            <tr><td colspan="5" class="loading"><i class="fas fa-spinner"></i></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+            <div class="article-content" id="article-body"></div>
 
-        <!-- Tab: Comments -->
-        <div class="tab-content" id="tab-comments">
-            <div class="admin-section">
-                <h2 class="admin-section-title">
-                    <i class="fas fa-comments"></i> Commentaires récents
-                </h2>
-                <div id="comments-list">
-                    <div class="loading"><i class="fas fa-spinner"></i></div>
-                </div>
+            <!-- Actions: Like, Share, Save -->
+            <div class="article-actions">
+                <button class="action-btn" id="like-btn" onclick="toggleLike()">
+                    <i class="far fa-heart" id="like-icon"></i>
+                    <span id="like-count">0</span> J'aime
+                </button>
+                <button class="action-btn" onclick="shareArticle()">
+                    <i class="fas fa-share-alt"></i> Partager
+                </button>
+                <button class="action-btn" id="bookmark-btn" onclick="toggleBookmark()">
+                    <i class="far fa-bookmark" id="bookmark-icon"></i> Sauvegarder
+                </button>
             </div>
-        </div>
+
+            <!-- Comments Section -->
+            <section class="comments-section">
+                <h2 class="comments-title">
+                    <i class="fas fa-comments"></i> Commentaires 
+                    <span class="comments-count" id="comments-count">(0)</span>
+                </h2>
+
+                <div id="comment-form-container"></div>
+
+                <ul class="comment-list" id="comments-list">
+                    <li class="loading"><i class="fas fa-spinner"></i></li>
+                </ul>
+            </section>
+        </article>
     </main>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -501,373 +323,309 @@
         const db = firebase.firestore();
 
         let currentUser = null;
+        let currentUserData = null;
+        let articleId = null;
+        let articleData = null;
+        let userLiked = false;
+        let userBookmarked = false;
 
-        // Date
-        document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
+        // Get article ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        articleId = urlParams.get('id');
 
-        // Auth check
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
-
-            currentUser = user;
-            
-            // Check admin role
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            if (!userDoc.exists || userDoc.data().role !== 'admin') {
-                alert('Accès réservé aux administrateurs');
-                window.location.href = 'index.html';
-                return;
-            }
-
-            document.getElementById('auth-buttons').innerHTML = `
-                <span style="margin-right: 10px;">${user.displayName || user.email}</span>
-                <span class="badge badge-admin">Admin</span>
-                <button class="btn-auth" onclick="auth.signOut().then(() => window.location.href='index.html')" style="margin-left: 10px;">Déconnexion</button>
-            `;
-
-            // Load data
-            loadStats();
-            loadEditorRequests();
-            loadArticles();
-            loadUsers();
-            loadComments();
-        });
-
-        // Tab switching
-        function showTab(tab) {
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            event.target.closest('.admin-tab').classList.add('active');
-            document.getElementById(`tab-${tab}`).classList.add('active');
+        if (!articleId) {
+            window.location.href = 'index.html';
         }
 
-        // Load stats
-        async function loadStats() {
+        // Auth state
+        auth.onAuthStateChanged(async (user) => {
+            currentUser = user;
+            if (user) {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                currentUserData = userDoc.exists ? userDoc.data() : { role: 'subscriber' };
+            }
+            loadArticle();
+            updateCommentForm();
+        });
+
+        async function loadArticle() {
             try {
-                // Articles count
-                const articlesSnap = await db.collection('articles').where('status', '==', 'published').get();
-                document.getElementById('stat-articles').textContent = articlesSnap.size;
-
-                // Total views
-                let totalViews = 0;
-                articlesSnap.forEach(doc => {
-                    totalViews += doc.data().views || 0;
-                });
-                document.getElementById('stat-views').textContent = totalViews;
-
-                // Users count
-                const usersSnap = await db.collection('users').get();
-                document.getElementById('stat-users').textContent = usersSnap.size;
-
-                // Pending requests count
-                const requestsSnap = await db.collection('editorRequests').where('status', '==', 'pending').get();
-                document.getElementById('stat-requests').textContent = requestsSnap.size;
+                const doc = await db.collection('articles').doc(articleId).get();
                 
-                // Update badge
-                if (requestsSnap.size > 0) {
-                    document.getElementById('requests-badge').textContent = requestsSnap.size;
-                    document.getElementById('requests-badge').style.display = 'inline';
+                if (!doc.exists) {
+                    document.getElementById('loading').innerHTML = '<p>Article non trouvé</p>';
+                    return;
                 }
 
+                articleData = doc.data();
+
+                // Check if published (or admin)
+                if (articleData.status !== 'published') {
+                    if (!currentUserData || currentUserData.role !== 'admin') {
+                        document.getElementById('loading').innerHTML = '<p>Article non disponible</p>';
+                        return;
+                    }
+                }
+
+                displayArticle();
+
+                // Increment views
+                await db.collection('articles').doc(articleId).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                });
+
+                // Check if user liked/bookmarked
+                if (currentUser) {
+                    const likeDoc = await db.collection('articles').doc(articleId)
+                        .collection('likes').doc(currentUser.uid).get();
+                    userLiked = likeDoc.exists;
+                    updateLikeButton();
+
+                    const bookmarkDoc = await db.collection('users').doc(currentUser.uid)
+                        .collection('bookmarks').doc(articleId).get();
+                    userBookmarked = bookmarkDoc.exists;
+                    updateBookmarkButton();
+                }
+
+                loadComments();
+
             } catch (error) {
-                console.error('Error loading stats:', error);
+                console.error('Error:', error);
+                document.getElementById('loading').innerHTML = '<p>Erreur de chargement</p>';
             }
         }
 
-        // Load editor requests
-        async function loadEditorRequests() {
-            const container = document.getElementById('requests-list');
-            
+        function displayArticle() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('article-content').style.display = 'block';
+
+            const categories = {
+                'politique': 'Politique', 'monde': 'Monde', 'economie': 'Économie',
+                'sciences': 'Sciences', 'culture': 'Culture', 'sports': 'Sports'
+            };
+
+            document.getElementById('article-category').textContent = categories[articleData.category] || articleData.category;
+            document.getElementById('article-title').textContent = articleData.title;
+            document.title = articleData.title + ' | L\'Éclaireur';
+
+            if (articleData.excerpt) {
+                document.getElementById('article-excerpt').textContent = articleData.excerpt;
+            }
+
+            const authorName = articleData.authorDisplayName || articleData.authorName || 'Anonyme';
+            document.getElementById('author-name').textContent = 'Par ' + authorName;
+            document.getElementById('author-avatar').textContent = getInitials(authorName);
+
+            if (articleData.authorProfession) {
+                document.getElementById('author-title').textContent = articleData.authorProfession;
+            }
+
+            if (articleData.createdAt) {
+                document.getElementById('article-date').textContent = formatDate(articleData.createdAt.toDate());
+            }
+
+            if (articleData.image) {
+                document.getElementById('article-image').src = articleData.image;
+                document.getElementById('article-image').style.display = 'block';
+            }
+
+            document.getElementById('article-body').innerHTML = articleData.content;
+            document.getElementById('like-count').textContent = articleData.likes || 0;
+        }
+
+        function updateCommentForm() {
+            const container = document.getElementById('comment-form-container');
+
+            if (currentUser && currentUserData) {
+                const canComment = ['subscriber', 'editor', 'admin'].includes(currentUserData.role);
+                
+                if (canComment) {
+                    const displayName = currentUserData.displayName || currentUser.email.split('@')[0];
+                    container.innerHTML = `
+                        <div class="comment-form">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;">
+                                <div class="comment-avatar">${getInitials(displayName)}</div>
+                                <span style="font-weight: 600;">${displayName}</span>
+                            </div>
+                            <textarea id="comment-text" placeholder="Écrivez votre commentaire..."></textarea>
+                            <div class="comment-form-actions">
+                                <button class="btn-comment" onclick="postComment()">
+                                    <i class="fas fa-paper-plane"></i> Publier
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                container.innerHTML = `
+                    <div class="login-prompt">
+                        <i class="fas fa-lock" style="font-size: 2rem; color: #ccc; margin-bottom: 1rem; display: block;"></i>
+                        <p>Connectez-vous pour commenter et liker cet article.</p>
+                        <p><a href="login.html">Se connecter</a> ou <a href="register.html">S'inscrire</a></p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadComments() {
+            const list = document.getElementById('comments-list');
+
             try {
-                const snapshot = await db.collection('editorRequests')
-                    .where('status', '==', 'pending')
+                const snapshot = await db.collection('articles').doc(articleId)
+                    .collection('comments')
+                    .orderBy('createdAt', 'desc')
                     .get();
 
+                document.getElementById('comments-count').textContent = `(${snapshot.size})`;
+
                 if (snapshot.empty) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-check-circle" style="color: #27ae60;"></i>
-                            <p>Aucune demande en attente</p>
-                        </div>
+                    list.innerHTML = `
+                        <li class="no-comments">
+                            <i class="far fa-comments"></i>
+                            <p>Aucun commentaire. Soyez le premier !</p>
+                        </li>
                     `;
                     return;
                 }
 
-                container.innerHTML = '';
+                list.innerHTML = '';
                 snapshot.forEach(doc => {
-                    const request = doc.data();
-                    const date = request.createdAt ? request.createdAt.toDate().toLocaleDateString('fr-FR', {
-                        day: 'numeric', month: 'long', year: 'numeric'
-                    }) : 'Date inconnue';
-                    const initials = getInitials(request.displayName);
-
-                    container.innerHTML += `
-                        <div class="request-card pending">
-                            <div class="request-header">
-                                <div class="request-user">
-                                    <div class="request-avatar">${initials}</div>
-                                    <div>
-                                        <div class="request-name">${request.displayName}</div>
-                                        <div class="request-email">${request.email}</div>
-                                    </div>
-                                </div>
-                                <div class="request-date">
-                                    <i class="fas fa-clock"></i> ${date}
+                    const c = doc.data();
+                    const date = c.createdAt ? formatDate(c.createdAt.toDate()) : '';
+                    list.innerHTML += `
+                        <li class="comment-item">
+                            <div class="comment-header">
+                                <div class="comment-avatar">${getInitials(c.authorName)}</div>
+                                <div>
+                                    <div class="comment-author">${c.authorName || 'Anonyme'}</div>
+                                    <div class="comment-date">${date}</div>
                                 </div>
                             </div>
-                            <div class="request-motivation">
-                                <div class="request-motivation-label">Motivation</div>
-                                <div class="request-motivation-text">${request.motivation || 'Aucune motivation fournie'}</div>
-                            </div>
-                            <div class="request-actions">
-                                <button class="btn-sm btn-approve" onclick="approveRequest('${doc.id}', '${request.userId}')">
-                                    <i class="fas fa-check"></i> Approuver
-                                </button>
-                                <button class="btn-sm btn-reject" onclick="rejectRequest('${doc.id}')">
-                                    <i class="fas fa-times"></i> Refuser
-                                </button>
-                            </div>
-                        </div>
+                            <div class="comment-body">${escapeHTML(c.text)}</div>
+                        </li>
                     `;
                 });
 
             } catch (error) {
-                console.error('Error loading requests:', error);
-                container.innerHTML = '<div class="empty-state"><p>Erreur lors du chargement</p></div>';
+                console.error('Error loading comments:', error);
+                list.innerHTML = '<li class="no-comments">Erreur de chargement</li>';
             }
         }
 
-        // Approve editor request
-        async function approveRequest(requestId, userId) {
-            if (!confirm('Approuver cette demande ? L\'utilisateur pourra écrire des articles.')) return;
+        async function postComment() {
+            if (!currentUser) return alert('Connectez-vous pour commenter');
+
+            const text = document.getElementById('comment-text').value.trim();
+            if (!text) return alert('Écrivez un commentaire');
 
             try {
-                // Update user role to editor
-                await db.collection('users').doc(userId).update({
-                    role: 'editor'
+                await db.collection('articles').doc(articleId).collection('comments').add({
+                    text: text,
+                    authorId: currentUser.uid,
+                    authorName: currentUserData.displayName || currentUser.email.split('@')[0],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                // Update request status
-                await db.collection('editorRequests').doc(requestId).update({
-                    status: 'approved',
-                    approvedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    approvedBy: currentUser.uid
-                });
-
-                alert('Demande approuvée ! L\'utilisateur est maintenant éditeur.');
-                loadEditorRequests();
-                loadStats();
-                loadUsers();
+                document.getElementById('comment-text').value = '';
+                loadComments();
 
             } catch (error) {
-                console.error('Error approving request:', error);
-                alert('Erreur lors de l\'approbation');
+                console.error('Error posting comment:', error);
+                alert('Erreur');
             }
         }
 
-        // Reject editor request
-        async function rejectRequest(requestId) {
-            if (!confirm('Refuser cette demande ?')) return;
-
-            try {
-                await db.collection('editorRequests').doc(requestId).update({
-                    status: 'rejected',
-                    rejectedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    rejectedBy: currentUser.uid
-                });
-
-                alert('Demande refusée.');
-                loadEditorRequests();
-                loadStats();
-
-            } catch (error) {
-                console.error('Error rejecting request:', error);
-                alert('Erreur lors du refus');
+        async function toggleLike() {
+            if (!currentUser) {
+                alert('Connectez-vous pour aimer cet article');
+                return window.location.href = 'login.html';
             }
-        }
 
-        // Load articles
-        async function loadArticles() {
-            const container = document.getElementById('articles-list');
-            
+            if (!['subscriber', 'editor', 'admin'].includes(currentUserData.role)) {
+                return alert('Vous devez être abonné pour liker');
+            }
+
+            const likeRef = db.collection('articles').doc(articleId).collection('likes').doc(currentUser.uid);
+
             try {
-                const snapshot = await db.collection('articles').get();
-
-                if (snapshot.empty) {
-                    container.innerHTML = '<tr><td colspan="7" class="empty-state">Aucun article</td></tr>';
-                    return;
+                if (userLiked) {
+                    await likeRef.delete();
+                    await db.collection('articles').doc(articleId).update({
+                        likes: firebase.firestore.FieldValue.increment(-1)
+                    });
+                    userLiked = false;
+                    document.getElementById('like-count').textContent = 
+                        parseInt(document.getElementById('like-count').textContent) - 1;
+                } else {
+                    await likeRef.set({ createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    await db.collection('articles').doc(articleId).update({
+                        likes: firebase.firestore.FieldValue.increment(1)
+                    });
+                    userLiked = true;
+                    document.getElementById('like-count').textContent = 
+                        parseInt(document.getElementById('like-count').textContent) + 1;
                 }
-
-                const articles = [];
-                snapshot.forEach(doc => {
-                    articles.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Sort by date
-                articles.sort((a, b) => {
-                    const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
-                    const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
-                    return dateB - dateA;
-                });
-
-                container.innerHTML = articles.map(article => {
-                    const date = article.createdAt ? article.createdAt.toDate().toLocaleDateString('fr-FR') : 'N/A';
-                    const statusClass = article.status === 'published' ? 'badge-published' : 'badge-draft';
-                    const statusText = article.status === 'published' ? 'Publié' : (article.status === 'pending' ? 'En attente' : 'Brouillon');
-                    
-                    return `
-                        <tr>
-                            <td><strong>${article.title}</strong></td>
-                            <td>${article.authorDisplayName || article.authorName || 'Anonyme'}</td>
-                            <td>${getCategoryName(article.category)}</td>
-                            <td><span class="badge ${statusClass}">${statusText}</span></td>
-                            <td>${article.views || 0}</td>
-                            <td>${date}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="article.html?id=${article.id}" class="btn-sm btn-view" target="_blank"><i class="fas fa-eye"></i></a>
-                                    <a href="editor.html?id=${article.id}" class="btn-sm btn-edit"><i class="fas fa-edit"></i></a>
-                                    ${article.status !== 'published' ? `<button class="btn-sm btn-approve" onclick="publishArticle('${article.id}')"><i class="fas fa-check"></i></button>` : ''}
-                                    <button class="btn-sm btn-delete" onclick="deleteArticle('${article.id}')"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
+                updateLikeButton();
 
             } catch (error) {
-                console.error('Error loading articles:', error);
-                container.innerHTML = '<tr><td colspan="7">Erreur lors du chargement</td></tr>';
+                console.error('Error toggling like:', error);
             }
         }
 
-        // Publish article
-        async function publishArticle(articleId) {
-            if (!confirm('Publier cet article ?')) return;
-
-            try {
-                await db.collection('articles').doc(articleId).update({
-                    status: 'published'
-                });
-                alert('Article publié !');
-                loadArticles();
-                loadStats();
-            } catch (error) {
-                console.error('Error publishing:', error);
-                alert('Erreur');
+        function updateLikeButton() {
+            const btn = document.getElementById('like-btn');
+            const icon = document.getElementById('like-icon');
+            if (userLiked) {
+                btn.classList.add('liked');
+                icon.className = 'fas fa-heart';
+            } else {
+                btn.classList.remove('liked');
+                icon.className = 'far fa-heart';
             }
         }
 
-        // Delete article
-        async function deleteArticle(articleId) {
-            if (!confirm('Supprimer cet article ? Cette action est irréversible.')) return;
+        async function toggleBookmark() {
+            if (!currentUser) return alert('Connectez-vous pour sauvegarder');
+
+            const ref = db.collection('users').doc(currentUser.uid).collection('bookmarks').doc(articleId);
 
             try {
-                await db.collection('articles').doc(articleId).delete();
-                alert('Article supprimé');
-                loadArticles();
-                loadStats();
-            } catch (error) {
-                console.error('Error deleting:', error);
-                alert('Erreur');
-            }
-        }
-
-        // Load users
-        async function loadUsers() {
-            const container = document.getElementById('users-list');
-            
-            try {
-                const snapshot = await db.collection('users').get();
-
-                if (snapshot.empty) {
-                    container.innerHTML = '<tr><td colspan="5" class="empty-state">Aucun utilisateur</td></tr>';
-                    return;
+                if (userBookmarked) {
+                    await ref.delete();
+                    userBookmarked = false;
+                } else {
+                    await ref.set({
+                        articleId: articleId,
+                        title: articleData.title,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    userBookmarked = true;
                 }
-
-                container.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const user = doc.data();
-                    const date = user.createdAt ? user.createdAt.toDate().toLocaleDateString('fr-FR') : 'N/A';
-                    const roleClass = `badge-${user.role || 'subscriber'}`;
-                    const roleName = getRoleName(user.role);
-
-                    container.innerHTML += `
-                        <tr>
-                            <td><strong>${user.displayName || 'Sans nom'}</strong></td>
-                            <td>${user.email}</td>
-                            <td>
-                                <select class="role-select" onchange="changeUserRole('${doc.id}', this.value)">
-                                    <option value="subscriber" ${user.role === 'subscriber' ? 'selected' : ''}>Abonné</option>
-                                    <option value="editor" ${user.role === 'editor' ? 'selected' : ''}>Éditeur</option>
-                                    <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
-                                </select>
-                            </td>
-                            <td>${date}</td>
-                            <td>
-                                <button class="btn-sm btn-delete" onclick="deleteUser('${doc.id}')" ${doc.id === currentUser.uid ? 'disabled title="Vous ne pouvez pas vous supprimer"' : ''}>
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
+                updateBookmarkButton();
             } catch (error) {
-                console.error('Error loading users:', error);
-                container.innerHTML = '<tr><td colspan="5">Erreur lors du chargement</td></tr>';
+                console.error('Error toggling bookmark:', error);
             }
         }
 
-        // Change user role
-        async function changeUserRole(userId, newRole) {
-            try {
-                await db.collection('users').doc(userId).update({
-                    role: newRole
-                });
-                alert(`Rôle mis à jour : ${getRoleName(newRole)}`);
-            } catch (error) {
-                console.error('Error changing role:', error);
-                alert('Erreur lors du changement de rôle');
-                loadUsers();
+        function updateBookmarkButton() {
+            const btn = document.getElementById('bookmark-btn');
+            const icon = document.getElementById('bookmark-icon');
+            if (userBookmarked) {
+                btn.classList.add('liked');
+                icon.className = 'fas fa-bookmark';
+            } else {
+                btn.classList.remove('liked');
+                icon.className = 'far fa-bookmark';
             }
         }
 
-        // Delete user
-        async function deleteUser(userId) {
-            if (userId === currentUser.uid) {
-                alert('Vous ne pouvez pas supprimer votre propre compte');
-                return;
+        function shareArticle() {
+            if (navigator.share) {
+                navigator.share({ title: articleData.title, url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Lien copié !');
             }
-            
-            if (!confirm('Supprimer cet utilisateur ? Cette action est irréversible.')) return;
-
-            try {
-                await db.collection('users').doc(userId).delete();
-                alert('Utilisateur supprimé');
-                loadUsers();
-                loadStats();
-            } catch (error) {
-                console.error('Error deleting user:', error);
-                alert('Erreur');
-            }
-        }
-
-        // Load comments
-        async function loadComments() {
-            const container = document.getElementById('comments-list');
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-comments"></i>
-                    <p>Les commentaires apparaissent sur chaque article</p>
-                </div>
-            `;
         }
 
         // Helpers
@@ -876,26 +634,72 @@
             return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
         }
 
-        function getRoleName(role) {
-            const names = {
-                'admin': 'Administrateur',
-                'editor': 'Éditeur',
-                'subscriber': 'Abonné'
-            };
-            return names[role] || 'Visiteur';
+        function formatDate(date) {
+            const now = new Date();
+            const diff = now - date;
+            const mins = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (mins < 60) return `Il y a ${mins} min`;
+            if (hours < 24) return `Il y a ${hours}h`;
+            if (days < 7) return `Il y a ${days}j`;
+            
+            return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
-        function getCategoryName(category) {
-            const names = {
-                'politique': 'Politique',
-                'monde': 'Monde',
-                'economie': 'Économie',
-                'sciences': 'Sciences',
-                'culture': 'Culture',
-                'sports': 'Sports'
-            };
-            return names[category] || category || 'Sans catégorie';
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
         }
     </script>
+    <script src="js/auth.js"></script>
 </body>
 </html>
+```
+
+4. **Commit changes**
+
+---
+
+# Étape 2 : Mettre à jour les règles Firestore
+
+Va dans **Firebase Console** → **Firestore Database** → **Rules** et remplace par :
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+      
+      match /bookmarks/{bookmarkId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    match /editorRequests/{requestId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null;
+    }
+    
+    match /articles/{articleId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null;
+      
+      match /likes/{likeId} {
+        allow read: if true;
+        allow write: if request.auth != null;
+      }
+      
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if request.auth != null;
+        allow update, delete: if request.auth != null;
+      }
+    }
+  }
+}
