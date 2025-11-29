@@ -107,8 +107,6 @@
         .upload-status.error {
             color: #e74c3c;
         }
-
-        /* Rich Text Editor Styles */
         .editor-toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -204,13 +202,11 @@
         .rich-editor em {
             font-style: italic;
         }
-        .rich-editor [data-placeholder]:empty:before {
-            content: attr(data-placeholder);
+        .rich-editor:empty:before {
+            content: 'Commencez à rédiger votre article ici...';
             color: #999;
             pointer-events: none;
         }
-
-        /* Preview Mode */
         .preview-container {
             display: none;
             background: white;
@@ -308,7 +304,6 @@
             margin-bottom: 2rem;
             border-radius: 4px;
         }
-
         .editor-tabs {
             display: flex;
             gap: 0;
@@ -335,13 +330,21 @@
             color: white;
             border-color: #326891;
         }
-
         .word-count {
             font-family: 'Source Sans Pro', sans-serif;
             font-size: 0.8rem;
             color: #999;
             text-align: right;
             margin-top: 0.5rem;
+        }
+        .saving-indicator {
+            display: none;
+            color: #326891;
+            font-size: 0.875rem;
+            margin-left: 1rem;
+        }
+        .saving-indicator.active {
+            display: inline;
         }
     </style>
 </head>
@@ -374,12 +377,13 @@
     <main class="editor-container">
         <div class="editor-header">
             <h1 class="editor-title" id="page-title">Nouvel article</h1>
+            <span class="saving-indicator" id="saving-indicator"><i class="fas fa-spinner fa-spin"></i> Sauvegarde...</span>
         </div>
 
-        <form class="editor-form" id="article-form">
+        <div class="editor-form" id="article-form">
             <div class="form-group">
                 <label for="title">Titre de l'article *</label>
-                <input type="text" id="title" placeholder="Entrez un titre accrocheur..." required style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700;">
+                <input type="text" id="title" placeholder="Entrez un titre accrocheur..." style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700;">
             </div>
 
             <div class="form-group">
@@ -403,7 +407,7 @@
 
             <div class="form-group">
                 <label for="category">Catégorie *</label>
-                <select id="category" required>
+                <select id="category">
                     <option value="">-- Sélectionner --</option>
                     <option value="politique">Politique</option>
                     <option value="monde">Monde</option>
@@ -493,7 +497,7 @@
                             <i class="fas fa-eraser"></i>
                         </button>
                     </div>
-                    <div class="rich-editor" id="rich-editor" contenteditable="true" data-placeholder="Commencez à rédiger votre article ici..."></div>
+                    <div class="rich-editor" id="rich-editor" contenteditable="true"></div>
                     <div class="word-count">
                         <span id="word-count">0</span> mots | <span id="char-count">0</span> caractères
                     </div>
@@ -513,22 +517,20 @@
                     <img class="preview-image" id="preview-article-image" src="" alt="" style="display: none;">
                     <div class="preview-content" id="preview-content"></div>
                 </div>
-
-                <input type="hidden" id="content" value="">
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-secondary" id="btn-draft">
+                <button type="button" class="btn-secondary" id="btn-draft" onclick="saveArticle('draft')">
                     <i class="fas fa-save"></i> Enregistrer brouillon
                 </button>
-                <button type="submit" class="btn-primary" id="btn-publish" style="display: none;">
+                <button type="button" class="btn-primary" id="btn-publish" style="display: none;" onclick="saveArticle('published')">
                     <i class="fas fa-paper-plane"></i> Publier
                 </button>
-                <button type="button" class="btn-primary" id="btn-submit" style="display: none;">
+                <button type="button" class="btn-primary" id="btn-submit" style="display: none;" onclick="saveArticle('pending')">
                     <i class="fas fa-check"></i> Soumettre pour révision
                 </button>
             </div>
-        </form>
+        </div>
 
         <div class="admin-section" id="my-articles-section" style="margin-top: 2rem;">
             <h2 class="admin-section-title"><i class="fas fa-file-alt"></i> Mes articles</h2>
@@ -576,13 +578,11 @@
             const range = selection.getRangeAt(0);
             let parentBlock = range.commonAncestorContainer;
             
-            // Trouver le bloc parent
             while (parentBlock && parentBlock !== richEditor && parentBlock.nodeType !== 1) {
                 parentBlock = parentBlock.parentNode;
             }
             
             if (parentBlock && parentBlock !== richEditor) {
-                // Si c'est déjà le même tag, convertir en paragraphe
                 if (parentBlock.tagName && parentBlock.tagName.toLowerCase() === tag.toLowerCase()) {
                     document.execCommand('formatBlock', false, '<p>');
                 } else {
@@ -615,14 +615,12 @@
 
         // Update toolbar button states
         function updateToolbarState() {
-            // Format states
             document.getElementById('btn-bold').classList.toggle('active', document.queryCommandState('bold'));
             document.getElementById('btn-italic').classList.toggle('active', document.queryCommandState('italic'));
             document.getElementById('btn-underline').classList.toggle('active', document.queryCommandState('underline'));
             document.getElementById('btn-ul').classList.toggle('active', document.queryCommandState('insertUnorderedList'));
             document.getElementById('btn-ol').classList.toggle('active', document.queryCommandState('insertOrderedList'));
             
-            // Block states
             const selection = window.getSelection();
             if (selection.rangeCount) {
                 let node = selection.getRangeAt(0).commonAncestorContainer;
@@ -640,14 +638,12 @@
             }
         }
 
-        // Listen for selection changes
         document.addEventListener('selectionchange', function() {
             if (document.activeElement === richEditor) {
                 updateToolbarState();
             }
         });
 
-        // Keyboard shortcuts
         richEditor.addEventListener('keydown', function(e) {
             if (e.ctrlKey || e.metaKey) {
                 switch(e.key.toLowerCase()) {
@@ -667,7 +663,6 @@
             }
         });
 
-        // Tab switching
         function showTab(tab) {
             const editorPanel = document.getElementById('editor-panel');
             const previewPanel = document.getElementById('preview-panel');
@@ -694,7 +689,7 @@
             const category = document.getElementById('category').value || 'actualites';
             const authorName = document.getElementById('authorDisplayName').value || 'Auteur';
             const authorProfession = document.getElementById('authorProfession').value || '';
-            const content = document.getElementById('rich-editor').innerHTML;
+            const content = richEditor.innerHTML;
             const image = document.getElementById('image').value;
 
             const categoryNames = {
@@ -711,7 +706,6 @@
             document.getElementById('preview-excerpt').textContent = excerpt;
             document.getElementById('preview-author').textContent = authorName;
             
-            // Afficher la profession si elle existe
             const professionEl = document.getElementById('preview-profession');
             if (authorProfession) {
                 professionEl.textContent = ', ' + authorProfession;
@@ -737,7 +731,6 @@
             }
         }
 
-        // Word count
         richEditor.addEventListener('input', function() {
             const text = this.innerText || '';
             const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
@@ -746,11 +739,9 @@
             document.getElementById('char-count').textContent = chars;
         });
 
-        // Click on editor to update toolbar
         richEditor.addEventListener('click', updateToolbarState);
         richEditor.addEventListener('keyup', updateToolbarState);
 
-        // Vérifier l'accès éditeur ou admin
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.href = 'login.html';
@@ -758,46 +749,52 @@
             }
 
             currentUser = user;
-            const userDoc = await db.collection('users').doc(user.uid).get();
             
-            if (!userDoc.exists) {
-                alert('Profil utilisateur non trouvé');
-                window.location.href = 'index.html';
-                return;
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    alert('Profil utilisateur non trouvé');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                const userData = userDoc.data();
+                userRole = userData.role;
+                
+                if (!['editor', 'admin'].includes(userRole)) {
+                    alert('Accès réservé aux éditeurs');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                document.getElementById('authorDisplayName').value = userData.displayName || user.displayName || '';
+                document.getElementById('authorProfession').value = userData.profession || '';
+
+                document.getElementById('auth-buttons').innerHTML = `
+                    <span class="user-welcome">${user.displayName || user.email}</span>
+                    <span class="user-role-badge role-${userRole}">${userRole === 'admin' ? 'Admin' : 'Éditeur'}</span>
+                    <button class="btn-auth" onclick="auth.signOut().then(() => window.location.href='index.html')">Déconnexion</button>
+                `;
+
+                if (userRole === 'admin') {
+                    document.getElementById('btn-publish').style.display = 'inline-block';
+                } else {
+                    document.getElementById('btn-submit').style.display = 'inline-block';
+                }
+
+                const urlParams = new URLSearchParams(window.location.search);
+                editingId = urlParams.get('id');
+                
+                if (editingId) {
+                    loadArticle(editingId);
+                }
+
+                loadMyArticles();
+            } catch (error) {
+                console.error('Erreur auth:', error);
+                alert('Erreur de connexion. Veuillez réessayer.');
             }
-
-            const userData = userDoc.data();
-            userRole = userData.role;
-            
-            if (!['editor', 'admin'].includes(userRole)) {
-                alert('Accès réservé aux éditeurs');
-                window.location.href = 'index.html';
-                return;
-            }
-
-            document.getElementById('authorDisplayName').value = userData.displayName || user.displayName || '';
-            document.getElementById('authorProfession').value = userData.profession || '';
-
-            document.getElementById('auth-buttons').innerHTML = `
-                <span class="user-welcome">${user.displayName || user.email}</span>
-                <span class="user-role-badge role-${userRole}">${userRole === 'admin' ? 'Admin' : 'Éditeur'}</span>
-                <button class="btn-auth" onclick="auth.signOut().then(() => window.location.href='index.html')">Déconnexion</button>
-            `;
-
-            if (userRole === 'admin') {
-                document.getElementById('btn-publish').style.display = 'inline-block';
-            } else {
-                document.getElementById('btn-submit').style.display = 'inline-block';
-            }
-
-            const urlParams = new URLSearchParams(window.location.search);
-            editingId = urlParams.get('id');
-            
-            if (editingId) {
-                loadArticle(editingId);
-            }
-
-            loadMyArticles();
         });
 
         // Image upload handling
@@ -928,89 +925,94 @@
         }
 
         async function loadArticle(id) {
-            const doc = await db.collection('articles').doc(id).get();
-            if (doc.exists) {
-                const article = doc.data();
-                
-                if (article.authorId !== currentUser.uid && userRole !== 'admin') {
-                    alert('Vous ne pouvez pas modifier cet article');
-                    window.location.href = 'editor.html';
-                    return;
-                }
+            try {
+                const doc = await db.collection('articles').doc(id).get();
+                if (doc.exists) {
+                    const article = doc.data();
+                    
+                    if (article.authorId !== currentUser.uid && userRole !== 'admin') {
+                        alert('Vous ne pouvez pas modifier cet article');
+                        window.location.href = 'editor.html';
+                        return;
+                    }
 
-                document.getElementById('page-title').textContent = 'Modifier l\'article';
-                document.getElementById('title').value = article.title || '';
-                document.getElementById('excerpt').value = article.excerpt || '';
-                document.getElementById('authorDisplayName').value = article.authorDisplayName || article.authorName || '';
-                document.getElementById('authorProfession').value = article.authorProfession || '';
-                document.getElementById('category').value = article.category || '';
-                richEditor.innerHTML = article.content || '';
-                
-                if (article.image) {
-                    hiddenImageInput.value = article.image;
-                    previewImg.src = article.image;
-                    imagePreview.style.display = 'block';
-                    imageUploadContainer.style.display = 'none';
-                }
+                    document.getElementById('page-title').textContent = 'Modifier l\'article';
+                    document.getElementById('title').value = article.title || '';
+                    document.getElementById('excerpt').value = article.excerpt || '';
+                    document.getElementById('authorDisplayName').value = article.authorDisplayName || article.authorName || '';
+                    document.getElementById('authorProfession').value = article.authorProfession || '';
+                    document.getElementById('category').value = article.category || '';
+                    richEditor.innerHTML = article.content || '';
+                    
+                    if (article.image) {
+                        hiddenImageInput.value = article.image;
+                        previewImg.src = article.image;
+                        imagePreview.style.display = 'block';
+                        imageUploadContainer.style.display = 'none';
+                    }
 
-                const text = richEditor.innerText || '';
-                const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
-                document.getElementById('word-count').textContent = words;
-                document.getElementById('char-count').textContent = text.length;
+                    const text = richEditor.innerText || '';
+                    const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+                    document.getElementById('word-count').textContent = words;
+                    document.getElementById('char-count').textContent = text.length;
+                }
+            } catch (error) {
+                console.error('Erreur chargement article:', error);
+                alert('Erreur lors du chargement de l\'article');
             }
         }
 
         async function loadMyArticles() {
-            let query = db.collection('articles').orderBy('createdAt', 'desc');
-            
-            if (userRole !== 'admin') {
-                query = query.where('authorId', '==', currentUser.uid);
-            }
-
-            const snapshot = await query.get();
-            const tbody = document.getElementById('my-articles-list');
-            tbody.innerHTML = '';
-
-            if (snapshot.empty) {
-                tbody.innerHTML = '<tr><td colspan="5">Aucun article</td></tr>';
-                return;
-            }
-
-            snapshot.forEach(doc => {
-                const article = doc.data();
-                const date = article.createdAt ? article.createdAt.toDate().toLocaleDateString('fr-FR') : 'N/A';
-                const canEdit = article.authorId === currentUser.uid || userRole === 'admin';
+            try {
+                let query = db.collection('articles').orderBy('createdAt', 'desc');
                 
-                let statusBadge = '';
-                switch(article.status) {
-                    case 'published':
-                        statusBadge = '<span class="user-role-badge role-subscriber">Publié</span>';
-                        break;
-                    case 'pending':
-                        statusBadge = '<span class="user-role-badge role-editor">En attente</span>';
-                        break;
-                    default:
-                        statusBadge = '<span class="user-role-badge role-visitor">Brouillon</span>';
+                if (userRole !== 'admin') {
+                    query = query.where('authorId', '==', currentUser.uid);
                 }
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${article.title}</td>
-                        <td>${article.category}</td>
-                        <td>${statusBadge}</td>
-                        <td>${date}</td>
-                        <td>
-                            ${canEdit ? `<button class="btn-action btn-edit" onclick="window.location.href='editor.html?id=${doc.id}'">Modifier</button>` : ''}
-                            ${canEdit ? `<button class="btn-action btn-delete" onclick="deleteArticle('${doc.id}')">Supprimer</button>` : ''}
-                        </td>
-                    </tr>
-                `;
-            });
-        }
+                const snapshot = await query.get();
+                const tbody = document.getElementById('my-articles-list');
+                tbody.innerHTML = '';
 
-        document.getElementById('btn-draft').addEventListener('click', () => saveArticle('draft'));
-        document.getElementById('btn-submit').addEventListener('click', () => saveArticle('pending'));
-        document.getElementById('btn-publish').addEventListener('click', () => saveArticle('published'));
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5">Aucun article</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const article = doc.data();
+                    const date = article.createdAt ? article.createdAt.toDate().toLocaleDateString('fr-FR') : 'N/A';
+                    const canEdit = article.authorId === currentUser.uid || userRole === 'admin';
+                    
+                    let statusBadge = '';
+                    switch(article.status) {
+                        case 'published':
+                            statusBadge = '<span class="user-role-badge role-subscriber">Publié</span>';
+                            break;
+                        case 'pending':
+                            statusBadge = '<span class="user-role-badge role-editor">En attente</span>';
+                            break;
+                        default:
+                            statusBadge = '<span class="user-role-badge role-visitor">Brouillon</span>';
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${article.title}</td>
+                            <td>${article.category}</td>
+                            <td>${statusBadge}</td>
+                            <td>${date}</td>
+                            <td>
+                                ${canEdit ? `<button class="btn-action btn-edit" onclick="window.location.href='editor.html?id=${doc.id}'">Modifier</button>` : ''}
+                                ${canEdit ? `<button class="btn-action btn-delete" onclick="deleteArticle('${doc.id}')">Supprimer</button>` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                console.error('Erreur chargement articles:', error);
+            }
+        }
 
         async function saveArticle(status) {
             const title = document.getElementById('title').value.trim();
@@ -1021,10 +1023,27 @@
             const image = document.getElementById('image').value.trim();
             const content = richEditor.innerHTML.trim();
 
-            if (!title || !category || !content || content === '<br>' || content === '<p><br></p>') {
-                alert('Veuillez remplir tous les champs obligatoires');
+            // Validation
+            if (!title) {
+                alert('Veuillez entrer un titre');
+                document.getElementById('title').focus();
                 return;
             }
+            
+            if (!category) {
+                alert('Veuillez sélectionner une catégorie');
+                document.getElementById('category').focus();
+                return;
+            }
+            
+            if (!content || content === '<br>' || content === '<p><br></p>' || content === '<p></p>') {
+                alert('Veuillez écrire le contenu de l\'article');
+                richEditor.focus();
+                return;
+            }
+
+            // Show saving indicator
+            document.getElementById('saving-indicator').classList.add('active');
 
             const articleData = {
                 title,
@@ -1040,19 +1059,26 @@
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            if (authorProfession) {
-                await db.collection('users').doc(currentUser.uid).update({ profession: authorProfession });
-            }
-
             try {
+                // Save profession to user profile
+                if (authorProfession) {
+                    await db.collection('users').doc(currentUser.uid).update({ profession: authorProfession });
+                }
+
                 if (editingId) {
                     await db.collection('articles').doc(editingId).update(articleData);
-                    alert('Article mis à jour');
+                    document.getElementById('saving-indicator').classList.remove('active');
+                    alert('Article mis à jour avec succès !');
                 } else {
                     articleData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    await db.collection('articles').add(articleData);
-                    alert('Article créé');
-                    document.getElementById('article-form').reset();
+                    const docRef = await db.collection('articles').add(articleData);
+                    document.getElementById('saving-indicator').classList.remove('active');
+                    alert('Article créé avec succès !');
+                    
+                    // Reset form
+                    document.getElementById('title').value = '';
+                    document.getElementById('excerpt').value = '';
+                    document.getElementById('category').value = '';
                     richEditor.innerHTML = '';
                     hiddenImageInput.value = '';
                     previewImg.src = '';
@@ -1063,21 +1089,29 @@
                     document.getElementById('char-count').textContent = '0';
                     editingId = null;
                 }
+                
                 loadMyArticles();
+                
             } catch (error) {
-                console.error('Erreur:', error);
-                alert('Erreur lors de la sauvegarde');
+                document.getElementById('saving-indicator').classList.remove('active');
+                console.error('Erreur sauvegarde:', error);
+                alert('Erreur lors de la sauvegarde: ' + error.message);
             }
         }
 
         async function deleteArticle(id) {
-            if (confirm('Supprimer cet article ?')) {
-                await db.collection('articles').doc(id).delete();
-                alert('Article supprimé');
-                if (editingId === id) {
-                    window.location.href = 'editor.html';
-                } else {
-                    loadMyArticles();
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
+                try {
+                    await db.collection('articles').doc(id).delete();
+                    alert('Article supprimé');
+                    if (editingId === id) {
+                        window.location.href = 'editor.html';
+                    } else {
+                        loadMyArticles();
+                    }
+                } catch (error) {
+                    console.error('Erreur suppression:', error);
+                    alert('Erreur lors de la suppression');
                 }
             }
         }
