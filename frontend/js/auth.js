@@ -2,15 +2,14 @@
 
 let currentUserData = null;
 
-// Attendre que Firebase soit initialisé
-document.addEventListener('DOMContentLoaded', function() {
-    // Vérifier si auth existe
-    if (typeof auth !== 'undefined') {
-        initAuth();
-    }
-});
-
+// Initialiser l'auth quand Firebase est prêt
 function initAuth() {
+    if (typeof auth === 'undefined' || typeof db === 'undefined') {
+        // Attendre que Firebase soit chargé
+        setTimeout(initAuth, 100);
+        return;
+    }
+
     auth.onAuthStateChanged(async (user) => {
         if (user) {
             await loadUserRole(user);
@@ -22,6 +21,9 @@ function initAuth() {
     });
 }
 
+// Démarrer l'initialisation
+initAuth();
+
 // Charger le rôle de l'utilisateur depuis Firestore
 async function loadUserRole(user) {
     try {
@@ -29,6 +31,7 @@ async function loadUserRole(user) {
         
         if (userDoc.exists) {
             currentUserData = userDoc.data();
+            console.log('User role:', currentUserData.role); // Debug
         } else {
             // Créer le profil si inexistant
             currentUserData = {
@@ -54,30 +57,102 @@ function updateUI(user) {
         const displayName = currentUserData.displayName || user.displayName || user.email.split('@')[0];
         const role = currentUserData.role || 'subscriber';
         
-        let roleButtons = '';
+        console.log('Updating UI for role:', role); // Debug
+
+        let buttons = '';
         
-        // Bouton Admin pour les admins
+        // Bouton Admin (rouge) - seulement pour admin
         if (role === 'admin') {
-            roleButtons += `<a href="admin.html" class="btn-auth" style="background: #e74c3c; color: white; margin-right: 5px;">Admin</a>`;
+            buttons += `<a href="admin.html" style="
+                display: inline-block;
+                padding: 8px 16px;
+                background: #e74c3c;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                font-family: 'Source Sans Pro', sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                margin-right: 8px;
+            ">Admin</a>`;
         }
         
-        // Bouton Éditeur pour les éditeurs et admins
+        // Bouton Éditeur (vert) - pour admin ET editor
         if (role === 'admin' || role === 'editor') {
-            roleButtons += `<a href="editor.html" class="btn-auth" style="background: #27ae60; color: white; margin-right: 5px;">Éditeur</a>`;
+            buttons += `<a href="editor.html" style="
+                display: inline-block;
+                padding: 8px 16px;
+                background: #27ae60;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                font-family: 'Source Sans Pro', sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+                margin-right: 8px;
+            ">Éditeur</a>`;
         }
 
-        authButtons.innerHTML = `
-            ${roleButtons}
-            <a href="profile.html" class="btn-auth" style="margin-right: 5px;" title="Mon profil">
-                ${displayName}
-            </a>
-            <span class="user-role-badge role-${role}" style="margin-right: 10px;">${getRoleName(role)}</span>
-            <button class="btn-auth" onclick="logout()" style="background: #666; color: white;">Déconnexion</button>
-        `;
+        // Nom d'utilisateur avec lien vers profil
+        buttons += `<a href="profile.html" style="
+            color: #326891;
+            text-decoration: none;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
+            margin-right: 8px;
+        ">${displayName}</a>`;
+
+        // Badge de rôle
+        let badgeColor = '#27ae60'; // subscriber = vert
+        if (role === 'admin') badgeColor = '#e74c3c';
+        if (role === 'editor') badgeColor = '#3498db';
+        
+        buttons += `<span style="
+            display: inline-block;
+            padding: 4px 10px;
+            background: ${badgeColor};
+            color: white;
+            border-radius: 50px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+        ">${getRoleName(role)}</span>`;
+
+        // Bouton déconnexion
+        buttons += `<button onclick="logout()" style="
+            padding: 8px 16px;
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+        ">Déconnexion</button>`;
+
+        authButtons.innerHTML = buttons;
     } else {
+        // Non connecté
         authButtons.innerHTML = `
-            <a href="login.html" class="btn-auth">Connexion</a>
-            <a href="register.html" class="btn-subscribe">S'abonner</a>
+            <a href="login.html" style="
+                color: #326891;
+                text-decoration: none;
+                font-family: 'Source Sans Pro', sans-serif;
+                font-weight: 600;
+                margin-right: 15px;
+            ">Connexion</a>
+            <a href="register.html" style="
+                display: inline-block;
+                padding: 8px 16px;
+                background: #326891;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                font-family: 'Source Sans Pro', sans-serif;
+                font-size: 14px;
+                font-weight: 600;
+            ">S'abonner</a>
         `;
     }
 }
@@ -87,8 +162,7 @@ function getRoleName(role) {
     const names = {
         'admin': 'Admin',
         'editor': 'Éditeur',
-        'subscriber': 'Abonné',
-        'visitor': 'Visiteur'
+        'subscriber': 'Abonné'
     };
     return names[role] || 'Visiteur';
 }
@@ -103,7 +177,7 @@ function logout() {
     });
 }
 
-// Vérifier les permissions
+// Fonctions de vérification des permissions
 function canComment() {
     return currentUserData && ['subscriber', 'editor', 'admin'].includes(currentUserData.role);
 }
@@ -117,10 +191,6 @@ function canPublish() {
 }
 
 function canManageUsers() {
-    return currentUserData && currentUserData.role === 'admin';
-}
-
-function canDeleteAny() {
     return currentUserData && currentUserData.role === 'admin';
 }
 
