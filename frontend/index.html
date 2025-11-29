@@ -120,6 +120,7 @@
         .search-no-results i {
             font-size: 3rem;
             margin-bottom: 1rem;
+            display: block;
         }
         .search-loading {
             padding: 2rem;
@@ -392,7 +393,7 @@
         <div class="search-container">
             <div class="search-header">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search-input" placeholder="Rechercher des articles..." autofocus>
+                <input type="text" id="search-input" placeholder="Rechercher des articles...">
                 <button class="search-close" onclick="closeSearch()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -515,6 +516,7 @@
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
     <script>
+        // Initialiser Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -529,7 +531,6 @@
         // Récupérer la catégorie depuis l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const selectedCategory = urlParams.get('cat');
-        const searchQuery = urlParams.get('q');
 
         // Mettre à jour le titre et la navigation
         if (selectedCategory) {
@@ -551,7 +552,7 @@
             });
         }
 
-        // Search functions
+        // ==================== SEARCH FUNCTIONS ====================
         function openSearch() {
             document.getElementById('search-overlay').classList.add('active');
             document.getElementById('search-input').focus();
@@ -598,13 +599,13 @@
             searchTimeout = setTimeout(() => searchArticles(query), 300);
         });
 
-        async function searchArticles(query) {
+        function searchArticles(query) {
             const resultsContainer = document.getElementById('search-results');
             const queryLower = query.toLowerCase();
 
             // Filter from cached articles
             const results = allArticles.filter(article => {
-                const titleMatch = article.title.toLowerCase().includes(queryLower);
+                const titleMatch = article.title && article.title.toLowerCase().includes(queryLower);
                 const contentMatch = article.content && article.content.toLowerCase().includes(queryLower);
                 const authorMatch = (article.authorDisplayName || article.authorName || '').toLowerCase().includes(queryLower);
                 const excerptMatch = article.excerpt && article.excerpt.toLowerCase().includes(queryLower);
@@ -631,7 +632,7 @@
                         <div class="search-result-content">
                             <div class="search-result-category">${getCategoryName(article.category)}</div>
                             <div class="search-result-title">${highlightText(article.title, query)}</div>
-                            <div class="search-result-meta">Par ${article.authorDisplayName || article.authorName} • ${date}</div>
+                            <div class="search-result-meta">Par ${article.authorDisplayName || article.authorName || 'Auteur'} • ${date}</div>
                         </div>
                     </a>
                 `;
@@ -639,35 +640,44 @@
         }
 
         function highlightText(text, query) {
+            if (!text) return '';
             const regex = new RegExp(`(${query})`, 'gi');
             return text.replace(regex, '<mark>$1</mark>');
         }
 
-        // Charger les articles
+        // ==================== LOAD ARTICLES ====================
         async function loadArticles() {
             try {
-                let query = db.collection('articles')
-                    .where('status', '==', 'published')
-                    .orderBy('createdAt', 'desc');
-
+                // Requête simple sans orderBy pour éviter les problèmes d'index
+                let snapshot;
+                
                 if (selectedCategory) {
-                    query = db.collection('articles')
+                    snapshot = await db.collection('articles')
                         .where('status', '==', 'published')
                         .where('category', '==', selectedCategory)
-                        .orderBy('createdAt', 'desc');
+                        .get();
+                } else {
+                    snapshot = await db.collection('articles')
+                        .where('status', '==', 'published')
+                        .get();
                 }
-
-                const snapshot = await query.get();
-                const articles = [];
                 
+                const articles = [];
                 snapshot.forEach(doc => {
                     articles.push({ id: doc.id, ...doc.data() });
                 });
 
-                allArticles = articles; // Cache for search
+                // Trier par date côté client (plus récent en premier)
+                articles.sort((a, b) => {
+                    const dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
+                    const dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
+                    return dateB - dateA;
+                });
+
+                allArticles = articles; // Cache pour la recherche
                 displayArticles(articles);
                 
-                // Load most read and category sections only on homepage
+                // Charger les sections uniquement sur la page d'accueil
                 if (!selectedCategory) {
                     loadMostRead();
                     loadCategorySections();
@@ -680,6 +690,7 @@
                     <div class="no-articles" style="grid-column: 1/-1;">
                         <i class="fas fa-exclamation-circle"></i>
                         <p>Erreur lors du chargement des articles</p>
+                        <p style="font-size: 0.8rem; color: #999;">${error.message}</p>
                     </div>
                 `;
             }
@@ -701,7 +712,7 @@
                 return;
             }
 
-            // Hero article
+            // Article principal (Hero)
             const heroArticle = articles[0];
             const heroDate = heroArticle.createdAt ? formatDate(heroArticle.createdAt.toDate()) : 'Récent';
             const heroImage = heroArticle.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200';
@@ -711,14 +722,14 @@
             heroSection.innerHTML = `
                 <article class="hero-article" onclick="window.location.href='article.html?id=${heroArticle.id}'">
                     <div class="hero-image">
-                        <img src="${heroImage}" alt="${heroArticle.title}">
+                        <img src="${heroImage}" alt="${heroArticle.title}" onerror="this.src='https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200'">
                     </div>
                     <div class="hero-content">
                         <span class="category-tag">${getCategoryName(heroArticle.category)}</span>
                         <h1 class="hero-title">${heroArticle.title}</h1>
                         <p class="hero-excerpt">${heroArticle.excerpt || truncateText(heroArticle.content, 200)}</p>
                         <div class="hero-meta">
-                            <span class="author">Par ${heroArticle.authorDisplayName || heroArticle.authorName}</span>
+                            <span class="author">Par ${heroArticle.authorDisplayName || heroArticle.authorName || 'Auteur'}</span>
                             ${heroArticle.authorProfession ? `<span class="profession">, ${heroArticle.authorProfession}</span>` : ''}
                             <span class="date"> • ${heroDate}</span>
                             <span style="margin-left: 1rem; color: #999;">
@@ -730,7 +741,7 @@
                 </article>
             `;
 
-            // Other articles
+            // Autres articles
             const otherArticles = articles.slice(1);
             
             if (otherArticles.length === 0) {
@@ -759,7 +770,7 @@
                             </h3>
                             <p class="article-card-excerpt">${article.excerpt || truncateText(article.content, 100)}</p>
                             <div class="article-card-meta">
-                                <span class="article-card-author">${article.authorDisplayName || article.authorName}</span>
+                                <span class="article-card-author">${article.authorDisplayName || article.authorName || 'Auteur'}</span>
                                 ${article.authorProfession ? `, ${article.authorProfession}` : ''}
                                 <span> • ${date}</span>
                             </div>
@@ -773,33 +784,37 @@
             }).join('');
         }
 
-        // Load most read articles
+        // ==================== MOST READ ====================
         async function loadMostRead() {
             try {
                 const snapshot = await db.collection('articles')
                     .where('status', '==', 'published')
-                    .orderBy('views', 'desc')
-                    .limit(5)
                     .get();
 
                 if (snapshot.empty) return;
 
+                const articles = [];
+                snapshot.forEach(doc => {
+                    articles.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Trier par vues côté client
+                articles.sort((a, b) => (b.views || 0) - (a.views || 0));
+                const topArticles = articles.slice(0, 5);
+
+                if (topArticles.length === 0) return;
+
                 const container = document.getElementById('most-read-list');
                 document.getElementById('most-read-section').style.display = 'block';
 
-                let html = '';
-                let index = 1;
-                
-                snapshot.forEach(doc => {
-                    const article = doc.data();
+                container.innerHTML = topArticles.map((article, index) => {
                     const views = article.views || 0;
-                    
-                    html += `
+                    return `
                         <div class="most-read-item">
-                            <span class="most-read-number">${index}</span>
+                            <span class="most-read-number">${index + 1}</span>
                             <div class="most-read-content">
                                 <h3 class="most-read-item-title">
-                                    <a href="article.html?id=${doc.id}">${article.title}</a>
+                                    <a href="article.html?id=${article.id}">${article.title}</a>
                                 </h3>
                                 <div class="most-read-meta">
                                     ${getCategoryName(article.category)} • ${views} vues
@@ -807,17 +822,14 @@
                             </div>
                         </div>
                     `;
-                    index++;
-                });
-
-                container.innerHTML = html;
+                }).join('');
 
             } catch (error) {
                 console.error('Error loading most read:', error);
             }
         }
 
-        // Load category sections
+        // ==================== CATEGORY SECTIONS ====================
         async function loadCategorySections() {
             const categories = ['politique', 'monde', 'economie', 'sciences', 'culture', 'sports'];
             const container = document.getElementById('category-sections');
@@ -827,28 +839,38 @@
                     const snapshot = await db.collection('articles')
                         .where('status', '==', 'published')
                         .where('category', '==', category)
-                        .orderBy('createdAt', 'desc')
-                        .limit(4)
                         .get();
 
                     if (snapshot.empty) continue;
 
-                    let articlesHtml = '';
+                    const articles = [];
                     snapshot.forEach(doc => {
-                        const article = doc.data();
+                        articles.push({ id: doc.id, ...doc.data() });
+                    });
+
+                    // Trier par date côté client
+                    articles.sort((a, b) => {
+                        const dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
+                        const dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
+                        return dateB - dateA;
+                    });
+
+                    const topArticles = articles.slice(0, 4);
+
+                    const articlesHtml = topArticles.map(article => {
                         const date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
                         const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=300';
                         
-                        articlesHtml += `
+                        return `
                             <div class="category-card">
                                 <img src="${image}" alt="${article.title}" class="category-card-image" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=300'">
                                 <h3 class="category-card-title">
-                                    <a href="article.html?id=${doc.id}">${article.title}</a>
+                                    <a href="article.html?id=${article.id}">${article.title}</a>
                                 </h3>
                                 <div class="category-card-date">${date}</div>
                             </div>
                         `;
-                    });
+                    }).join('');
 
                     container.innerHTML += `
                         <section class="category-section">
@@ -868,7 +890,7 @@
             }
         }
 
-        // Helpers
+        // ==================== HELPERS ====================
         function getCategoryName(category) {
             const names = {
                 'politique': 'Politique',
@@ -878,10 +900,11 @@
                 'culture': 'Culture',
                 'sports': 'Sports'
             };
-            return names[category] || category;
+            return names[category] || category || 'Actualités';
         }
 
         function formatDate(date) {
+            if (!date) return '';
             const now = new Date();
             const diff = now - date;
             const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -914,7 +937,7 @@
             e.target.reset();
         });
 
-        // Load articles
+        // ==================== INIT ====================
         loadArticles();
     </script>
 </body>
