@@ -966,3 +966,90 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         font-size: 1rem;
     }
 }
+/* === MOBILE MENU === */
+.menu-btn,
+.search-btn {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #333;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.menu-btn:hover,
+.search-btn:hover {
+    color: #326891;
+}
+
+/* Menu responsive */
+@media (max-width: 768px) {
+    .main-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #e5e5e5;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        z-index: 1000;
+    }
+
+    .main-nav.active {
+        display: block;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .nav-list li {
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .nav-list a,
+    .nav-link {
+        display: block;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .nav-list a:hover,
+    .nav-link:hover {
+        background: #f9f9f9;
+    }
+
+    .header-content {
+        position: relative;
+    }
+
+    .header-right {
+        display: none;
+    }
+
+    .main-nav.active + .header-right,
+    .header-right.mobile-visible {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 1rem;
+        border-top: 1px solid #e5e5e5;
+    }
+}
+
+/* Desktop - cacher le bouton menu */
+@media (min-width: 769px) {
+    .menu-btn {
+        display: none;
+    }
+    
+    .main-nav {
+        display: block !important;
+    }
+}
