@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Search Styles */
+        /* ==================== SEARCH STYLES ==================== */
         .search-overlay {
             display: none;
             position: fixed;
@@ -18,7 +18,7 @@
             right: 0;
             bottom: 0;
             background: rgba(0,0,0,0.8);
-            z-index: 1000;
+            z-index: 2000;
             justify-content: center;
             align-items: flex-start;
             padding-top: 10vh;
@@ -111,12 +111,16 @@
             margin-bottom: 1rem;
             display: block;
         }
+        .search-loading {
+            padding: 2rem;
+            text-align: center;
+        }
         .search-loading i {
             font-size: 2rem;
             animation: spin 1s linear infinite;
         }
 
-        /* Article Cards */
+        /* ==================== ARTICLE CARDS ==================== */
         .article-card {
             background: white;
             border: 1px solid #e5e5e5;
@@ -227,7 +231,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Category Sections */
+        /* ==================== CATEGORY SECTIONS ==================== */
         .category-section {
             margin-top: 3rem;
             padding-top: 2rem;
@@ -291,7 +295,7 @@
             margin-top: 0.25rem;
         }
 
-        /* Most Read Section */
+        /* ==================== MOST READ ==================== */
         .most-read-section {
             margin-top: 3rem;
             padding: 2rem;
@@ -340,31 +344,37 @@
             margin-top: 0.25rem;
         }
 
-        /* ==================== MOBILE MENU ==================== */
-        .menu-btn {
-            display: none;
+        /* ==================== MOBILE MENU - IMPORTANT ==================== */
+        #menu-btn {
+            display: none !important;
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             color: #333;
             cursor: pointer;
-            padding: 10px;
+            padding: 8px;
             z-index: 1001;
+            align-items: center;
+            justify-content: center;
         }
+
         .search-btn {
             background: none;
             border: none;
             font-size: 1.25rem;
             color: #333;
             cursor: pointer;
-            padding: 10px;
+            padding: 8px;
         }
+
+        /* MOBILE */
         @media (max-width: 768px) {
-            .menu-btn {
-                display: block !important;
+            #menu-btn {
+                display: flex !important;
             }
+
             .main-nav {
-                display: none;
+                display: none !important;
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -372,61 +382,128 @@
                 bottom: 0;
                 background: white;
                 z-index: 1000;
-                padding-top: 80px;
+                padding-top: 70px;
                 overflow-y: auto;
             }
+
             .main-nav.active {
                 display: block !important;
             }
+
+            .main-nav .container {
+                padding: 0;
+            }
+
             .main-nav .nav-list {
                 flex-direction: column;
                 padding: 0;
                 margin: 0;
+                list-style: none;
             }
+
             .main-nav .nav-list li {
                 border-bottom: 1px solid #e5e5e5;
+                margin: 0;
             }
-            .main-nav .nav-list a {
+
+            .main-nav .nav-list a,
+            .main-nav .nav-list .nav-link {
                 display: block;
                 padding: 18px 24px;
                 font-size: 18px;
                 color: #333;
                 text-decoration: none;
+                font-family: 'Source Sans Pro', sans-serif;
             }
+
             .main-nav .nav-list a:hover {
                 background: #f5f5f5;
             }
+
             .main-nav .nav-link.active {
                 background: #326891;
-                color: white;
+                color: white !important;
             }
+
             .header-right {
+                display: none !important;
+            }
+
+            .header-left {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .header-center {
+                flex: 1;
+                text-align: center;
+            }
+
+            .logo-text {
+                font-size: 1.4rem !important;
+            }
+
+            .tagline {
+                font-size: 0.65rem !important;
+            }
+
+            .top-bar {
                 display: none;
             }
         }
+
+        /* DESKTOP */
         @media (min-width: 769px) {
-            .menu-btn {
+            #menu-btn {
                 display: none !important;
             }
+
             .main-nav {
                 display: block !important;
             }
+
+            .menu-close-btn {
+                display: none !important;
+            }
         }
+
+        /* Close button inside mobile menu */
         .menu-close-btn {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             background: none;
             border: none;
             font-size: 2rem;
             color: #333;
             cursor: pointer;
+            z-index: 1002;
             display: none;
+            padding: 10px;
         }
-        @media (max-width: 768px) {
-            .main-nav.active .menu-close-btn {
-                display: block;
-            }
+
+        .main-nav.active .menu-close-btn {
+            display: block;
+        }
+
+        /* Mobile menu header */
+        .mobile-menu-header {
+            display: none;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e5e5e5;
+            background: #f9f9f9;
+        }
+
+        .main-nav.active .mobile-menu-header {
+            display: block;
+        }
+
+        .mobile-menu-header h3 {
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            color: #333;
         }
     </style>
 </head>
@@ -462,7 +539,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="header-left">
-                    <button class="menu-btn" id="menu-btn" onclick="toggleMobileMenu()">
+                    <button id="menu-btn" onclick="toggleMobileMenu()">
                         <i class="fas fa-bars" id="menu-icon"></i>
                     </button>
                     <button class="search-btn" onclick="openSearch()">
@@ -487,6 +564,9 @@
         <button class="menu-close-btn" onclick="toggleMobileMenu()">
             <i class="fas fa-times"></i>
         </button>
+        <div class="mobile-menu-header">
+            <h3>Menu</h3>
+        </div>
         <div class="container">
             <ul class="nav-list">
                 <li><a href="index.html" class="nav-link active">Accueil</a></li>
@@ -562,10 +642,11 @@
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
     <script>
-        // MOBILE MENU
+        // ==================== MOBILE MENU ====================
         function toggleMobileMenu() {
             var nav = document.getElementById('main-nav');
             var icon = document.getElementById('menu-icon');
+            
             if (nav.classList.contains('active')) {
                 nav.classList.remove('active');
                 icon.className = 'fas fa-bars';
@@ -577,6 +658,7 @@
             }
         }
 
+        // Close menu when clicking a link
         document.querySelectorAll('.nav-link').forEach(function(link) {
             link.addEventListener('click', function() {
                 var nav = document.getElementById('main-nav');
@@ -587,16 +669,18 @@
             });
         });
 
-        // Firebase Init
+        // ==================== FIREBASE INIT ====================
         firebase.initializeApp(firebaseConfig);
         var auth = firebase.auth();
         var db = firebase.firestore();
         var allArticles = [];
 
+        // Date du jour
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         });
 
+        // Catégorie depuis URL
         var urlParams = new URLSearchParams(window.location.search);
         var selectedCategory = urlParams.get('cat');
 
@@ -618,7 +702,7 @@
             });
         }
 
-        // SEARCH
+        // ==================== SEARCH ====================
         function openSearch() {
             document.getElementById('search-overlay').classList.add('active');
             document.getElementById('search-input').focus();
@@ -630,6 +714,7 @@
             document.body.style.overflow = '';
         }
 
+        // Escape key closes everything
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeSearch();
@@ -641,18 +726,22 @@
             }
         });
 
+        // Click outside closes search
         document.getElementById('search-overlay').addEventListener('click', function(e) {
             if (e.target.id === 'search-overlay') closeSearch();
         });
 
+        // Search input
         var searchTimeout;
         document.getElementById('search-input').addEventListener('input', function(e) {
             clearTimeout(searchTimeout);
             var query = e.target.value.trim();
+            
             if (query.length < 2) {
                 document.getElementById('search-results').innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i><p>Tapez au moins 2 caractères</p></div>';
                 return;
             }
+            
             document.getElementById('search-results').innerHTML = '<div class="search-loading"><i class="fas fa-spinner"></i></div>';
             searchTimeout = setTimeout(function() { searchArticles(query); }, 300);
         });
@@ -660,120 +749,190 @@
         function searchArticles(query) {
             var resultsContainer = document.getElementById('search-results');
             var queryLower = query.toLowerCase();
+            
             var results = allArticles.filter(function(article) {
                 var titleMatch = article.title && article.title.toLowerCase().includes(queryLower);
                 var contentMatch = article.content && article.content.toLowerCase().includes(queryLower);
-                return titleMatch || contentMatch;
+                var excerptMatch = article.excerpt && article.excerpt.toLowerCase().includes(queryLower);
+                return titleMatch || contentMatch || excerptMatch;
             });
+            
             if (results.length === 0) {
-                resultsContainer.innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i><p>Aucun résultat</p></div>';
+                resultsContainer.innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i><p>Aucun résultat pour "' + query + '"</p></div>';
                 return;
             }
+            
             resultsContainer.innerHTML = results.slice(0, 10).map(function(article) {
+                var date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
                 var image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200';
-                return '<a href="article.html?id=' + article.id + '" class="search-result"><img src="' + image + '" class="search-result-image"><div class="search-result-content"><div class="search-result-category">' + getCategoryName(article.category) + '</div><div class="search-result-title">' + article.title + '</div></div></a>';
+                return '<a href="article.html?id=' + article.id + '" class="search-result"><img src="' + image + '" class="search-result-image" onerror="this.src=\'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200\'"><div class="search-result-content"><div class="search-result-category">' + getCategoryName(article.category) + '</div><div class="search-result-title">' + article.title + '</div><div class="search-result-meta">Par ' + (article.authorDisplayName || article.authorName || 'Auteur') + ' • ' + date + '</div></div></a>';
             }).join('');
         }
 
-        // LOAD ARTICLES
+        // ==================== LOAD ARTICLES ====================
         async function loadArticles() {
             try {
                 var snapshot;
+                
                 if (selectedCategory) {
-                    snapshot = await db.collection('articles').where('status', '==', 'published').where('category', '==', selectedCategory).get();
+                    snapshot = await db.collection('articles')
+                        .where('status', '==', 'published')
+                        .where('category', '==', selectedCategory)
+                        .get();
                 } else {
-                    snapshot = await db.collection('articles').where('status', '==', 'published').get();
+                    snapshot = await db.collection('articles')
+                        .where('status', '==', 'published')
+                        .get();
                 }
+                
                 var articles = [];
                 snapshot.forEach(function(doc) {
                     articles.push({ id: doc.id, ...doc.data() });
                 });
+
+                // Sort by date
                 articles.sort(function(a, b) {
                     var dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
                     var dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
                     return dateB - dateA;
                 });
+
                 allArticles = articles;
                 displayArticles(articles);
+                
                 if (!selectedCategory) {
                     loadMostRead();
                     loadCategorySections();
                 }
+
             } catch (error) {
                 console.error('Erreur:', error);
                 document.getElementById('hero-section').innerHTML = '';
-                document.getElementById('articles-container').innerHTML = '<div class="no-articles"><i class="fas fa-exclamation-circle"></i><p>Erreur de chargement</p></div>';
+                document.getElementById('articles-container').innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><i class="fas fa-exclamation-circle"></i><p>Erreur de chargement</p><p style="font-size:0.8rem;color:#999;">' + error.message + '</p></div>';
             }
         }
 
         function displayArticles(articles) {
             var heroSection = document.getElementById('hero-section');
             var articlesContainer = document.getElementById('articles-container');
+
             if (articles.length === 0) {
                 heroSection.innerHTML = '';
-                articlesContainer.innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><i class="fas fa-newspaper"></i><p>Aucun article</p></div>';
+                articlesContainer.innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><i class="fas fa-newspaper"></i><p>Aucun article publié pour le moment</p><p style="font-size:0.9rem;">Revenez bientôt !</p></div>';
                 return;
             }
+
+            // Hero article
             var hero = articles[0];
-            var heroDate = hero.createdAt ? formatDate(hero.createdAt.toDate()) : '';
+            var heroDate = hero.createdAt ? formatDate(hero.createdAt.toDate()) : 'Récent';
             var heroImage = hero.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200';
-            heroSection.innerHTML = '<article class="hero-article" onclick="window.location.href=\'article.html?id=' + hero.id + '\'"><div class="hero-image"><img src="' + heroImage + '" alt="' + hero.title + '"></div><div class="hero-content"><span class="category-tag">' + getCategoryName(hero.category) + '</span><h1 class="hero-title">' + hero.title + '</h1><p class="hero-excerpt">' + (hero.excerpt || truncateText(hero.content, 200)) + '</p><div class="hero-meta"><span class="author">Par ' + (hero.authorDisplayName || hero.authorName || 'Auteur') + '</span><span class="date"> • ' + heroDate + '</span><span style="margin-left:1rem;color:#999;"><i class="fas fa-heart"></i> ' + (hero.likes || 0) + ' <i class="fas fa-eye" style="margin-left:0.5rem;"></i> ' + (hero.views || 0) + '</span></div></div></article>';
+            var heroLikes = hero.likes || 0;
+            var heroViews = hero.views || 0;
+
+            heroSection.innerHTML = '<article class="hero-article" onclick="window.location.href=\'article.html?id=' + hero.id + '\'"><div class="hero-image"><img src="' + heroImage + '" alt="' + hero.title + '" onerror="this.src=\'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200\'"></div><div class="hero-content"><span class="category-tag">' + getCategoryName(hero.category) + '</span><h1 class="hero-title">' + hero.title + '</h1><p class="hero-excerpt">' + (hero.excerpt || truncateText(hero.content, 200)) + '</p><div class="hero-meta"><span class="author">Par ' + (hero.authorDisplayName || hero.authorName || 'Auteur') + '</span>' + (hero.authorProfession ? '<span class="profession">, ' + hero.authorProfession + '</span>' : '') + '<span class="date"> • ' + heroDate + '</span><span style="margin-left:1rem;color:#999;"><i class="fas fa-heart"></i> ' + heroLikes + ' <i class="fas fa-eye" style="margin-left:0.5rem;"></i> ' + heroViews + '</span></div></div></article>';
+
+            // Other articles
             var others = articles.slice(1);
+            
             if (others.length === 0) {
                 articlesContainer.innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><p>Plus d\'articles à venir...</p></div>';
                 return;
             }
+
             articlesContainer.innerHTML = others.map(function(article) {
-                var date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
+                var date = article.createdAt ? formatDate(article.createdAt.toDate()) : 'Récent';
                 var image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600';
-                return '<article class="article-card"><img src="' + image + '" class="article-card-image"><div class="article-card-content"><div class="article-card-category">' + getCategoryName(article.category) + '</div><h3 class="article-card-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3><p class="article-card-excerpt">' + (article.excerpt || truncateText(article.content, 100)) + '</p><div class="article-card-meta"><span>' + (article.authorDisplayName || article.authorName || 'Auteur') + '</span> • ' + date + '</div><div class="article-card-stats"><span><i class="fas fa-heart"></i> ' + (article.likes || 0) + '</span><span><i class="fas fa-eye"></i> ' + (article.views || 0) + '</span></div></div></article>';
+                var likes = article.likes || 0;
+                var views = article.views || 0;
+                
+                return '<article class="article-card"><img src="' + image + '" alt="' + article.title + '" class="article-card-image" onerror="this.src=\'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600\'"><div class="article-card-content"><div class="article-card-category">' + getCategoryName(article.category) + '</div><h3 class="article-card-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3><p class="article-card-excerpt">' + (article.excerpt || truncateText(article.content, 100)) + '</p><div class="article-card-meta"><span class="article-card-author">' + (article.authorDisplayName || article.authorName || 'Auteur') + '</span>' + (article.authorProfession ? ', ' + article.authorProfession : '') + '<span> • ' + date + '</span></div><div class="article-card-stats"><span><i class="fas fa-heart"></i> ' + likes + '</span><span><i class="fas fa-eye"></i> ' + views + '</span></div></div></article>';
             }).join('');
         }
 
+        // ==================== MOST READ ====================
         async function loadMostRead() {
             try {
-                var snapshot = await db.collection('articles').where('status', '==', 'published').get();
+                var snapshot = await db.collection('articles')
+                    .where('status', '==', 'published')
+                    .get();
+
                 if (snapshot.empty) return;
+
                 var articles = [];
-                snapshot.forEach(function(doc) { articles.push({ id: doc.id, ...doc.data() }); });
-                articles.sort(function(a, b) { return (b.views || 0) - (a.views || 0); });
+                snapshot.forEach(function(doc) {
+                    articles.push({ id: doc.id, ...doc.data() });
+                });
+
+                articles.sort(function(a, b) {
+                    return (b.views || 0) - (a.views || 0);
+                });
+
                 var top = articles.slice(0, 5);
                 if (top.length === 0) return;
+
                 document.getElementById('most-read-section').style.display = 'block';
                 document.getElementById('most-read-list').innerHTML = top.map(function(article, i) {
-                    return '<div class="most-read-item"><span class="most-read-number">' + (i + 1) + '</span><div class="most-read-content"><h3 class="most-read-item-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3><div class="most-read-meta">' + getCategoryName(article.category) + ' • ' + (article.views || 0) + ' vues</div></div></div>';
+                    var views = article.views || 0;
+                    return '<div class="most-read-item"><span class="most-read-number">' + (i + 1) + '</span><div class="most-read-content"><h3 class="most-read-item-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3><div class="most-read-meta">' + getCategoryName(article.category) + ' • ' + views + ' vues</div></div></div>';
                 }).join('');
-            } catch (error) { console.error(error); }
+
+            } catch (error) {
+                console.error('Error loading most read:', error);
+            }
         }
 
+        // ==================== CATEGORY SECTIONS ====================
         async function loadCategorySections() {
             var categories = ['politique', 'monde', 'economie', 'sciences', 'culture', 'sports'];
             var container = document.getElementById('category-sections');
+            
             for (var i = 0; i < categories.length; i++) {
                 var cat = categories[i];
                 try {
-                    var snapshot = await db.collection('articles').where('status', '==', 'published').where('category', '==', cat).get();
+                    var snapshot = await db.collection('articles')
+                        .where('status', '==', 'published')
+                        .where('category', '==', cat)
+                        .get();
+
                     if (snapshot.empty) continue;
+
                     var articles = [];
-                    snapshot.forEach(function(doc) { articles.push({ id: doc.id, ...doc.data() }); });
+                    snapshot.forEach(function(doc) {
+                        articles.push({ id: doc.id, ...doc.data() });
+                    });
+
                     articles.sort(function(a, b) {
                         var dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
                         var dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
                         return dateB - dateA;
                     });
+
                     var top = articles.slice(0, 4);
-                    var html = top.map(function(article) {
+
+                    var articlesHtml = top.map(function(article) {
                         var date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
                         var image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=300';
-                        return '<div class="category-card"><img src="' + image + '" class="category-card-image"><h3 class="category-card-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3><div class="category-card-date">' + date + '</div></div>';
+                        return '<div class="category-card"><img src="' + image + '" alt="' + article.title + '" class="category-card-image" onerror="this.src=\'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=300\'"><h3 class="category-card-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3><div class="category-card-date">' + date + '</div></div>';
                     }).join('');
-                    container.innerHTML += '<section class="category-section"><div class="category-header"><h2 class="category-title">' + getCategoryName(cat) + '</h2><a href="index.html?cat=' + cat + '" class="category-link">Voir tout <i class="fas fa-arrow-right"></i></a></div><div class="category-articles">' + html + '</div></section>';
-                } catch (error) { console.error(error); }
+
+                    container.innerHTML += '<section class="category-section"><div class="category-header"><h2 class="category-title">' + getCategoryName(cat) + '</h2><a href="index.html?cat=' + cat + '" class="category-link">Voir tout <i class="fas fa-arrow-right"></i></a></div><div class="category-articles">' + articlesHtml + '</div></section>';
+
+                } catch (error) {
+                    console.error('Error loading ' + cat + ':', error);
+                }
             }
         }
 
+        // ==================== HELPERS ====================
         function getCategoryName(cat) {
-            var names = { 'politique': 'Politique', 'monde': 'Monde', 'economie': 'Économie', 'sciences': 'Sciences', 'culture': 'Culture', 'sports': 'Sports' };
+            var names = {
+                'politique': 'Politique',
+                'monde': 'Monde',
+                'economie': 'Économie',
+                'sciences': 'Sciences',
+                'culture': 'Culture',
+                'sports': 'Sports'
+            };
             return names[cat] || cat || 'Actualités';
         }
 
@@ -781,28 +940,36 @@
             if (!date) return '';
             var now = new Date();
             var diff = now - date;
-            var hours = Math.floor(diff / 3600000);
-            var days = Math.floor(diff / 86400000);
+            var hours = Math.floor(diff / (1000 * 60 * 60));
+            var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
             if (hours < 1) return 'À l\'instant';
             if (hours < 24) return 'Il y a ' + hours + 'h';
             if (days === 1) return 'Hier';
             if (days < 7) return 'Il y a ' + days + ' jours';
-            return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+            
+            return date.toLocaleDateString('fr-FR', { 
+                day: 'numeric', 
+                month: 'long',
+                year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+            });
         }
 
         function truncateText(text, max) {
             if (!text) return '';
             var plain = text.replace(/<[^>]*>/g, '');
             if (plain.length <= max) return plain;
-            return plain.substring(0, max) + '...';
+            return plain.substring(0, max).trim() + '...';
         }
 
+        // Newsletter
         document.getElementById('newsletter-form').addEventListener('submit', function(e) {
             e.preventDefault();
             alert('Merci pour votre inscription !');
             e.target.reset();
         });
 
+        // ==================== INIT ====================
         loadArticles();
     </script>
 </body>
