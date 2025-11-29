@@ -4,76 +4,299 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription | L'Éclaireur</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Source Sans Pro', sans-serif; background: #f5f5f5; min-height: 100vh; display: flex; flex-direction: column; }
-        .header { padding: 1.5rem; text-align: center; border-bottom: 2px solid #121212; background: #fff; }
-        .logo { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #121212; text-decoration: none; }
-        .main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-        .register-box { background: #fff; padding: 3rem; max-width: 400px; width: 100%; border: 1px solid #e5e5e5; }
-        h1 { font-family: 'Playfair Display', serif; font-size: 1.75rem; text-align: center; margin-bottom: 0.5rem; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 2rem; }
-        .form-group { margin-bottom: 1.25rem; }
-        label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem; }
-        input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 0.875rem 1rem; border: 1px solid #ccc; font-size: 1rem; }
-        input:focus { outline: none; border-color: #121212; }
-        .terms { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem; color: #666; }
-        .terms a { color: #326891; text-decoration: none; }
-        .btn-submit { width: 100%; padding: 1rem; background: #121212; color: #fff; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; }
-        .btn-submit:hover { background: #333; }
-        .btn-submit:disabled { background: #999; cursor: not-allowed; }
-        .divider { display: flex; align-items: center; margin: 1.5rem 0; color: #999; font-size: 0.875rem; }
-        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e5e5e5; }
-        .divider span { padding: 0 1rem; }
-        .btn-google { width: 100%; padding: 0.875rem; border: 1px solid #ccc; background: #fff; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
-        .btn-google:hover { background: #f5f5f5; }
-        .btn-google img { width: 20px; height: 20px; }
-        .footer-text { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e5e5; color: #666; }
-        .footer-text a { color: #326891; font-weight: 600; text-decoration: none; }
-        .alert { padding: 1rem; margin-bottom: 1rem; border-radius: 4px; display: none; }
-        .alert-error { background: #fee; border: 1px solid #fcc; color: #c00; }
-        .alert-success { background: #efe; border: 1px solid #cfc; color: #060; }
+        .auth-container {
+            max-width: 450px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .auth-box {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 2.5rem;
+        }
+        .auth-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        .auth-subtitle {
+            font-family: 'Source Sans Pro', sans-serif;
+            color: #666;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #326891;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: #326891;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .btn-primary:hover {
+            background: #1d4f73;
+        }
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-google {
+            width: 100%;
+            padding: 0.875rem;
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .btn-google:hover {
+            background: #f5f5f5;
+        }
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        .divider span {
+            padding: 0 1rem;
+            color: #999;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+        }
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        .auth-footer a {
+            color: #326891;
+            text-decoration: none;
+        }
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+            display: none;
+        }
+        .success-message {
+            background: #efe;
+            color: #070;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+            display: none;
+        }
+        .editor-request {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: #f0f7ff;
+            border: 1px solid #326891;
+            border-radius: 8px;
+        }
+        .editor-request-title {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
+            color: #326891;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .editor-request label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9375rem;
+            color: #333;
+            cursor: pointer;
+        }
+        .editor-request input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+        .editor-request p {
+            font-size: 0.8125rem;
+            color: #666;
+            margin-top: 0.75rem;
+            padding-left: 1.75rem;
+        }
+        .editor-reason {
+            margin-top: 1rem;
+            display: none;
+        }
+        .editor-reason textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9375rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .editor-reason textarea:focus {
+            outline: none;
+            border-color: #326891;
+        }
+        .editor-reason label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body>
-    <header class="header">
-        <a href="index.html" class="logo">L'Éclaireur</a>
+    <div class="top-bar">
+        <div class="container">
+            <span class="date" id="current-date"></span>
+            <span class="separator">|</span>
+            <span class="edition">Édition Francophone</span>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="index.html" class="btn-auth"><i class="fas fa-arrow-left"></i> Retour</a>
+                </div>
+                <div class="header-center">
+                    <a href="index.html" class="logo">
+                        <span class="logo-text">L'Éclaireur</span>
+                    </a>
+                    <p class="tagline">La lumière sur l'actualité</p>
+                </div>
+                <div class="header-right"></div>
+            </div>
+        </div>
     </header>
-    <main class="main">
-        <div class="register-box">
-            <h1>Créer un compte</h1>
-            <p class="subtitle">Rejoignez L'Éclaireur</p>
-            <div id="alert" class="alert"></div>
+
+    <main class="auth-container">
+        <div class="auth-box">
+            <h1 class="auth-title">Créer un compte</h1>
+            <p class="auth-subtitle">Rejoignez la communauté L'Éclaireur</p>
+
+            <div class="error-message" id="error-message"></div>
+            <div class="success-message" id="success-message"></div>
+
             <form id="register-form">
                 <div class="form-group">
-                    <label>Nom complet</label>
-                    <input type="text" id="name" placeholder="Prénom Nom" required>
+                    <label for="displayName">Nom complet *</label>
+                    <input type="text" id="displayName" placeholder="Votre nom" required>
                 </div>
+
                 <div class="form-group">
-                    <label>Email</label>
+                    <label for="email">Email *</label>
                     <input type="email" id="email" placeholder="votre@email.com" required>
                 </div>
+
                 <div class="form-group">
-                    <label>Mot de passe</label>
-                    <input type="password" id="password" placeholder="••••••••" required minlength="6">
+                    <label for="password">Mot de passe *</label>
+                    <input type="password" id="password" placeholder="Au moins 6 caractères" required minlength="6">
                 </div>
+
                 <div class="form-group">
-                    <label>Confirmer le mot de passe</label>
-                    <input type="password" id="password-confirm" placeholder="••••••••" required>
+                    <label for="confirmPassword">Confirmer le mot de passe *</label>
+                    <input type="password" id="confirmPassword" placeholder="Répétez le mot de passe" required>
                 </div>
-                <label class="terms">
-                    <input type="checkbox" id="terms" required>
-                    <span>J'accepte les <a href="#">conditions d'utilisation</a></span>
-                </label>
-                <button type="submit" class="btn-submit" id="btn-register">Créer mon compte</button>
+
+                <!-- Demande de devenir éditeur -->
+                <div class="editor-request">
+                    <div class="editor-request-title">
+                        <i class="fas fa-pen-fancy"></i> Devenir Éditeur
+                    </div>
+                    <label>
+                        <input type="checkbox" id="requestEditor">
+                        <span>Je souhaite écrire des articles pour L'Éclaireur</span>
+                    </label>
+                    <p><i class="fas fa-info-circle"></i> Votre demande sera examinée par un administrateur.</p>
+                    
+                    <div class="editor-reason" id="editor-reason">
+                        <label for="editorMotivation">Pourquoi souhaitez-vous devenir éditeur ?</label>
+                        <textarea id="editorMotivation" placeholder="Décrivez votre expérience, vos domaines d'expertise, et pourquoi vous souhaitez contribuer..."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-submit">
+                    <i class="fas fa-user-plus"></i> S'inscrire
+                </button>
             </form>
-            <div class="divider"><span>ou</span></div>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
             <button class="btn-google" id="btn-google">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-                S'inscrire avec Google
+                Continuer avec Google
             </button>
-            <p class="footer-text">Déjà un compte ? <a href="login.html">Se connecter</a></p>
+
+            <div class="auth-footer">
+                <p>Déjà inscrit ? <a href="login.html">Se connecter</a></p>
+            </div>
         </div>
     </main>
 
@@ -86,81 +309,153 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        function showAlert(message, type) {
-            const alert = document.getElementById('alert');
-            alert.textContent = message;
-            alert.className = 'alert alert-' + type;
-            alert.style.display = 'block';
-        }
+        // Date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
 
-        // Créer le profil utilisateur dans Firestore
-        async function createUserProfile(user, displayName) {
-            const userRef = db.collection('users').doc(user.uid);
-            await userRef.set({
-                email: user.email,
-                displayName: displayName || user.displayName || user.email.split('@')[0],
-                role: 'subscriber',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
+        // Toggle editor reason field
+        document.getElementById('requestEditor').addEventListener('change', function() {
+            document.getElementById('editor-reason').style.display = this.checked ? 'block' : 'none';
+        });
 
+        // Register form
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btn-register');
             
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
+            const displayName = document.getElementById('displayName').value.trim();
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
-            const passwordConfirm = document.getElementById('password-confirm').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const requestEditor = document.getElementById('requestEditor').checked;
+            const editorMotivation = document.getElementById('editorMotivation').value.trim();
 
-            if (password !== passwordConfirm) {
-                showAlert('Les mots de passe ne correspondent pas', 'error');
+            const errorEl = document.getElementById('error-message');
+            const successEl = document.getElementById('success-message');
+            const submitBtn = document.getElementById('btn-submit');
+
+            errorEl.style.display = 'none';
+            successEl.style.display = 'none';
+
+            // Validation
+            if (password !== confirmPassword) {
+                errorEl.textContent = 'Les mots de passe ne correspondent pas';
+                errorEl.style.display = 'block';
                 return;
             }
 
-            btn.disabled = true;
-            btn.textContent = 'Création...';
+            if (password.length < 6) {
+                errorEl.textContent = 'Le mot de passe doit contenir au moins 6 caractères';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            if (requestEditor && !editorMotivation) {
+                errorEl.textContent = 'Veuillez expliquer pourquoi vous souhaitez devenir éditeur';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Inscription...';
 
             try {
-                const result = await auth.createUserWithEmailAndPassword(email, password);
-                await result.user.updateProfile({ displayName: name });
-                await createUserProfile(result.user, name);
-                showAlert('Compte créé avec succès !', 'success');
-                setTimeout(() => window.location.href = 'index.html', 1000);
+                // Create user
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Update profile
+                await user.updateProfile({ displayName: displayName });
+
+                // Create user document
+                const userData = {
+                    email: email,
+                    displayName: displayName,
+                    role: 'subscriber',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                await db.collection('users').doc(user.uid).set(userData);
+
+                // If requesting editor role, create request
+                if (requestEditor) {
+                    await db.collection('editorRequests').add({
+                        userId: user.uid,
+                        email: email,
+                        displayName: displayName,
+                        motivation: editorMotivation,
+                        status: 'pending',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    successEl.innerHTML = `
+                        <strong>Compte créé avec succès !</strong><br>
+                        Votre demande pour devenir éditeur a été envoyée. 
+                        Un administrateur l'examinera prochainement.
+                    `;
+                } else {
+                    successEl.innerHTML = '<strong>Compte créé avec succès !</strong> Redirection...';
+                }
+
+                successEl.style.display = 'block';
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+
             } catch (error) {
-                let message = 'Erreur lors de la création du compte';
+                console.error('Erreur inscription:', error);
+                
+                let message = 'Erreur lors de l\'inscription';
                 if (error.code === 'auth/email-already-in-use') {
                     message = 'Cet email est déjà utilisé';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Email invalide';
                 } else if (error.code === 'auth/weak-password') {
-                    message = 'Le mot de passe doit contenir au moins 6 caractères';
+                    message = 'Mot de passe trop faible';
                 }
-                showAlert(message, 'error');
-                btn.disabled = false;
-                btn.textContent = 'Créer mon compte';
+
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> S\'inscrire';
             }
         });
 
+        // Google sign in
         document.getElementById('btn-google').addEventListener('click', async () => {
             const provider = new firebase.auth.GoogleAuthProvider();
+            const errorEl = document.getElementById('error-message');
+            const successEl = document.getElementById('success-message');
+
             try {
                 const result = await auth.signInWithPopup(provider);
-                
-                // Vérifier si l'utilisateur existe déjà
-                const userDoc = await db.collection('users').doc(result.user.uid).get();
-                if (!userDoc.exists) {
-                    await createUserProfile(result.user);
-                }
-                
-                showAlert('Inscription réussie !', 'success');
-                setTimeout(() => window.location.href = 'index.html', 1000);
-            } catch (error) {
-                showAlert('Erreur de connexion Google', 'error');
-            }
-        });
+                const user = result.user;
 
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                window.location.href = 'index.html';
+                // Check if user exists
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    // Create new user
+                    await db.collection('users').doc(user.uid).set({
+                        email: user.email,
+                        displayName: user.displayName,
+                        role: 'subscriber',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
+                successEl.textContent = 'Connexion réussie ! Redirection...';
+                successEl.style.display = 'block';
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+
+            } catch (error) {
+                console.error('Erreur Google:', error);
+                errorEl.textContent = 'Erreur lors de la connexion avec Google';
+                errorEl.style.display = 'block';
             }
         });
     </script>
