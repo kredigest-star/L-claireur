@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil | L'Éclaireur</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem;
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 600px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #326891, #1d4f73);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 3rem;
+            flex-shrink: 0;
+        }
+        .profile-info {
+            flex: 1;
+        }
+        .profile-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #121212;
+            margin-bottom: 0.25rem;
+        }
+        .profile-email {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        .profile-role {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .profile-role.admin {
+            background: #e74c3c;
+            color: white;
+        }
+        .profile-role.editor {
+            background: #3498db;
+            color: white;
+        }
+        .profile-role.subscriber {
+            background: #27ae60;
+            color: white;
+        }
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        .profile-stat {
+            text-align: center;
+        }
+        .profile-stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #326891;
+        }
+        .profile-stat-label {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.8125rem;
+            color: #999;
+        }
+        .profile-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .profile-tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e5e5;
+            margin-bottom: 1.5rem;
+        }
+        .profile-tab {
+            padding: 1rem 1.5rem;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .profile-tab:hover {
+            color: #326891;
+        }
+        .profile-tab.active {
+            color: #326891;
+            border-bottom-color: #326891;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .profile-form {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 2rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #326891;
+        }
+        .form-group input:disabled {
+            background: #f5f5f5;
+            color: #999;
+        }
+        .btn-save {
+            padding: 0.75rem 2rem;
+            background: #326891;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-save:hover {
+            background: #1d4f73;
+        }
+        .articles-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .article-card {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            transition: box-shadow 0.2s;
+        }
+        .article-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .article-card-image {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+            background: #f0f0f0;
+        }
+        .article-card-content {
+            flex: 1;
+        }
+        .article-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #121212;
+            margin-bottom: 0.25rem;
+        }
+        .article-card-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .article-card-title a:hover {
+            text-decoration: underline;
+        }
+        .article-card-meta {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.8125rem;
+            color: #999;
+        }
+        .article-card-status {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .article-card-status.published {
+            background: #d4edda;
+            color: #155724;
+        }
+        .article-card-status.draft {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .article-card-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .article-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .article-card-actions a, .article-card-actions button {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.8125rem;
+            color: #326891;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .article-card-actions a:hover, .article-card-actions button:hover {
+            text-decoration: underline;
+        }
+        .article-card-actions button.delete {
+            color: #e74c3c;
+        }
+        .favorites-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .empty-state p {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        .member-since {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+            color: #999;
+            margin-top: 0.5rem;
+        }
+        .danger-zone {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #e74c3c;
+            border-radius: 8px;
+            background: #fdf2f2;
+        }
+        .danger-zone h3 {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e74c3c;
+            margin-bottom: 0.5rem;
+        }
+        .danger-zone p {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .btn-danger {
+            padding: 0.5rem 1rem;
+            background: white;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-danger:hover {
+            background: #e74c3c;
+            color: white;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="container">
+            <span class="date" id="current-date"></span>
+            <span class="separator">|</span>
+            <span class="edition">Édition Francophone</span>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="index.html" class="btn-auth"><i class="fas fa-arrow-left"></i> Retour</a>
+                </div>
+                <div class="header-center">
+                    <a href="index.html" class="logo">
+                        <span class="logo-text">L'Éclaireur</span>
+                    </a>
+                    <p class="tagline">La lumière sur l'actualité</p>
+                </div>
+                <div class="header-right" id="auth-buttons"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="profile-container">
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner"></i>
+            <p>Chargement du profil...</p>
+        </div>
+
+        <div id="profile-content" style="display: none;">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profile-avatar">?</div>
+                <div class="profile-info">
+                    <h1 class="profile-name" id="profile-name">Utilisateur</h1>
+                    <p class="profile-email" id="profile-email">email@exemple.com</p>
+                    <span class="profile-role subscriber" id="profile-role">Abonné</span>
+                    <p class="member-since" id="member-since">Membre depuis ...</p>
+                    <div class="profile-stats" id="profile-stats"></div>
+                </div>
+            </div>
+
+            <div class="profile-tabs">
+                <div class="profile-tab active" onclick="showTab('settings')">
+                    <i class="fas fa-cog"></i> Paramètres
+                </div>
+                <div class="profile-tab" onclick="showTab('articles')" id="tab-articles" style="display: none;">
+                    <i class="fas fa-newspaper"></i> Mes articles
+                </div>
+                <div class="profile-tab" onclick="showTab('favorites')">
+                    <i class="fas fa-bookmark"></i> Favoris
+                </div>
+                <div class="profile-tab" onclick="showTab('comments')">
+                    <i class="fas fa-comments"></i> Commentaires
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content active" id="tab-content-settings">
+                <div class="profile-form">
+                    <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 1.5rem;">Modifier mon profil</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="displayName">Nom affiché</label>
+                            <input type="text" id="displayName" placeholder="Votre nom">
+                        </div>
+                        <div class="form-group">
+                            <label for="profession">Profession / Titre</label>
+                            <input type="text" id="profession" placeholder="Ex: Journaliste, Analyste...">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio">Biographie</label>
+                        <textarea id="bio" rows="4" placeholder="Parlez-nous de vous..."></textarea>
+                    </div>
+
+                    <button class="btn-save" onclick="saveProfile()">
+                        <i class="fas fa-save"></i> Enregistrer les modifications
+                    </button>
+
+                    <div class="danger-zone">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Zone dangereuse</h3>
+                        <p>La suppression de votre compte est irréversible. Toutes vos données seront perdues.</p>
+                        <button class="btn-danger" onclick="deleteAccount()">
+                            <i class="fas fa-trash"></i> Supprimer mon compte
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Articles Tab -->
+            <div class="tab-content" id="tab-content-articles">
+                <div class="articles-list" id="articles-list">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
+
+            <!-- Favorites Tab -->
+            <div class="tab-content" id="tab-content-favorites">
+                <div class="favorites-list" id="favorites-list">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
+
+            <!-- Comments Tab -->
+            <div class="tab-content" id="tab-content-comments">
+                <div class="comments-list" id="user-comments-list">
+                    <div class="loading"><i class="fas fa-spinner"></i></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-brand">
+                <span class="footer-logo">L'Éclaireur</span>
+                <p>La lumière sur l'actualité</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 L'Éclaireur. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/config.js"></script>
+    <script>
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        let userData = null;
+
+        // Date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+
+        // Auth check
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = user;
+            await loadProfile();
+        });
+
+        async function loadProfile() {
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (!userDoc.exists) {
+                    alert('Profil non trouvé');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                userData = userDoc.data();
+                displayProfile();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'block';
+
+                // Load tabs content
+                if (['editor', 'admin'].includes(userData.role)) {
+                    document.getElementById('tab-articles').style.display = 'block';
+                    loadMyArticles();
+                }
+                loadFavorites();
+                loadUserComments();
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Erreur lors du chargement du profil');
+            }
+        }
+
+        function displayProfile() {
+            const name = userData.displayName || currentUser.displayName || currentUser.email;
+            const initials = getInitials(name);
+            
+            document.getElementById('profile-avatar').textContent = initials;
+            document.getElementById('profile-name').textContent = name;
+            document.getElementById('profile-email').textContent = currentUser.email;
+            
+            // Role badge
+            const roleEl = document.getElementById('profile-role');
+            roleEl.textContent = getRoleName(userData.role);
+            roleEl.className = `profile-role ${userData.role}`;
+
+            // Member since
+            if (userData.createdAt) {
+                const date = userData.createdAt.toDate().toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                document.getElementById('member-since').textContent = `Membre depuis le ${date}`;
+            }
+
+            // Form fields
+            document.getElementById('displayName').value = userData.displayName || '';
+            document.getElementById('profession').value = userData.profession || '';
+            document.getElementById('email').value = currentUser.email;
+            document.getElementById('bio').value = userData.bio || '';
+
+            // Auth buttons
+            document.getElementById('auth-buttons').innerHTML = `
+                <span class="user-welcome">${name}</span>
+                <button class="btn-auth" onclick="auth.signOut().then(() => window.location.href='index.html')">Déconnexion</button>
+            `;
+        }
+
+        function showTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+            event.target.closest('.profile-tab').classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(`tab-content-${tab}`).classList.add('active');
+        }
+
+        async function saveProfile() {
+            const displayName = document.getElementById('displayName').value.trim();
+            const profession = document.getElementById('profession').value.trim();
+            const bio = document.getElementById('bio').value.trim();
+
+            try {
+                await db.collection('users').doc(currentUser.uid).update({
+                    displayName,
+                    profession,
+                    bio,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Update auth profile
+                if (displayName) {
+                    await currentUser.updateProfile({ displayName });
+                }
+
+                alert('Profil mis à jour !');
+                loadProfile();
+
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('Erreur lors de la sauvegarde');
+            }
+        }
+
+        async function loadMyArticles() {
+            const container = document.getElementById('articles-list');
+            
+            try {
+                const snapshot = await db.collection('articles')
+                    .where('authorId', '==', currentUser.uid)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-newspaper"></i>
+                            <p>Vous n'avez pas encore écrit d'articles</p>
+                            <a href="editor.html" style="color: #326891;">Écrire mon premier article</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Update stats
+                const statsEl = document.getElementById('profile-stats');
+                statsEl.innerHTML = `
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${snapshot.size}</div>
+                        <div class="profile-stat-label">Articles</div>
+                    </div>
+                `;
+
+                container.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const article = doc.data();
+                    const date = article.createdAt ? article.createdAt.toDate().toLocaleDateString('fr-FR') : 'N/A';
+                    const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200';
+                    
+                    let statusClass = 'draft';
+                    let statusText = 'Brouillon';
+                    if (article.status === 'published') {
+                        statusClass = 'published';
+                        statusText = 'Publié';
+                    } else if (article.status === 'pending') {
+                        statusClass = 'pending';
+                        statusText = 'En attente';
+                    }
+
+                    container.innerHTML += `
+                        <div class="article-card">
+                            <img src="${image}" alt="${article.title}" class="article-card-image" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200'">
+                            <div class="article-card-content">
+                                <h3 class="article-card-title">
+                                    <a href="article.html?id=${doc.id}">${article.title}</a>
+                                </h3>
+                                <div class="article-card-meta">
+                                    ${date} • ${getCategoryName(article.category)}
+                                    <span class="article-card-status ${statusClass}">${statusText}</span>
+                                </div>
+                                <div class="article-card-actions">
+                                    <a href="editor.html?id=${doc.id}"><i class="fas fa-edit"></i> Modifier</a>
+                                    <button class="delete" onclick="deleteArticle('${doc.id}')"><i class="fas fa-trash"></i> Supprimer</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                container.innerHTML = '<div class="empty-state"><p>Erreur lors du chargement</p></div>';
+            }
+        }
+
+        async function loadFavorites() {
+            const container = document.getElementById('favorites-list');
+            
+            try {
+                const snapshot = await db.collection('users').doc(currentUser.uid)
+                    .collection('favorites')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-bookmark"></i>
+                            <p>Vous n'avez pas encore de favoris</p>
+                            <a href="index.html" style="color: #326891;">Découvrir des articles</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+                
+                for (const doc of snapshot.docs) {
+                    const articleId = doc.data().articleId || doc.id;
+                    const articleDoc = await db.collection('articles').doc(articleId).get();
+                    
+                    if (!articleDoc.exists) continue;
+                    
+                    const article = articleDoc.data();
+                    const date = article.createdAt ? article.createdAt.toDate().toLocaleDateString('fr-FR') : 'N/A';
+                    const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200';
+
+                    container.innerHTML += `
+                        <div class="article-card">
+                            <img src="${image}" alt="${article.title}" class="article-card-image" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200'">
+                            <div class="article-card-content">
+                                <h3 class="article-card-title">
+                                    <a href="article.html?id=${articleId}">${article.title}</a>
+                                </h3>
+                                <div class="article-card-meta">
+                                    ${date} • ${getCategoryName(article.category)}
+                                </div>
+                                <div class="article-card-actions">
+                                    <button onclick="removeFavorite('${articleId}')"><i class="fas fa-bookmark"></i> Retirer des favoris</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Error loading favorites:', error);
+                container.innerHTML = '<div class="empty-state"><p>Erreur lors du chargement</p></div>';
+            }
+        }
+
+        async function loadUserComments() {
+            const container = document.getElementById('user-comments-list');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-comments"></i>
+                    <p>Vos commentaires apparaîtront ici</p>
+                </div>
+            `;
+            // Note: Pour charger tous les commentaires de l'utilisateur, 
+            // il faudrait une structure de données différente ou une requête de groupe de collections
+        }
+
+        async function removeFavorite(articleId) {
+            if (!confirm('Retirer cet article des favoris ?')) return;
+            
+            try {
+                await db.collection('users').doc(currentUser.uid).collection('favorites').doc(articleId).delete();
+                loadFavorites();
+            } catch (error) {
+                console.error('Error removing favorite:', error);
+                alert('Erreur');
+            }
+        }
+
+        async function deleteArticle(articleId) {
+            if (!confirm('Supprimer cet article ? Cette action est irréversible.')) return;
+            
+            try {
+                await db.collection('articles').doc(articleId).delete();
+                loadMyArticles();
+                alert('Article supprimé');
+            } catch (error) {
+                console.error('Error deleting article:', error);
+                alert('Erreur lors de la suppression');
+            }
+        }
+
+        async function deleteAccount() {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est IRRÉVERSIBLE.')) return;
+            if (!confirm('DERNIÈRE CHANCE : Toutes vos données seront perdues. Continuer ?')) return;
+
+            try {
+                // Delete user document
+                await db.collection('users').doc(currentUser.uid).delete();
+                
+                // Delete user auth
+                await currentUser.delete();
+                
+                alert('Votre compte a été supprimé');
+                window.location.href = 'index.html';
+                
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                alert('Erreur lors de la suppression. Vous devrez peut-être vous reconnecter.');
+            }
+        }
+
+        function getInitials(name) {
+            if (!name) return '?';
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function getRoleName(role) {
+            const names = {
+                'admin': 'Administrateur',
+                'editor': 'Éditeur',
+                'subscriber': 'Abonné'
+            };
+            return names[role] || 'Visiteur';
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'politique': 'Politique',
+                'monde': 'Monde',
+                'economie': 'Économie',
+                'sciences': 'Sciences',
+                'culture': 'Culture',
+                'sports': 'Sports'
+            };
+            return names[category] || category;
+        }
+    </script>
+</body>
+</html>
