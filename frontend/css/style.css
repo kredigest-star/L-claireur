@@ -31,6 +31,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
 
+/* ==================== TOP BAR ==================== */
 .top-bar {
     background: var(--color-gray-50);
     border-bottom: 1px solid var(--color-gray-100);
@@ -48,6 +49,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .top-bar .date { font-weight: 600; }
 .separator { color: var(--color-gray-200); }
 
+/* ==================== HEADER ==================== */
 .main-header {
     padding: 1rem 0;
     border-bottom: 2px solid var(--color-black);
@@ -83,18 +85,41 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     font-style: italic;
 }
 
-.menu-btn, .search-btn {
-    width: 40px;
-    height: 40px;
+/* ==================== MENU & SEARCH BUTTONS ==================== */
+.menu-btn {
+    display: none;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: var(--color-gray-600);
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.search-btn {
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 4px;
     color: var(--color-gray-600);
+    font-size: 1.25rem;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
-.menu-btn:hover, .search-btn:hover { background: var(--color-gray-100); }
+.menu-btn:hover, .search-btn:hover { 
+    background: var(--color-gray-100); 
+    color: var(--color-primary);
+}
 
+/* ==================== AUTH BUTTONS ==================== */
 .btn-auth {
     font-family: var(--font-ui);
     font-size: 0.875rem;
@@ -114,6 +139,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .btn-subscribe:hover { background: var(--color-gray-900); }
 
+/* ==================== NAVIGATION ==================== */
 .main-nav {
     border-bottom: 1px solid var(--color-gray-200);
     padding: 0.75rem 0;
@@ -136,8 +162,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .nav-link:hover, .nav-link.active { color: var(--color-black); }
 
+/* ==================== MAIN CONTENT ==================== */
 .main-content { padding: 2rem 0; }
 
+/* ==================== HERO SECTION ==================== */
 .hero-section {
     margin-bottom: 3rem;
     padding-bottom: 2rem;
@@ -195,6 +223,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .hero-meta .author { font-weight: 600; color: var(--color-gray-600); }
 
+/* ==================== ARTICLES ==================== */
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -260,6 +289,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     color: var(--color-gray-400);
 }
 
+/* ==================== NEWSLETTER ==================== */
 .newsletter-section {
     background: var(--color-gray-900);
     padding: 3rem 0;
@@ -309,6 +339,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .newsletter-form button:hover { background: #1d4f73; }
 
+/* ==================== FOOTER ==================== */
 .main-footer {
     background: var(--color-black);
     color: var(--color-gray-400);
@@ -331,17 +362,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     font-size: 0.75rem;
 }
 
-@media (max-width: 768px) {
-    .logo-text { font-size: 2rem; }
-    .tagline { display: none; }
-    .hero-article { grid-template-columns: 1fr; }
-    .hero-image img { height: 250px; }
-    .articles-grid { grid-template-columns: 1fr; }
-    .nav-list { gap: 1rem; overflow-x: auto; }
-    .newsletter-content { flex-direction: column; text-align: center; }
-    .newsletter-form { flex-direction: column; }
-    .newsletter-form input { width: 100%; }
-}/* User Auth Styles */
+/* ==================== USER AUTH ==================== */
 .user-welcome {
     font-family: var(--font-ui);
     font-size: 0.875rem;
@@ -364,7 +385,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 #btn-logout:hover {
     background: var(--color-gray-900);
 }
-/* Role Badges */
+
+/* ==================== ROLE BADGES ==================== */
 .user-role-badge {
     font-family: var(--font-ui);
     font-size: 0.7rem;
@@ -375,27 +397,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     margin-left: 0.5rem;
 }
 
-.role-admin {
-    background: #e74c3c;
-    color: white;
-}
+.role-admin { background: #e74c3c; color: white; }
+.role-editor { background: #3498db; color: white; }
+.role-subscriber { background: #27ae60; color: white; }
+.role-visitor { background: #95a5a6; color: white; }
 
-.role-editor {
-    background: #3498db;
-    color: white;
-}
-
-.role-subscriber {
-    background: #27ae60;
-    color: white;
-}
-
-.role-visitor {
-    background: #95a5a6;
-    color: white;
-}
-
-/* Role Buttons */
 .btn-role {
     font-family: var(--font-ui);
     font-size: 0.8rem;
@@ -413,7 +419,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     color: white;
 }
 
-/* Admin Dashboard Styles */
+/* ==================== ADMIN DASHBOARD ==================== */
 .admin-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -508,36 +514,19 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     margin-right: 0.25rem;
 }
 
-.btn-edit {
-    background: #3498db;
-    color: white;
-}
+.btn-edit { background: #3498db; color: white; }
+.btn-delete { background: #e74c3c; color: white; }
+.btn-publish { background: #27ae60; color: white; }
+.btn-unpublish { background: #f39c12; color: white; }
 
-.btn-delete {
-    background: #e74c3c;
-    color: white;
-}
-
-.btn-publish {
-    background: #27ae60;
-    color: white;
-}
-
-.btn-unpublish {
-    background: #f39c12;
-    color: white;
-}
-
-/* Editor Page Styles */
+/* ==================== EDITOR ==================== */
 .editor-container {
     max-width: 900px;
     margin: 0 auto;
     padding: 2rem;
 }
 
-.editor-header {
-    margin-bottom: 2rem;
-}
+.editor-header { margin-bottom: 2rem; }
 
 .editor-title {
     font-family: var(--font-display);
@@ -552,9 +541,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     border-radius: 8px;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
+.form-group { margin-bottom: 1.5rem; }
 
 .form-group label {
     display: block;
@@ -603,9 +590,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     cursor: pointer;
 }
 
-.btn-primary:hover {
-    background: #1d4f73;
-}
+.btn-primary:hover { background: #1d4f73; }
 
 .btn-secondary {
     padding: 0.75rem 1.5rem;
@@ -618,113 +603,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     cursor: pointer;
 }
 
-.btn-secondary:hover {
-    background: var(--color-gray-400);
-}
+.btn-secondary:hover { background: var(--color-gray-400); }
 
-@media (max-width: 768px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .admin-header {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .users-table, .articles-table {
-        font-size: 0.75rem;
-    }
-    
-    .btn-action {
-        padding: 0.3rem 0.5rem;
-        font-size: 0.7rem;
-    }
-}
-/* === AUTH BUTTONS === */
-.btn-admin {
-    display: inline-block;
-    padding: 8px 16px;
-    background: #e74c3c;
-    color: white !important;
-    text-decoration: none;
-    border-radius: 4px;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    margin-right: 8px;
-}
-.btn-admin:hover { background: #c0392b; }
-
-.btn-editor {
-    display: inline-block;
-    padding: 8px 16px;
-    background: #27ae60;
-    color: white !important;
-    text-decoration: none;
-    border-radius: 4px;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    margin-right: 8px;
-}
-.btn-editor:hover { background: #1e8449; }
-
-.user-name {
-    color: #326891;
-    text-decoration: none;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-weight: 600;
-    margin-right: 8px;
-}
-
-.user-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 50px;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    margin-right: 10px;
-    color: white;
-}
-.badge-admin { background: #e74c3c; }
-.badge-editor { background: #3498db; }
-.badge-subscriber { background: #27ae60; }
-
-.btn-logout {
-    padding: 8px 16px;
-    background: #666;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-}
-.btn-logout:hover { background: #555; }
-
-.btn-login {
-    color: #326891;
-    text-decoration: none;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-weight: 600;
-    margin-right: 15px;
-}
-
-.btn-subscribe {
-    display: inline-block;
-    padding: 8px 16px;
-    background: #326891;
-    color: white !important;
-    text-decoration: none;
-    border-radius: 4px;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-}
-.btn-subscribe:hover { background: #1d4f73; }
-/* === DROPDOWN MENU === */
+/* ==================== DROPDOWN ==================== */
 .dropdown {
     position: relative;
     display: inline-block;
@@ -744,22 +625,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     transition: all 0.2s;
 }
 
-.dropdown-toggle i {
-    font-size: 12px;
-}
+.dropdown-toggle i { font-size: 12px; }
 
-.btn-admin {
-    background: #e74c3c;
-    color: white;
-    margin-right: 8px;
-}
+.btn-admin { background: #e74c3c; color: white; margin-right: 8px; }
 .btn-admin:hover { background: #c0392b; }
 
-.btn-editor {
-    background: #27ae60;
-    color: white;
-    margin-right: 8px;
-}
+.btn-editor { background: #27ae60; color: white; margin-right: 8px; }
 .btn-editor:hover { background: #1e8449; }
 
 .btn-user {
@@ -799,10 +670,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     margin-top: 8px;
 }
 
-.dropdown-menu-right {
-    left: auto;
-    right: 0;
-}
+.dropdown-menu-right { left: auto; right: 0; }
 
 .dropdown.active .dropdown-menu {
     opacity: 1;
@@ -817,18 +685,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     gap: 10px;
 }
 
-.dropdown-header strong {
-    font-family: 'Source Sans Pro', sans-serif;
-}
+.dropdown-header strong { font-family: 'Source Sans Pro', sans-serif; }
 
-.user-role-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: 600;
-    color: white;
-}
 .user-role-badge.admin { background: #e74c3c; }
 .user-role-badge.editor { background: #3498db; }
 .user-role-badge.subscriber { background: #27ae60; }
@@ -851,23 +709,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     transition: background 0.2s;
 }
 
-.dropdown-menu a:hover {
-    background: #f5f5f5;
-}
+.dropdown-menu a:hover { background: #f5f5f5; }
+.dropdown-menu a i { width: 16px; color: #666; }
 
-.dropdown-menu a i {
-    width: 16px;
-    color: #666;
-}
+.logout-link { color: #e74c3c !important; }
+.logout-link i { color: #e74c3c !important; }
 
-.logout-link {
-    color: #e74c3c !important;
-}
-.logout-link i {
-    color: #e74c3c !important;
-}
-
-/* Auth buttons pour non-connectés */
 .btn-login {
     color: #326891;
     text-decoration: none;
@@ -876,180 +723,206 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     margin-right: 15px;
 }
 
-.btn-subscribe {
-    display: inline-block;
-    padding: 8px 16px;
-    background: #326891;
-    color: white !important;
-    text-decoration: none;
-    border-radius: 4px;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-}
-.btn-subscribe:hover { background: #1d4f73; }
-/* === MOBILE MENU === */
-.menu-toggle,
-.search-toggle {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #333;
-    cursor: pointer;
-    padding: 0.5rem;
-}
-
+/* ==================== MOBILE RESPONSIVE ==================== */
 @media (max-width: 768px) {
-    .menu-toggle,
-    .search-toggle {
-        display: block;
+    /* Show menu button on mobile */
+    .menu-btn {
+        display: flex !important;
     }
 
-    .nav-menu {
+    /* Hide top bar on mobile */
+    .top-bar {
         display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border-top: 1px solid #e5e5e5;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        z-index: 1000;
     }
 
-    .nav-menu.active {
-        display: block;
+    /* Header adjustments */
+    .header-content {
+        grid-template-columns: auto 1fr auto;
     }
 
-    .nav-menu ul {
-        flex-direction: column;
-        padding: 1rem 0;
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    .nav-menu li {
-        border-bottom: 1px solid #f0f0f0;
+    .header-center {
+        text-align: center;
     }
 
-    .nav-menu a {
-        display: block;
-        padding: 1rem 1.5rem;
-        font-size: 1rem;
+    .logo-text { 
+        font-size: 1.5rem; 
     }
 
-    .nav-menu a:hover {
-        background: #f9f9f9;
+    .tagline { 
+        display: none; 
     }
 
-    .search-bar {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        padding: 1rem;
-        border-top: 1px solid #e5e5e5;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        z-index: 1000;
+    /* Hide auth buttons on mobile */
+    .header-right {
+        display: none !important;
     }
 
-    .search-bar.active {
-        display: block;
-    }
-
-    .search-bar input {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 1rem;
-    }
-}
-/* === MOBILE MENU === */
-.menu-btn,
-.search-btn {
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    color: #333;
-    cursor: pointer;
-    padding: 0.5rem;
-}
-
-.menu-btn:hover,
-.search-btn:hover {
-    color: #326891;
-}
-
-/* Menu responsive */
-@media (max-width: 768px) {
+    /* Mobile Navigation */
     .main-nav {
         display: none;
-        position: absolute;
-        top: 100%;
+        position: fixed;
+        top: 0;
         left: 0;
         right: 0;
+        bottom: 0;
         background: white;
-        border-top: 1px solid #e5e5e5;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        z-index: 1000;
+        z-index: 9999;
+        padding-top: 70px;
+        overflow-y: auto;
+        border-bottom: none;
     }
 
     .main-nav.active {
-        display: block;
+        display: block !important;
+    }
+
+    .main-nav .container {
+        padding: 0;
     }
 
     .nav-list {
         flex-direction: column;
+        gap: 0;
         padding: 0;
     }
 
     .nav-list li {
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #e5e5e5;
     }
 
     .nav-list a,
     .nav-link {
         display: block;
-        padding: 1rem 1.5rem;
-        font-size: 1rem;
+        padding: 18px 24px;
+        font-size: 18px;
+        text-transform: none;
+        letter-spacing: 0;
+        color: #333;
     }
 
     .nav-list a:hover,
     .nav-link:hover {
-        background: #f9f9f9;
+        background: #f5f5f5;
     }
 
-    .header-content {
-        position: relative;
+    .nav-link.active {
+        background: #326891;
+        color: white !important;
     }
 
-    .header-right {
-        display: none;
+    /* Hero adjustments */
+    .hero-article { 
+        grid-template-columns: 1fr; 
     }
 
-    .main-nav.active + .header-right,
-    .header-right.mobile-visible {
-        display: flex;
+    .hero-image img { 
+        height: 250px; 
+    }
+
+    .hero-title {
+        font-size: 1.5rem;
+    }
+
+    /* Articles grid */
+    .articles-grid { 
+        grid-template-columns: 1fr; 
+    }
+
+    /* Newsletter */
+    .newsletter-content { 
+        flex-direction: column; 
+        text-align: center; 
+    }
+
+    .newsletter-form { 
+        flex-direction: column; 
+    }
+
+    .newsletter-form input { 
+        width: 100%; 
+    }
+
+    /* Admin */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .admin-header {
         flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        padding: 1rem;
-        border-top: 1px solid #e5e5e5;
+        gap: 1rem;
+    }
+    
+    .users-table, .articles-table {
+        font-size: 0.75rem;
+    }
+    
+    .btn-action {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
     }
 }
 
-/* Desktop - cacher le bouton menu */
+/* Desktop - hide menu button, show nav */
 @media (min-width: 769px) {
     .menu-btn {
-        display: none;
+        display: none !important;
     }
     
     .main-nav {
         display: block !important;
+        position: relative;
+        padding-top: 0;
     }
+
+    .menu-close-btn {
+        display: none !important;
+    }
+}
+
+/* ==================== MOBILE MENU CLOSE BUTTON ==================== */
+.menu-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #333;
+    cursor: pointer;
+    z-index: 10000;
+    display: none;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-nav.active .menu-close-btn {
+    display: flex;
+}
+
+/* Mobile menu header */
+.mobile-menu-header {
+    display: none;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e5e5e5;
+    background: #f9f9f9;
+}
+
+.main-nav.active .mobile-menu-header {
+    display: block;
+}
+
+.mobile-menu-header h3 {
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    color: #333;
 }
