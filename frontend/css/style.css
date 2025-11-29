@@ -926,3 +926,74 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     font-size: 1.25rem;
     color: #333;
 }
+/* ==================== SHARE BUTTONS ==================== */
+.share-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.share-title {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+    color: white;
+}
+
+.share-btn i {
+    font-size: 18px;
+}
+
+.share-btn.facebook { background: #1877F2; }
+.share-btn.twitter { background: #000000; }
+.share-btn.whatsapp { background: #25D366; }
+.share-btn.linkedin { background: #0A66C2; }
+.share-btn.telegram { background: #0088cc; }
+.share-btn.copy-link { background: #666; }
+
+.share-btn.copy-link.copied {
+    background: #27ae60;
+}
+
+/* Mobile responsive */
+@media (max-width: 576px) {
+    .share-buttons {
+        flex-direction: column;
+    }
+    
+    .share-btn {
+        justify-content: center;
+    }
+}
