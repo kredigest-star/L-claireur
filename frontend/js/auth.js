@@ -2,16 +2,25 @@
 
 let currentUserData = null;
 
-// Initialiser l'auth listener
-auth.onAuthStateChanged(async (user) => {
-    if (user) {
-        await loadUserRole(user);
-        updateUI(user);
-    } else {
-        currentUserData = null;
-        updateUI(null);
+// Attendre que Firebase soit initialisé
+document.addEventListener('DOMContentLoaded', function() {
+    // Vérifier si auth existe
+    if (typeof auth !== 'undefined') {
+        initAuth();
     }
 });
+
+function initAuth() {
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            await loadUserRole(user);
+            updateUI(user);
+        } else {
+            currentUserData = null;
+            updateUI(null);
+        }
+    });
+}
 
 // Charger le rôle de l'utilisateur depuis Firestore
 async function loadUserRole(user) {
@@ -49,21 +58,21 @@ function updateUI(user) {
         
         // Bouton Admin pour les admins
         if (role === 'admin') {
-            roleButtons += `<a href="admin.html" class="btn-auth" style="background: #326891; color: white;">Admin</a>`;
+            roleButtons += `<a href="admin.html" class="btn-auth" style="background: #e74c3c; color: white; margin-right: 5px;">Admin</a>`;
         }
         
         // Bouton Éditeur pour les éditeurs et admins
         if (role === 'admin' || role === 'editor') {
-            roleButtons += `<a href="editor.html" class="btn-auth" style="background: #27ae60; color: white;">Éditeur</a>`;
+            roleButtons += `<a href="editor.html" class="btn-auth" style="background: #27ae60; color: white; margin-right: 5px;">Éditeur</a>`;
         }
 
         authButtons.innerHTML = `
             ${roleButtons}
-            <a href="profile.html" class="user-profile-link" title="Mon profil">
-                <span class="user-welcome">Bonjour, ${displayName}</span>
+            <a href="profile.html" class="btn-auth" style="margin-right: 5px;" title="Mon profil">
+                ${displayName}
             </a>
-            <span class="user-role-badge role-${role}">${getRoleName(role)}</span>
-            <button class="btn-auth" onclick="logout()">Déconnexion</button>
+            <span class="user-role-badge role-${role}" style="margin-right: 10px;">${getRoleName(role)}</span>
+            <button class="btn-auth" onclick="logout()" style="background: #666; color: white;">Déconnexion</button>
         `;
     } else {
         authButtons.innerHTML = `
@@ -95,7 +104,6 @@ function logout() {
 }
 
 // Vérifier les permissions
-
 function canComment() {
     return currentUserData && ['subscriber', 'editor', 'admin'].includes(currentUserData.role);
 }
@@ -114,14 +122,6 @@ function canManageUsers() {
 
 function canDeleteAny() {
     return currentUserData && currentUserData.role === 'admin';
-}
-
-// Vérifier si l'utilisateur a un rôle minimum requis
-function requireRole(minRole) {
-    const roleHierarchy = ['visitor', 'subscriber', 'editor', 'admin'];
-    const userRoleIndex = roleHierarchy.indexOf(currentUserData?.role || 'visitor');
-    const requiredRoleIndex = roleHierarchy.indexOf(minRole);
-    return userRoleIndex >= requiredRoleIndex;
 }
 
 // Obtenir les initiales d'un nom
