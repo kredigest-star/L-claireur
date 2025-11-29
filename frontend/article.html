@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article | L'Éclaireur</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" id="og-url" content="">
+    <meta property="og:title" id="og-title" content="">
+    <meta property="og:description" id="og-description" content="">
+    <meta property="og:image" id="og-image" content="">
+    <meta property="og:site_name" content="L'Éclaireur">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" id="twitter-url" content="">
+    <meta name="twitter:title" id="twitter-title" content="">
+    <meta name="twitter:description" id="twitter-description" content="">
+    <meta name="twitter:image" id="twitter-image" content="">
+    
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&family=Source+Serif+Pro:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -142,47 +158,80 @@
             color: #326891;
             text-decoration: underline;
         }
+
+        /* ==================== SHARE SECTION AMÉLIORÉE ==================== */
         .article-share {
             margin-top: 3rem;
-            padding: 2rem 0;
-            border-top: 1px solid #e5e5e5;
-            border-bottom: 1px solid #e5e5e5;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 1px solid #e5e5e5;
         }
         .share-title {
             font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.8125rem;
-            font-weight: 600;
+            font-size: 1rem;
+            font-weight: 700;
             text-transform: uppercase;
-            color: #999;
-            margin-bottom: 1rem;
+            color: #333;
+            margin-bottom: 1.25rem;
             text-align: center;
+            letter-spacing: 0.05em;
         }
         .share-buttons {
             display: flex;
             justify-content: center;
-            gap: 0.75rem;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         .share-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
             color: white;
             text-decoration: none;
-            transition: transform 0.2s;
-            font-size: 1.125rem;
+            transition: all 0.3s ease;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            min-width: 130px;
         }
         .share-btn:hover {
-            transform: scale(1.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            color: white;
         }
-        .share-btn.facebook { background: #1877f2; }
-        .share-btn.twitter { background: #1da1f2; }
-        .share-btn.linkedin { background: #0077b5; }
-        .share-btn.whatsapp { background: #25d366; }
-        .share-btn.email { background: #666; }
-        .share-btn.copy { background: #333; cursor: pointer; border: none; }
+        .share-btn i {
+            font-size: 1.25rem;
+        }
+        .share-btn.facebook { 
+            background: linear-gradient(135deg, #1877F2 0%, #0d5ecf 100%); 
+        }
+        .share-btn.twitter { 
+            background: linear-gradient(135deg, #000000 0%, #333333 100%); 
+        }
+        .share-btn.whatsapp { 
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); 
+        }
+        .share-btn.linkedin { 
+            background: linear-gradient(135deg, #0A66C2 0%, #004182 100%); 
+        }
+        .share-btn.telegram { 
+            background: linear-gradient(135deg, #0088cc 0%, #006699 100%); 
+        }
+        .share-btn.email { 
+            background: linear-gradient(135deg, #666666 0%, #444444 100%); 
+        }
+        .share-btn.copy { 
+            background: linear-gradient(135deg, #333333 0%, #111111 100%); 
+        }
+        .share-btn.copy.copied {
+            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+        }
 
         /* Like Button */
         .article-actions {
@@ -397,17 +446,6 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
         }
-        @media (max-width: 600px) {
-            .related-grid {
-                grid-template-columns: 1fr;
-            }
-            .article-title {
-                font-size: 2rem;
-            }
-            .article-content p:first-of-type::first-letter {
-                font-size: 4rem;
-            }
-        }
         .related-card {
             display: flex;
             gap: 1rem;
@@ -486,6 +524,111 @@
         .error-message a {
             color: #326891;
         }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .related-grid {
+                grid-template-columns: 1fr;
+            }
+            .article-title {
+                font-size: 2rem;
+            }
+            .article-content p:first-of-type::first-letter {
+                font-size: 4rem;
+            }
+            .share-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .share-btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+        }
+
+        /* ==================== MOBILE MENU ==================== */
+        #menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        @media (max-width: 768px) {
+            #menu-btn {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .main-nav {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: white;
+                z-index: 9999;
+                padding-top: 70px;
+                overflow-y: auto;
+            }
+
+            .main-nav.active {
+                display: block !important;
+            }
+
+            .main-nav .nav-list {
+                flex-direction: column;
+                gap: 0;
+                padding: 0;
+            }
+
+            .main-nav .nav-list li {
+                border-bottom: 1px solid #e5e5e5;
+            }
+
+            .main-nav .nav-list a {
+                display: block;
+                padding: 18px 24px;
+                font-size: 18px;
+            }
+
+            .main-nav .nav-link.active {
+                background: #326891;
+                color: white !important;
+            }
+
+            .header-right {
+                display: none !important;
+            }
+
+            .menu-close-btn {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                background: none;
+                border: none;
+                font-size: 2rem;
+                color: #333;
+                cursor: pointer;
+                display: none;
+            }
+
+            .main-nav.active .menu-close-btn {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            #menu-btn {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -501,7 +644,9 @@
         <div class="container">
             <div class="header-content">
                 <div class="header-left">
-                    <button class="menu-btn"><i class="fas fa-bars"></i></button>
+                    <button id="menu-btn" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars" id="menu-icon"></i>
+                    </button>
                     <button class="search-btn"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="header-center">
@@ -518,7 +663,10 @@
         </div>
     </header>
 
-    <nav class="main-nav">
+    <nav class="main-nav" id="main-nav">
+        <button class="menu-close-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
         <div class="container">
             <ul class="nav-list">
                 <li><a href="index.html" class="nav-link">Accueil</a></li>
@@ -558,12 +706,39 @@
     <script src="js/auth.js"></script>
     <script>
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        var auth = firebase.auth();
+        var db = firebase.firestore();
 
-        let currentUser = null;
-        let userRole = null;
-        let currentArticleId = null;
+        var currentUser = null;
+        var userRole = null;
+        var currentArticleId = null;
+
+        // ==================== MOBILE MENU ====================
+        function toggleMobileMenu() {
+            var nav = document.getElementById('main-nav');
+            var icon = document.getElementById('menu-icon');
+            
+            if (nav.classList.contains('active')) {
+                nav.classList.remove('active');
+                icon.className = 'fas fa-bars';
+                document.body.style.overflow = '';
+            } else {
+                nav.classList.add('active');
+                icon.className = 'fas fa-times';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                var nav = document.getElementById('main-nav');
+                var icon = document.getElementById('menu-icon');
+                nav.classList.remove('active');
+                icon.className = 'fas fa-bars';
+                document.body.style.overflow = '';
+            });
+        });
 
         // Date du jour
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
@@ -571,11 +746,11 @@
         });
 
         // Auth state
-        auth.onAuthStateChanged(async (user) => {
+        auth.onAuthStateChanged(async function(user) {
             currentUser = user;
             if (user) {
                 try {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    var userDoc = await db.collection('users').doc(user.uid).get();
                     if (userDoc.exists) {
                         userRole = userDoc.data().role;
                     }
@@ -584,7 +759,6 @@
                 }
             }
             
-            // Reload comments section if article is loaded
             if (currentArticleId) {
                 loadComments(currentArticleId);
                 updateLikeButton(currentArticleId);
@@ -593,8 +767,8 @@
         });
 
         // Récupérer l'ID de l'article
-        const urlParams = new URLSearchParams(window.location.search);
-        const articleId = urlParams.get('id');
+        var urlParams = new URLSearchParams(window.location.search);
+        var articleId = urlParams.get('id');
 
         if (!articleId) {
             showError('Article non trouvé');
@@ -605,14 +779,14 @@
 
         async function loadArticle(id) {
             try {
-                const doc = await db.collection('articles').doc(id).get();
+                var doc = await db.collection('articles').doc(id).get();
                 
                 if (!doc.exists) {
                     showError('Article non trouvé');
                     return;
                 }
 
-                const article = doc.data();
+                var article = doc.data();
                 
                 if (article.status !== 'published') {
                     showError('Cet article n\'est pas disponible');
@@ -620,15 +794,16 @@
                 }
 
                 displayArticle(article, id);
+                updateMetaTags(article);
                 loadComments(id);
                 loadRelatedArticles(article.category, id);
                 
                 // Increment view count
                 db.collection('articles').doc(id).update({
                     views: firebase.firestore.FieldValue.increment(1)
-                }).catch(e => console.log('View count error:', e));
+                }).catch(function(e) { console.log('View count error:', e); });
                 
-                document.title = `${article.title} | L'Éclaireur`;
+                document.title = article.title + ' | L\'Éclaireur';
 
             } catch (error) {
                 console.error('Erreur:', error);
@@ -636,121 +811,174 @@
             }
         }
 
+        // ==================== UPDATE META TAGS FOR SOCIAL SHARING ====================
+        function updateMetaTags(article) {
+            var url = window.location.href;
+            var title = article.title;
+            var description = article.excerpt || article.title;
+            var image = article.image || '';
+
+            // Open Graph
+            document.getElementById('og-url').setAttribute('content', url);
+            document.getElementById('og-title').setAttribute('content', title);
+            document.getElementById('og-description').setAttribute('content', description);
+            document.getElementById('og-image').setAttribute('content', image);
+
+            // Twitter
+            document.getElementById('twitter-url').setAttribute('content', url);
+            document.getElementById('twitter-title').setAttribute('content', title);
+            document.getElementById('twitter-description').setAttribute('content', description);
+            document.getElementById('twitter-image').setAttribute('content', image);
+        }
+
         function displayArticle(article, id) {
-            const container = document.getElementById('article-container');
-            const date = article.createdAt ? article.createdAt.toDate() : new Date();
-            const fullDate = date.toLocaleDateString('fr-FR', {
+            var container = document.getElementById('article-container');
+            var date = article.createdAt ? article.createdAt.toDate() : new Date();
+            var fullDate = date.toLocaleDateString('fr-FR', {
                 weekday: 'long',
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
             });
             
-            const authorName = article.authorDisplayName || article.authorName || 'Auteur';
-            const authorProfession = article.authorProfession || '';
-            const authorInitials = getInitials(authorName);
-            const image = article.image || '';
-            const likes = article.likes || 0;
+            var authorName = article.authorDisplayName || article.authorName || 'Auteur';
+            var authorProfession = article.authorProfession || '';
+            var authorInitials = getInitials(authorName);
+            var image = article.image || '';
+            var likes = article.likes || 0;
 
-            const currentUrl = encodeURIComponent(window.location.href);
-            const shareTitle = encodeURIComponent(article.title);
-            const shareText = encodeURIComponent(article.excerpt || article.title);
+            var currentUrl = encodeURIComponent(window.location.href);
+            var shareTitle = encodeURIComponent(article.title);
+            var shareText = encodeURIComponent(article.excerpt || article.title);
+            var shareImage = encodeURIComponent(image);
 
-            container.innerHTML = `
-                <a href="index.html" class="back-link">
-                    <i class="fas fa-arrow-left"></i> Retour à l'accueil
-                </a>
+            container.innerHTML = 
+                '<a href="index.html" class="back-link">' +
+                    '<i class="fas fa-arrow-left"></i> Retour à l\'accueil' +
+                '</a>' +
 
-                <article>
-                    <header class="article-header">
-                        <a href="index.html?cat=${article.category}" class="article-category">
-                            ${getCategoryName(article.category)}
-                        </a>
-                        <h1 class="article-title">${article.title}</h1>
-                        ${article.excerpt ? `<p class="article-excerpt">${article.excerpt}</p>` : ''}
-                        <div class="article-meta">
-                            <div class="author-avatar">${authorInitials}</div>
-                            <div class="author-info">
-                                <div class="author-name">${authorName}</div>
-                                ${authorProfession ? `<div class="author-profession">${authorProfession}</div>` : ''}
-                            </div>
-                            <div class="article-date">${fullDate}</div>
-                        </div>
-                    </header>
+                '<article>' +
+                    '<header class="article-header">' +
+                        '<a href="index.html?cat=' + article.category + '" class="article-category">' +
+                            getCategoryName(article.category) +
+                        '</a>' +
+                        '<h1 class="article-title">' + article.title + '</h1>' +
+                        (article.excerpt ? '<p class="article-excerpt">' + article.excerpt + '</p>' : '') +
+                        '<div class="article-meta">' +
+                            '<div class="author-avatar">' + authorInitials + '</div>' +
+                            '<div class="author-info">' +
+                                '<div class="author-name">' + authorName + '</div>' +
+                                (authorProfession ? '<div class="author-profession">' + authorProfession + '</div>' : '') +
+                            '</div>' +
+                            '<div class="article-date">' + fullDate + '</div>' +
+                        '</div>' +
+                    '</header>' +
 
-                    ${image ? `
-                        <figure class="article-image">
-                            <img src="${image}" alt="${article.title}">
-                        </figure>
-                    ` : ''}
+                    (image ? '<figure class="article-image"><img src="' + image + '" alt="' + article.title + '"></figure>' : '') +
 
-                    <div class="article-content">
-                        ${article.content}
-                    </div>
+                    '<div class="article-content">' + article.content + '</div>' +
 
-                    <div class="article-actions">
-                        <button class="action-btn" id="like-btn" onclick="toggleLike('${id}')">
-                            <i class="far fa-heart"></i>
-                            <span id="like-count">${likes}</span> J'aime
-                        </button>
-                        <button class="action-btn" id="favorite-btn" onclick="toggleFavorite('${id}')">
-                            <i class="far fa-bookmark"></i>
-                            Sauvegarder
-                        </button>
-                    </div>
+                    '<div class="article-actions">' +
+                        '<button class="action-btn" id="like-btn" onclick="toggleLike(\'' + id + '\')">' +
+                            '<i class="far fa-heart"></i>' +
+                            '<span id="like-count">' + likes + '</span> J\'aime' +
+                        '</button>' +
+                        '<button class="action-btn" id="favorite-btn" onclick="toggleFavorite(\'' + id + '\')">' +
+                            '<i class="far fa-bookmark"></i>' +
+                            'Sauvegarder' +
+                        '</button>' +
+                    '</div>' +
 
-                    <div class="article-share">
-                        <div class="share-title">Partager cet article</div>
-                        <div class="share-buttons">
-                            <a href="https://www.facebook.com/sharer/sharer.php?u=${currentUrl}" target="_blank" rel="noopener" class="share-btn facebook">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="https://twitter.com/intent/tweet?url=${currentUrl}&text=${shareTitle}" target="_blank" rel="noopener" class="share-btn twitter">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="https://www.linkedin.com/shareArticle?mini=true&url=${currentUrl}&title=${shareTitle}" target="_blank" rel="noopener" class="share-btn linkedin">
-                                <i class="fab fa-linkedin-in"></i>
-                            </a>
-                            <a href="https://wa.me/?text=${shareTitle}%20${currentUrl}" target="_blank" rel="noopener" class="share-btn whatsapp">
-                                <i class="fab fa-whatsapp"></i>
-                            </a>
-                            <a href="mailto:?subject=${shareTitle}&body=${shareText}%0A%0A${currentUrl}" class="share-btn email">
-                                <i class="fas fa-envelope"></i>
-                            </a>
-                            <button class="share-btn copy" onclick="copyLink()">
-                                <i class="fas fa-link"></i>
-                            </button>
-                        </div>
-                    </div>
-                </article>
+                    '<div class="article-share">' +
+                        '<div class="share-title"><i class="fas fa-share-alt"></i> Partager cet article</div>' +
+                        '<div class="share-buttons">' +
+                            '<a href="https://www.facebook.com/sharer/sharer.php?u=' + currentUrl + '&quote=' + shareTitle + '" target="_blank" rel="noopener" class="share-btn facebook">' +
+                                '<i class="fab fa-facebook-f"></i>' +
+                                '<span>Facebook</span>' +
+                            '</a>' +
+                            '<a href="https://twitter.com/intent/tweet?url=' + currentUrl + '&text=' + shareTitle + '" target="_blank" rel="noopener" class="share-btn twitter">' +
+                                '<i class="fab fa-x-twitter"></i>' +
+                                '<span>Twitter</span>' +
+                            '</a>' +
+                            '<a href="https://api.whatsapp.com/send?text=' + shareTitle + '%20' + currentUrl + '" target="_blank" rel="noopener" class="share-btn whatsapp">' +
+                                '<i class="fab fa-whatsapp"></i>' +
+                                '<span>WhatsApp</span>' +
+                            '</a>' +
+                            '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + currentUrl + '" target="_blank" rel="noopener" class="share-btn linkedin">' +
+                                '<i class="fab fa-linkedin-in"></i>' +
+                                '<span>LinkedIn</span>' +
+                            '</a>' +
+                            '<a href="https://t.me/share/url?url=' + currentUrl + '&text=' + shareTitle + '" target="_blank" rel="noopener" class="share-btn telegram">' +
+                                '<i class="fab fa-telegram-plane"></i>' +
+                                '<span>Telegram</span>' +
+                            '</a>' +
+                            '<a href="mailto:?subject=' + shareTitle + '&body=' + shareText + '%0A%0ALire l\'article : ' + currentUrl + '" class="share-btn email">' +
+                                '<i class="fas fa-envelope"></i>' +
+                                '<span>Email</span>' +
+                            '</a>' +
+                            '<button class="share-btn copy" id="copy-btn" onclick="copyLink()">' +
+                                '<i class="fas fa-link"></i>' +
+                                '<span>Copier</span>' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</article>' +
 
-                <section class="comments-section">
-                    <div class="comments-header">
-                        <h2 class="comments-title">Commentaires</h2>
-                        <span class="comments-count" id="comments-count">0 commentaires</span>
-                    </div>
-                    
-                    <div id="comment-form-container"></div>
-                    
-                    <div class="comments-list" id="comments-list">
-                        <div class="loading"><i class="fas fa-spinner"></i></div>
-                    </div>
-                </section>
+                '<section class="comments-section">' +
+                    '<div class="comments-header">' +
+                        '<h2 class="comments-title">Commentaires</h2>' +
+                        '<span class="comments-count" id="comments-count">0 commentaires</span>' +
+                    '</div>' +
+                    '<div id="comment-form-container"></div>' +
+                    '<div class="comments-list" id="comments-list">' +
+                        '<div class="loading"><i class="fas fa-spinner"></i></div>' +
+                    '</div>' +
+                '</section>' +
 
-                <div class="related-articles" id="related-articles">
-                    <h2 class="related-title">Articles similaires</h2>
-                    <div class="related-grid" id="related-grid">
-                        <div class="loading"><i class="fas fa-spinner"></i></div>
-                    </div>
-                </div>
-            `;
+                '<div class="related-articles" id="related-articles">' +
+                    '<h2 class="related-title">Articles similaires</h2>' +
+                    '<div class="related-grid" id="related-grid">' +
+                        '<div class="loading"><i class="fas fa-spinner"></i></div>' +
+                    '</div>' +
+                '</div>';
 
-            // Update like/favorite buttons
             updateLikeButton(id);
             updateFavoriteButton(id);
         }
 
-        // Like functionality
+        // ==================== COPY LINK FUNCTION ====================
+        function copyLink() {
+            var url = window.location.href;
+            var btn = document.getElementById('copy-btn');
+            
+            navigator.clipboard.writeText(url).then(function() {
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fas fa-check"></i><span>Copié !</span>';
+                
+                setTimeout(function() {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fas fa-link"></i><span>Copier</span>';
+                }, 2000);
+            }).catch(function(err) {
+                // Fallback for older browsers
+                var textarea = document.createElement('textarea');
+                textarea.value = url;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fas fa-check"></i><span>Copié !</span>';
+                
+                setTimeout(function() {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fas fa-link"></i><span>Copier</span>';
+                }, 2000);
+            });
+        }
+
+        // ==================== LIKE FUNCTIONALITY ====================
         async function toggleLike(articleId) {
             if (!currentUser) {
                 alert('Connectez-vous pour aimer cet article');
@@ -758,17 +986,15 @@
                 return;
             }
 
-            const likeRef = db.collection('articles').doc(articleId).collection('likes').doc(currentUser.uid);
-            const likeDoc = await likeRef.get();
+            var likeRef = db.collection('articles').doc(articleId).collection('likes').doc(currentUser.uid);
+            var likeDoc = await likeRef.get();
 
             if (likeDoc.exists) {
-                // Unlike
                 await likeRef.delete();
                 await db.collection('articles').doc(articleId).update({
                     likes: firebase.firestore.FieldValue.increment(-1)
                 });
             } else {
-                // Like
                 await likeRef.set({
                     userId: currentUser.uid,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -782,31 +1008,30 @@
         }
 
         async function updateLikeButton(articleId) {
-            const likeBtn = document.getElementById('like-btn');
-            const likeCount = document.getElementById('like-count');
+            var likeBtn = document.getElementById('like-btn');
+            var likeCount = document.getElementById('like-count');
             
             if (!likeBtn) return;
 
-            // Get current like count
-            const articleDoc = await db.collection('articles').doc(articleId).get();
-            const likes = articleDoc.data()?.likes || 0;
+            var articleDoc = await db.collection('articles').doc(articleId).get();
+            var likes = articleDoc.data()?.likes || 0;
             likeCount.textContent = likes;
 
             if (currentUser) {
-                const likeRef = db.collection('articles').doc(articleId).collection('likes').doc(currentUser.uid);
-                const likeDoc = await likeRef.get();
+                var likeRef = db.collection('articles').doc(articleId).collection('likes').doc(currentUser.uid);
+                var likeDoc = await likeRef.get();
                 
                 if (likeDoc.exists) {
                     likeBtn.classList.add('liked');
-                    likeBtn.innerHTML = `<i class="fas fa-heart"></i> <span id="like-count">${likes}</span> J'aime`;
+                    likeBtn.innerHTML = '<i class="fas fa-heart"></i> <span id="like-count">' + likes + '</span> J\'aime';
                 } else {
                     likeBtn.classList.remove('liked');
-                    likeBtn.innerHTML = `<i class="far fa-heart"></i> <span id="like-count">${likes}</span> J'aime`;
+                    likeBtn.innerHTML = '<i class="far fa-heart"></i> <span id="like-count">' + likes + '</span> J\'aime';
                 }
             }
         }
 
-        // Favorite functionality
+        // ==================== FAVORITE FUNCTIONALITY ====================
         async function toggleFavorite(articleId) {
             if (!currentUser) {
                 alert('Connectez-vous pour sauvegarder cet article');
@@ -814,8 +1039,8 @@
                 return;
             }
 
-            const favRef = db.collection('users').doc(currentUser.uid).collection('favorites').doc(articleId);
-            const favDoc = await favRef.get();
+            var favRef = db.collection('users').doc(currentUser.uid).collection('favorites').doc(articleId);
+            var favDoc = await favRef.get();
 
             if (favDoc.exists) {
                 await favRef.delete();
@@ -830,91 +1055,84 @@
         }
 
         async function updateFavoriteButton(articleId) {
-            const favBtn = document.getElementById('favorite-btn');
+            var favBtn = document.getElementById('favorite-btn');
             if (!favBtn || !currentUser) return;
 
-            const favRef = db.collection('users').doc(currentUser.uid).collection('favorites').doc(articleId);
-            const favDoc = await favRef.get();
+            var favRef = db.collection('users').doc(currentUser.uid).collection('favorites').doc(articleId);
+            var favDoc = await favRef.get();
 
             if (favDoc.exists) {
                 favBtn.classList.add('favorited');
-                favBtn.innerHTML = `<i class="fas fa-bookmark"></i> Sauvegardé`;
+                favBtn.innerHTML = '<i class="fas fa-bookmark"></i> Sauvegardé';
             } else {
                 favBtn.classList.remove('favorited');
-                favBtn.innerHTML = `<i class="far fa-bookmark"></i> Sauvegarder`;
+                favBtn.innerHTML = '<i class="far fa-bookmark"></i> Sauvegarder';
             }
         }
 
-        // Comments functionality
+        // ==================== COMMENTS FUNCTIONALITY ====================
         async function loadComments(articleId) {
-            const formContainer = document.getElementById('comment-form-container');
-            const commentsList = document.getElementById('comments-list');
-            const commentsCount = document.getElementById('comments-count');
+            var formContainer = document.getElementById('comment-form-container');
+            var commentsList = document.getElementById('comments-list');
+            var commentsCount = document.getElementById('comments-count');
 
-            // Show comment form based on auth state
             if (currentUser) {
-                formContainer.innerHTML = `
-                    <div class="comment-form">
-                        <textarea id="comment-text" placeholder="Écrivez votre commentaire..."></textarea>
-                        <div class="comment-form-actions">
-                            <button onclick="submitComment('${articleId}')">Publier</button>
-                        </div>
-                    </div>
-                `;
+                formContainer.innerHTML = 
+                    '<div class="comment-form">' +
+                        '<textarea id="comment-text" placeholder="Écrivez votre commentaire..."></textarea>' +
+                        '<div class="comment-form-actions">' +
+                            '<button onclick="submitComment(\'' + articleId + '\')">Publier</button>' +
+                        '</div>' +
+                    '</div>';
             } else {
-                formContainer.innerHTML = `
-                    <div class="comment-form-login">
-                        <p><i class="fas fa-comment"></i> Connectez-vous pour laisser un commentaire</p>
-                        <a href="login.html">Se connecter</a> ou <a href="register.html">S'inscrire</a>
-                    </div>
-                `;
+                formContainer.innerHTML = 
+                    '<div class="comment-form-login">' +
+                        '<p><i class="fas fa-comment"></i> Connectez-vous pour laisser un commentaire</p>' +
+                        '<a href="login.html">Se connecter</a> ou <a href="register.html">S\'inscrire</a>' +
+                    '</div>';
             }
 
-            // Load comments
             try {
-                const snapshot = await db.collection('articles').doc(articleId)
+                var snapshot = await db.collection('articles').doc(articleId)
                     .collection('comments')
                     .orderBy('createdAt', 'desc')
                     .get();
 
-                const count = snapshot.size;
-                commentsCount.textContent = `${count} commentaire${count !== 1 ? 's' : ''}`;
+                var count = snapshot.size;
+                commentsCount.textContent = count + ' commentaire' + (count !== 1 ? 's' : '');
 
                 if (snapshot.empty) {
-                    commentsList.innerHTML = `
-                        <div class="no-comments">
-                            <i class="far fa-comment"></i>
-                            <p>Soyez le premier à commenter !</p>
-                        </div>
-                    `;
+                    commentsList.innerHTML = 
+                        '<div class="no-comments">' +
+                            '<i class="far fa-comment"></i>' +
+                            '<p>Soyez le premier à commenter !</p>' +
+                        '</div>';
                     return;
                 }
 
                 commentsList.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const comment = doc.data();
-                    const commentDate = comment.createdAt ? formatDate(comment.createdAt.toDate()) : 'Récent';
-                    const canDelete = currentUser && (currentUser.uid === comment.userId || userRole === 'admin');
+                snapshot.forEach(function(doc) {
+                    var comment = doc.data();
+                    var commentDate = comment.createdAt ? formatDate(comment.createdAt.toDate()) : 'Récent';
+                    var canDelete = currentUser && (currentUser.uid === comment.userId || userRole === 'admin');
                     
-                    commentsList.innerHTML += `
-                        <div class="comment" id="comment-${doc.id}">
-                            <div class="comment-header">
-                                <div class="comment-avatar">${getInitials(comment.authorName)}</div>
-                                <div>
-                                    <div class="comment-author">${comment.authorName}</div>
-                                    <div class="comment-date">${commentDate}</div>
-                                </div>
-                            </div>
-                            <div class="comment-content">${escapeHtml(comment.content)}</div>
-                            ${canDelete ? `
-                                <div class="comment-actions">
-                                    <button class="comment-action delete" onclick="deleteComment('${articleId}', '${doc.id}')">
-                                        <i class="fas fa-trash"></i> Supprimer
-                                    </button>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
+                    commentsList.innerHTML += 
+                        '<div class="comment" id="comment-' + doc.id + '">' +
+                            '<div class="comment-header">' +
+                                '<div class="comment-avatar">' + getInitials(comment.authorName) + '</div>' +
+                                '<div>' +
+                                    '<div class="comment-author">' + comment.authorName + '</div>' +
+                                    '<div class="comment-date">' + commentDate + '</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="comment-content">' + escapeHtml(comment.content) + '</div>' +
+                            (canDelete ? 
+                                '<div class="comment-actions">' +
+                                    '<button class="comment-action delete" onclick="deleteComment(\'' + articleId + '\', \'' + doc.id + '\')">' +
+                                        '<i class="fas fa-trash"></i> Supprimer' +
+                                    '</button>' +
+                                '</div>' : '') +
+                        '</div>';
                 });
 
             } catch (error) {
@@ -929,8 +1147,8 @@
                 return;
             }
 
-            const textarea = document.getElementById('comment-text');
-            const content = textarea.value.trim();
+            var textarea = document.getElementById('comment-text');
+            var content = textarea.value.trim();
 
             if (!content) {
                 alert('Veuillez écrire un commentaire');
@@ -966,45 +1184,49 @@
             }
         }
 
+        // ==================== RELATED ARTICLES ====================
         async function loadRelatedArticles(category, currentId) {
             try {
-                const snapshot = await db.collection('articles')
+                var snapshot = await db.collection('articles')
                     .where('status', '==', 'published')
                     .where('category', '==', category)
-                    .orderBy('createdAt', 'desc')
-                    .limit(5)
                     .get();
 
-                const articles = [];
-                snapshot.forEach(doc => {
+                var articles = [];
+                snapshot.forEach(function(doc) {
                     if (doc.id !== currentId) {
                         articles.push({ id: doc.id, ...doc.data() });
                     }
                 });
 
-                const relatedGrid = document.getElementById('related-grid');
+                // Sort by date
+                articles.sort(function(a, b) {
+                    var dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
+                    var dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
+                    return dateB - dateA;
+                });
+
+                var relatedGrid = document.getElementById('related-grid');
                 
                 if (articles.length === 0) {
                     document.getElementById('related-articles').style.display = 'none';
                     return;
                 }
 
-                relatedGrid.innerHTML = articles.slice(0, 4).map(article => {
-                    const date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
-                    const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200';
+                relatedGrid.innerHTML = articles.slice(0, 4).map(function(article) {
+                    var date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
+                    var image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200';
                     
-                    return `
-                        <div class="related-card">
-                            <img src="${image}" alt="${article.title}" class="related-card-image" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200'">
-                            <div class="related-card-content">
-                                <div class="related-card-category">${getCategoryName(article.category)}</div>
-                                <h3 class="related-card-title">
-                                    <a href="article.html?id=${article.id}">${article.title}</a>
-                                </h3>
-                                <div class="related-card-date">${date}</div>
-                            </div>
-                        </div>
-                    `;
+                    return '<div class="related-card">' +
+                        '<img src="' + image + '" alt="' + article.title + '" class="related-card-image" onerror="this.src=\'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200\'">' +
+                        '<div class="related-card-content">' +
+                            '<div class="related-card-category">' + getCategoryName(article.category) + '</div>' +
+                            '<h3 class="related-card-title">' +
+                                '<a href="article.html?id=' + article.id + '">' + article.title + '</a>' +
+                            '</h3>' +
+                            '<div class="related-card-date">' + date + '</div>' +
+                        '</div>' +
+                    '</div>';
                 }).join('');
 
             } catch (error) {
@@ -1013,24 +1235,18 @@
             }
         }
 
+        // ==================== HELPER FUNCTIONS ====================
         function showError(message) {
-            document.getElementById('article-container').innerHTML = `
-                <div class="error-message">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <h2>${message}</h2>
-                    <p><a href="index.html">Retourner à l'accueil</a></p>
-                </div>
-            `;
-        }
-
-        function copyLink() {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Lien copié !');
-            });
+            document.getElementById('article-container').innerHTML = 
+                '<div class="error-message">' +
+                    '<i class="fas fa-exclamation-circle"></i>' +
+                    '<h2>' + message + '</h2>' +
+                    '<p><a href="index.html">Retourner à l\'accueil</a></p>' +
+                '</div>';
         }
 
         function getCategoryName(category) {
-            const names = {
+            var names = {
                 'politique': 'Politique',
                 'monde': 'Monde',
                 'economie': 'Économie',
@@ -1042,15 +1258,15 @@
         }
 
         function formatDate(date) {
-            const now = new Date();
-            const diff = now - date;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            var now = new Date();
+            var diff = now - date;
+            var hours = Math.floor(diff / (1000 * 60 * 60));
+            var days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
             if (hours < 1) return 'À l\'instant';
-            if (hours < 24) return `Il y a ${hours}h`;
+            if (hours < 24) return 'Il y a ' + hours + 'h';
             if (days === 1) return 'Hier';
-            if (days < 7) return `Il y a ${days} jours`;
+            if (days < 7) return 'Il y a ' + days + ' jours';
             
             return date.toLocaleDateString('fr-FR', { 
                 day: 'numeric', 
@@ -1060,11 +1276,11 @@
 
         function getInitials(name) {
             if (!name) return '?';
-            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            return name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().substring(0, 2);
         }
 
         function escapeHtml(text) {
-            const div = document.createElement('div');
+            var div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
