@@ -9,6 +9,129 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* Search Styles */
+        .search-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 10vh;
+        }
+        .search-overlay.active {
+            display: flex;
+        }
+        .search-container {
+            width: 90%;
+            max-width: 700px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .search-header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .search-header i {
+            font-size: 1.25rem;
+            color: #999;
+            margin-right: 1rem;
+        }
+        .search-header input {
+            flex: 1;
+            border: none;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1.125rem;
+            outline: none;
+        }
+        .search-header input::placeholder {
+            color: #999;
+        }
+        .search-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        .search-close:hover {
+            color: #333;
+        }
+        .search-results {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .search-result {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.2s;
+        }
+        .search-result:hover {
+            background: #f9f9f9;
+        }
+        .search-result-image {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .search-result-content {
+            flex: 1;
+        }
+        .search-result-category {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #326891;
+        }
+        .search-result-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #121212;
+            margin: 0.25rem 0;
+        }
+        .search-result-meta {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.75rem;
+            color: #999;
+        }
+        .search-no-results {
+            padding: 3rem;
+            text-align: center;
+            color: #999;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        .search-no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .search-loading {
+            padding: 2rem;
+            text-align: center;
+            color: #999;
+        }
+        .search-loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Article Cards */
         .article-card {
             background: white;
             border: 1px solid #e5e5e5;
@@ -67,6 +190,18 @@
             font-weight: 600;
             color: #666;
         }
+        .article-card-stats {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #999;
+        }
+        .article-card-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
         .articles-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -110,9 +245,167 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+
+        /* Category Sections */
+        .category-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #121212;
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .category-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #121212;
+        }
+        .category-link {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+            color: #326891;
+            text-decoration: none;
+        }
+        .category-link:hover {
+            text-decoration: underline;
+        }
+        .category-articles {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        @media (max-width: 992px) {
+            .category-articles {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 576px) {
+            .category-articles {
+                grid-template-columns: 1fr;
+            }
+        }
+        .category-card {
+            display: flex;
+            flex-direction: column;
+        }
+        .category-card-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+        .category-card-title {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            line-height: 1.3;
+            color: #121212;
+        }
+        .category-card-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .category-card-title a:hover {
+            text-decoration: underline;
+        }
+        .category-card-date {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        /* Most Read Section */
+        .most-read-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .most-read-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #121212;
+        }
+        .most-read-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .most-read-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        .most-read-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #326891;
+            line-height: 1;
+            min-width: 2rem;
+        }
+        .most-read-content {
+            flex: 1;
+        }
+        .most-read-item-title {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .most-read-item-title a {
+            color: #121212;
+            text-decoration: none;
+        }
+        .most-read-item-title a:hover {
+            text-decoration: underline;
+        }
+        .most-read-meta {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 0.25rem;
+        }
+
+        /* Profile Link */
+        .user-profile-link {
+            color: #326891;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .user-profile-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-container">
+            <div class="search-header">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Rechercher des articles..." autofocus>
+                <button class="search-close" onclick="closeSearch()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-results" id="search-results">
+                <div class="search-no-results">
+                    <i class="fas fa-search"></i>
+                    <p>Commencez à taper pour rechercher</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="top-bar">
         <div class="container">
             <span class="date" id="current-date"></span>
@@ -126,7 +419,7 @@
             <div class="header-content">
                 <div class="header-left">
                     <button class="menu-btn"><i class="fas fa-bars"></i></button>
-                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                    <button class="search-btn" onclick="openSearch()"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="header-center">
                     <a href="index.html" class="logo">
@@ -158,7 +451,7 @@
 
     <main class="main-content">
         <div class="container">
-            <!-- Hero Section - Article principal -->
+            <!-- Hero Section -->
             <section class="hero-section" id="hero-section">
                 <div class="loading">
                     <i class="fas fa-spinner"></i>
@@ -177,6 +470,15 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Most Read Section -->
+            <section class="most-read-section" id="most-read-section" style="display: none;">
+                <h2 class="most-read-title"><i class="fas fa-fire"></i> Les plus lus</h2>
+                <div class="most-read-list" id="most-read-list"></div>
+            </section>
+
+            <!-- Category Sections (only on homepage) -->
+            <div id="category-sections"></div>
         </div>
     </main>
 
@@ -217,6 +519,8 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        let allArticles = [];
+
         // Date du jour
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
@@ -225,6 +529,7 @@
         // Récupérer la catégorie depuis l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const selectedCategory = urlParams.get('cat');
+        const searchQuery = urlParams.get('q');
 
         // Mettre à jour le titre et la navigation
         if (selectedCategory) {
@@ -238,13 +543,104 @@
             };
             document.getElementById('section-title').textContent = categoryNames[selectedCategory] || 'Actualités';
             
-            // Activer le lien de navigation
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
                 if (link.href.includes(`cat=${selectedCategory}`)) {
                     link.classList.add('active');
                 }
             });
+        }
+
+        // Search functions
+        function openSearch() {
+            document.getElementById('search-overlay').classList.add('active');
+            document.getElementById('search-input').focus();
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSearch() {
+            document.getElementById('search-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close search on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeSearch();
+        });
+
+        // Close search on overlay click
+        document.getElementById('search-overlay').addEventListener('click', (e) => {
+            if (e.target.id === 'search-overlay') closeSearch();
+        });
+
+        // Search input handler
+        let searchTimeout;
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length < 2) {
+                document.getElementById('search-results').innerHTML = `
+                    <div class="search-no-results">
+                        <i class="fas fa-search"></i>
+                        <p>Tapez au moins 2 caractères</p>
+                    </div>
+                `;
+                return;
+            }
+
+            document.getElementById('search-results').innerHTML = `
+                <div class="search-loading">
+                    <i class="fas fa-spinner"></i>
+                </div>
+            `;
+
+            searchTimeout = setTimeout(() => searchArticles(query), 300);
+        });
+
+        async function searchArticles(query) {
+            const resultsContainer = document.getElementById('search-results');
+            const queryLower = query.toLowerCase();
+
+            // Filter from cached articles
+            const results = allArticles.filter(article => {
+                const titleMatch = article.title.toLowerCase().includes(queryLower);
+                const contentMatch = article.content && article.content.toLowerCase().includes(queryLower);
+                const authorMatch = (article.authorDisplayName || article.authorName || '').toLowerCase().includes(queryLower);
+                const excerptMatch = article.excerpt && article.excerpt.toLowerCase().includes(queryLower);
+                return titleMatch || contentMatch || authorMatch || excerptMatch;
+            });
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="search-no-results">
+                        <i class="fas fa-search"></i>
+                        <p>Aucun résultat pour "${query}"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsContainer.innerHTML = results.slice(0, 10).map(article => {
+                const date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
+                const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200';
+                
+                return `
+                    <a href="article.html?id=${article.id}" class="search-result">
+                        <img src="${image}" alt="${article.title}" class="search-result-image" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200'">
+                        <div class="search-result-content">
+                            <div class="search-result-category">${getCategoryName(article.category)}</div>
+                            <div class="search-result-title">${highlightText(article.title, query)}</div>
+                            <div class="search-result-meta">Par ${article.authorDisplayName || article.authorName} • ${date}</div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        function highlightText(text, query) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<mark>$1</mark>');
         }
 
         // Charger les articles
@@ -254,7 +650,6 @@
                     .where('status', '==', 'published')
                     .orderBy('createdAt', 'desc');
 
-                // Filtrer par catégorie si sélectionnée
                 if (selectedCategory) {
                     query = db.collection('articles')
                         .where('status', '==', 'published')
@@ -269,7 +664,15 @@
                     articles.push({ id: doc.id, ...doc.data() });
                 });
 
+                allArticles = articles; // Cache for search
                 displayArticles(articles);
+                
+                // Load most read and category sections only on homepage
+                if (!selectedCategory) {
+                    loadMostRead();
+                    loadCategorySections();
+                }
+
             } catch (error) {
                 console.error('Erreur chargement articles:', error);
                 document.getElementById('hero-section').innerHTML = '';
@@ -282,7 +685,6 @@
             }
         }
 
-        // Afficher les articles
         function displayArticles(articles) {
             const heroSection = document.getElementById('hero-section');
             const articlesContainer = document.getElementById('articles-container');
@@ -299,10 +701,12 @@
                 return;
             }
 
-            // Article principal (le plus récent)
+            // Hero article
             const heroArticle = articles[0];
             const heroDate = heroArticle.createdAt ? formatDate(heroArticle.createdAt.toDate()) : 'Récent';
             const heroImage = heroArticle.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200';
+            const heroLikes = heroArticle.likes || 0;
+            const heroViews = heroArticle.views || 0;
 
             heroSection.innerHTML = `
                 <article class="hero-article" onclick="window.location.href='article.html?id=${heroArticle.id}'">
@@ -317,12 +721,16 @@
                             <span class="author">Par ${heroArticle.authorDisplayName || heroArticle.authorName}</span>
                             ${heroArticle.authorProfession ? `<span class="profession">, ${heroArticle.authorProfession}</span>` : ''}
                             <span class="date"> • ${heroDate}</span>
+                            <span style="margin-left: 1rem; color: #999;">
+                                <i class="fas fa-heart"></i> ${heroLikes} 
+                                <i class="fas fa-eye" style="margin-left: 0.5rem;"></i> ${heroViews}
+                            </span>
                         </div>
                     </div>
                 </article>
             `;
 
-            // Autres articles
+            // Other articles
             const otherArticles = articles.slice(1);
             
             if (otherArticles.length === 0) {
@@ -337,6 +745,8 @@
             articlesContainer.innerHTML = otherArticles.map(article => {
                 const date = article.createdAt ? formatDate(article.createdAt.toDate()) : 'Récent';
                 const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600';
+                const likes = article.likes || 0;
+                const views = article.views || 0;
                 
                 return `
                     <article class="article-card">
@@ -353,10 +763,109 @@
                                 ${article.authorProfession ? `, ${article.authorProfession}` : ''}
                                 <span> • ${date}</span>
                             </div>
+                            <div class="article-card-stats">
+                                <span><i class="fas fa-heart"></i> ${likes}</span>
+                                <span><i class="fas fa-eye"></i> ${views}</span>
+                            </div>
                         </div>
                     </article>
                 `;
             }).join('');
+        }
+
+        // Load most read articles
+        async function loadMostRead() {
+            try {
+                const snapshot = await db.collection('articles')
+                    .where('status', '==', 'published')
+                    .orderBy('views', 'desc')
+                    .limit(5)
+                    .get();
+
+                if (snapshot.empty) return;
+
+                const container = document.getElementById('most-read-list');
+                document.getElementById('most-read-section').style.display = 'block';
+
+                let html = '';
+                let index = 1;
+                
+                snapshot.forEach(doc => {
+                    const article = doc.data();
+                    const views = article.views || 0;
+                    
+                    html += `
+                        <div class="most-read-item">
+                            <span class="most-read-number">${index}</span>
+                            <div class="most-read-content">
+                                <h3 class="most-read-item-title">
+                                    <a href="article.html?id=${doc.id}">${article.title}</a>
+                                </h3>
+                                <div class="most-read-meta">
+                                    ${getCategoryName(article.category)} • ${views} vues
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    index++;
+                });
+
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error loading most read:', error);
+            }
+        }
+
+        // Load category sections
+        async function loadCategorySections() {
+            const categories = ['politique', 'monde', 'economie', 'sciences', 'culture', 'sports'];
+            const container = document.getElementById('category-sections');
+            
+            for (const category of categories) {
+                try {
+                    const snapshot = await db.collection('articles')
+                        .where('status', '==', 'published')
+                        .where('category', '==', category)
+                        .orderBy('createdAt', 'desc')
+                        .limit(4)
+                        .get();
+
+                    if (snapshot.empty) continue;
+
+                    let articlesHtml = '';
+                    snapshot.forEach(doc => {
+                        const article = doc.data();
+                        const date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
+                        const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=300';
+                        
+                        articlesHtml += `
+                            <div class="category-card">
+                                <img src="${image}" alt="${article.title}" class="category-card-image" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=300'">
+                                <h3 class="category-card-title">
+                                    <a href="article.html?id=${doc.id}">${article.title}</a>
+                                </h3>
+                                <div class="category-card-date">${date}</div>
+                            </div>
+                        `;
+                    });
+
+                    container.innerHTML += `
+                        <section class="category-section">
+                            <div class="category-header">
+                                <h2 class="category-title">${getCategoryName(category)}</h2>
+                                <a href="index.html?cat=${category}" class="category-link">Voir tout <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                            <div class="category-articles">
+                                ${articlesHtml}
+                            </div>
+                        </section>
+                    `;
+
+                } catch (error) {
+                    console.error(`Error loading ${category}:`, error);
+                }
+            }
         }
 
         // Helpers
@@ -392,8 +901,10 @@
 
         function truncateText(text, maxLength) {
             if (!text) return '';
-            if (text.length <= maxLength) return text;
-            return text.substring(0, maxLength).trim() + '...';
+            // Remove HTML tags
+            const plainText = text.replace(/<[^>]*>/g, '');
+            if (plainText.length <= maxLength) return plainText;
+            return plainText.substring(0, maxLength).trim() + '...';
         }
 
         // Newsletter
@@ -403,7 +914,7 @@
             e.target.reset();
         });
 
-        // Charger les articles au démarrage
+        // Load articles
         loadArticles();
     </script>
 </body>
