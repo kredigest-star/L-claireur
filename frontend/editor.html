@@ -8,6 +8,95 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .image-upload-container {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+        .image-upload-container:hover {
+            border-color: #326891;
+            background: #f0f7ff;
+        }
+        .image-upload-container.dragover {
+            border-color: #326891;
+            background: #e6f2ff;
+        }
+        .image-upload-container i {
+            font-size: 3rem;
+            color: #999;
+            margin-bottom: 1rem;
+        }
+        .image-upload-container p {
+            color: #666;
+            margin: 0;
+        }
+        .image-upload-container input[type="file"] {
+            display: none;
+        }
+        .image-preview {
+            margin-top: 1rem;
+            display: none;
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .image-preview .remove-image {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        .author-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 768px) {
+            .author-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+        .upload-progress {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .upload-progress-bar {
+            height: 100%;
+            background: #326891;
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .image-url-toggle {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+        .image-url-toggle a {
+            color: #326891;
+            cursor: pointer;
+        }
+        .url-input-container {
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="top-bar">
@@ -52,6 +141,20 @@
             </div>
 
             <div class="form-group">
+                <label>Informations sur l'auteur</label>
+                <div class="author-fields">
+                    <div>
+                        <label for="authorDisplayName" style="font-weight: normal; font-size: 0.875rem;">Nom affiché</label>
+                        <input type="text" id="authorDisplayName" placeholder="Votre nom ou pseudonyme">
+                    </div>
+                    <div>
+                        <label for="authorProfession" style="font-weight: normal; font-size: 0.875rem;">Profession / Titre</label>
+                        <input type="text" id="authorProfession" placeholder="Ex: Journaliste, Analyste politique...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label for="category">Catégorie *</label>
                 <select id="category" required>
                     <option value="">-- Sélectionner --</option>
@@ -65,8 +168,30 @@
             </div>
 
             <div class="form-group">
-                <label for="image">URL de l'image</label>
-                <input type="url" id="image" placeholder="https://exemple.com/image.jpg">
+                <label>Image de l'article</label>
+                <div class="image-upload-container" id="image-upload-container">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Glissez une image ici ou <strong>cliquez pour sélectionner</strong></p>
+                    <p style="font-size: 0.75rem; margin-top: 0.5rem; color: #999;">PNG, JPG ou WEBP (max 5MB)</p>
+                    <input type="file" id="image-file" accept="image/png, image/jpeg, image/webp">
+                </div>
+                <div class="upload-progress" id="upload-progress">
+                    <div class="upload-progress-bar" id="upload-progress-bar"></div>
+                </div>
+                <div class="image-preview" id="image-preview">
+                    <img id="preview-img" src="" alt="Aperçu">
+                    <br>
+                    <button type="button" class="remove-image" id="remove-image">
+                        <i class="fas fa-trash"></i> Supprimer l'image
+                    </button>
+                </div>
+                <div class="image-url-toggle">
+                    <a id="toggle-url-input"><i class="fas fa-link"></i> Ou entrer une URL d'image</a>
+                </div>
+                <div class="url-input-container" id="url-input-container">
+                    <input type="url" id="image-url" placeholder="https://exemple.com/image.jpg">
+                </div>
+                <input type="hidden" id="image" value="">
             </div>
 
             <div class="form-group">
@@ -107,15 +232,18 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
     <script src="js/config.js"></script>
     <script>
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const storage = firebase.storage();
 
         let currentUser = null;
         let userRole = null;
         let editingId = null;
+        let uploadedImageUrl = '';
 
         // Vérifier l'accès éditeur ou admin
         auth.onAuthStateChanged(async (user) => {
@@ -133,13 +261,18 @@
                 return;
             }
 
-            userRole = userDoc.data().role;
+            const userData = userDoc.data();
+            userRole = userData.role;
             
             if (!['editor', 'admin'].includes(userRole)) {
                 alert('Accès réservé aux éditeurs');
                 window.location.href = 'index.html';
                 return;
             }
+
+            // Pré-remplir les champs auteur
+            document.getElementById('authorDisplayName').value = userData.displayName || user.displayName || '';
+            document.getElementById('authorProfession').value = userData.profession || '';
 
             // Afficher le nom
             document.getElementById('auth-buttons').innerHTML = `
@@ -166,6 +299,133 @@
             loadMyArticles();
         });
 
+        // Gestion de l'upload d'image
+        const imageUploadContainer = document.getElementById('image-upload-container');
+        const imageFileInput = document.getElementById('image-file');
+        const imagePreview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        const removeImageBtn = document.getElementById('remove-image');
+        const uploadProgress = document.getElementById('upload-progress');
+        const uploadProgressBar = document.getElementById('upload-progress-bar');
+        const toggleUrlInput = document.getElementById('toggle-url-input');
+        const urlInputContainer = document.getElementById('url-input-container');
+        const imageUrlInput = document.getElementById('image-url');
+        const hiddenImageInput = document.getElementById('image');
+
+        // Click pour upload
+        imageUploadContainer.addEventListener('click', () => {
+            imageFileInput.click();
+        });
+
+        // Drag & Drop
+        imageUploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageUploadContainer.classList.add('dragover');
+        });
+
+        imageUploadContainer.addEventListener('dragleave', () => {
+            imageUploadContainer.classList.remove('dragover');
+        });
+
+        imageUploadContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageUploadContainer.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleImageUpload(files[0]);
+            }
+        });
+
+        // Input file change
+        imageFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleImageUpload(e.target.files[0]);
+            }
+        });
+
+        // Toggle URL input
+        toggleUrlInput.addEventListener('click', () => {
+            urlInputContainer.style.display = urlInputContainer.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // URL input change
+        imageUrlInput.addEventListener('input', (e) => {
+            const url = e.target.value.trim();
+            if (url) {
+                hiddenImageInput.value = url;
+                previewImg.src = url;
+                imagePreview.style.display = 'block';
+                imageUploadContainer.style.display = 'none';
+            }
+        });
+
+        // Remove image
+        removeImageBtn.addEventListener('click', () => {
+            hiddenImageInput.value = '';
+            uploadedImageUrl = '';
+            previewImg.src = '';
+            imagePreview.style.display = 'none';
+            imageUploadContainer.style.display = 'block';
+            imageFileInput.value = '';
+            imageUrlInput.value = '';
+        });
+
+        // Handle image upload to Firebase Storage
+        async function handleImageUpload(file) {
+            // Vérifier le type
+            if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+                alert('Format non supporté. Utilisez PNG, JPG ou WEBP.');
+                return;
+            }
+
+            // Vérifier la taille (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image trop lourde. Maximum 5MB.');
+                return;
+            }
+
+            // Afficher la progression
+            uploadProgress.style.display = 'block';
+            uploadProgressBar.style.width = '0%';
+
+            // Créer un nom unique
+            const fileName = `articles/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+            const storageRef = storage.ref(fileName);
+
+            try {
+                // Upload
+                const uploadTask = storageRef.put(file);
+
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        uploadProgressBar.style.width = progress + '%';
+                    },
+                    (error) => {
+                        console.error('Erreur upload:', error);
+                        alert('Erreur lors de l\'upload de l\'image');
+                        uploadProgress.style.display = 'none';
+                    },
+                    async () => {
+                        // Upload terminé
+                        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                        uploadedImageUrl = downloadURL;
+                        hiddenImageInput.value = downloadURL;
+                        
+                        // Afficher l'aperçu
+                        previewImg.src = downloadURL;
+                        imagePreview.style.display = 'block';
+                        imageUploadContainer.style.display = 'none';
+                        uploadProgress.style.display = 'none';
+                    }
+                );
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de l\'upload');
+                uploadProgress.style.display = 'none';
+            }
+        }
+
         // Charger un article pour édition
         async function loadArticle(id) {
             const doc = await db.collection('articles').doc(id).get();
@@ -182,9 +442,18 @@
                 document.getElementById('page-title').textContent = 'Modifier l\'article';
                 document.getElementById('title').value = article.title || '';
                 document.getElementById('excerpt').value = article.excerpt || '';
+                document.getElementById('authorDisplayName').value = article.authorDisplayName || article.authorName || '';
+                document.getElementById('authorProfession').value = article.authorProfession || '';
                 document.getElementById('category').value = article.category || '';
-                document.getElementById('image').value = article.image || '';
                 document.getElementById('content').value = article.content || '';
+                
+                // Image
+                if (article.image) {
+                    hiddenImageInput.value = article.image;
+                    previewImg.src = article.image;
+                    imagePreview.style.display = 'block';
+                    imageUploadContainer.style.display = 'none';
+                }
             }
         }
 
@@ -251,6 +520,8 @@
         async function saveArticle(status) {
             const title = document.getElementById('title').value.trim();
             const excerpt = document.getElementById('excerpt').value.trim();
+            const authorDisplayName = document.getElementById('authorDisplayName').value.trim();
+            const authorProfession = document.getElementById('authorProfession').value.trim();
             const category = document.getElementById('category').value;
             const image = document.getElementById('image').value.trim();
             const content = document.getElementById('content').value.trim();
@@ -263,14 +534,23 @@
             const articleData = {
                 title,
                 excerpt,
+                authorDisplayName: authorDisplayName || currentUser.displayName || currentUser.email,
+                authorProfession,
                 category,
                 image,
                 content,
                 status,
                 authorId: currentUser.uid,
-                authorName: currentUser.displayName || currentUser.email,
+                authorName: authorDisplayName || currentUser.displayName || currentUser.email,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
+
+            // Sauvegarder la profession dans le profil utilisateur
+            if (authorProfession) {
+                await db.collection('users').doc(currentUser.uid).update({
+                    profession: authorProfession
+                });
+            }
 
             try {
                 if (editingId) {
@@ -282,6 +562,10 @@
                     alert('Article créé');
                     // Réinitialiser le formulaire
                     document.getElementById('article-form').reset();
+                    document.getElementById('image').value = '';
+                    previewImg.src = '';
+                    imagePreview.style.display = 'none';
+                    imageUploadContainer.style.display = 'block';
                     editingId = null;
                 }
                 loadMyArticles();
