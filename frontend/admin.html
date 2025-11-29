@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration | L'Éclaireur</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="container">
+            <span class="date" id="current-date"></span>
+            <span class="separator">|</span>
+            <span class="edition">Panneau d'Administration</span>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <a href="index.html" class="btn-auth"><i class="fas fa-arrow-left"></i> Retour au site</a>
+                </div>
+                <div class="header-center">
+                    <a href="index.html" class="logo">
+                        <span class="logo-text">L'Éclaireur</span>
+                    </a>
+                    <p class="tagline">Administration</p>
+                </div>
+                <div class="header-right" id="auth-buttons"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">Tableau de bord</h1>
+            <a href="editor.html" class="btn-primary"><i class="fas fa-plus"></i> Nouvel article</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="stat-users">0</div>
+                <div class="stat-label">Utilisateurs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-articles">0</div>
+                <div class="stat-label">Articles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-published">0</div>
+                <div class="stat-label">Publiés</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="stat-drafts">0</div>
+                <div class="stat-label">Brouillons</div>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h2 class="admin-section-title"><i class="fas fa-users"></i> Gestion des utilisateurs</h2>
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Inscrit le</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-list"></tbody>
+            </table>
+        </div>
+
+        <div class="admin-section">
+            <h2 class="admin-section-title"><i class="fas fa-newspaper"></i> Gestion des articles</h2>
+            <table class="articles-table">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Catégorie</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="articles-list"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/config.js"></script>
+    <script>
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Vérifier l'accès admin
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (!userDoc.exists || userDoc.data().role !== 'admin') {
+                alert('Accès non autorisé');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Afficher le nom
+            document.getElementById('auth-buttons').innerHTML = `
+                <span class="user-welcome">Admin: ${user.displayName || user.email}</span>
+                <button class="btn-auth" onclick="auth.signOut().then(() => window.location.href='index.html')">Déconnexion</button>
+            `;
+
+            loadStats();
+            loadUsers();
+            loadArticles();
+        });
+
+        // Charger les statistiques
+        async function loadStats() {
+            const users = await db.collection('users').get();
+            const articles = await db.collection('articles').get();
+            
+            let published = 0, drafts = 0;
+            articles.forEach(doc => {
+                if (doc.data().status === 'published') published++;
+                else drafts++;
+            });
+
+            document.getElementById('stat-users').textContent = users.size;
+            document.getElementById('stat-articles').textContent = articles.size;
+            document.getElementById('stat-published').textContent = published;
+            document.getElementById('stat-drafts').textContent = drafts;
+        }
+
+        // Charger les utilisateurs
+        async function loadUsers() {
+            const snapshot = await db.collection('users').orderBy('createdAt', 'desc').get();
+            const tbody = document.getElementById('users-list');
+            tbody.innerHTML = '';
+
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                const date = user.createdAt ? user.createdAt.toDate().toLocaleDateString('fr-FR') : 'N/A';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${user.displayName || 'N/A'}</td>
+                        <td>${user.email}</td>
+                        <td>
+                            <select onchange="changeRole('${doc.id}', this.value)" ${user.role === 'admin' ? 'disabled' : ''}>
+                                <option value="subscriber" ${user.role === 'subscriber' ? 'selected' : ''}>Abonné</option>
+                                <option value="editor" ${user.role === 'editor' ? 'selected' : ''}>Éditeur</option>
+                                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                            </select>
+                        </td>
+                        <td>${date}</td>
+                        <td>
+                            ${user.role !== 'admin' ? `<button class="btn-action btn-delete" onclick="deleteUser('${doc.id}')">Supprimer</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Charger les articles
+        async function loadArticles() {
+            const snapshot = await db.collection('articles').orderBy('createdAt', 'desc').get();
+            const tbody = document.getElementById('articles-list');
+            tbody.innerHTML = '';
+
+            snapshot.forEach(doc => {
+                const article = doc.data();
+                const date = article.createdAt ? article.createdAt.toDate().toLocaleDateString('fr-FR') : 'N/A';
+                const statusBtn = article.status === 'published' 
+                    ? `<button class="btn-action btn-unpublish" onclick="toggleStatus('${doc.id}', 'draft')">Dépublier</button>`
+                    : `<button class="btn-action btn-publish" onclick="toggleStatus('${doc.id}', 'published')">Publier</button>`;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${article.title}</td>
+                        <td>${article.authorName || 'N/A'}</td>
+                        <td>${article.category}</td>
+                        <td><span class="user-role-badge role-${article.status === 'published' ? 'subscriber' : 'visitor'}">${article.status}</span></td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="editArticle('${doc.id}')">Modifier</button>
+                            ${statusBtn}
+                            <button class="btn-action btn-delete" onclick="deleteArticle('${doc.id}')">Supprimer</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Changer le rôle d'un utilisateur
+        async function changeRole(uid, newRole) {
+            if (confirm(`Changer le rôle en "${newRole}" ?`)) {
+                await db.collection('users').doc(uid).update({ role: newRole });
+                alert('Rôle mis à jour');
+                loadUsers();
+                loadStats();
+            }
+        }
+
+        // Supprimer un utilisateur
+        async function deleteUser(uid) {
+            if (confirm('Supprimer cet utilisateur ?')) {
+                await db.collection('users').doc(uid).delete();
+                alert('Utilisateur supprimé');
+                loadUsers();
+                loadStats();
+            }
+        }
+
+        // Modifier un article
+        function editArticle(id) {
+            window.location.href = `editor.html?id=${id}`;
+        }
+
+        // Changer le statut d'un article
+        async function toggleStatus(id, newStatus) {
+            await db.collection('articles').doc(id).update({ status: newStatus });
+            alert(`Article ${newStatus === 'published' ? 'publié' : 'dépublié'}`);
+            loadArticles();
+            loadStats();
+        }
+
+        // Supprimer un article
+        async function deleteArticle(id) {
+            if (confirm('Supprimer cet article ?')) {
+                await db.collection('articles').doc(id).delete();
+                alert('Article supprimé');
+                loadArticles();
+                loadStats();
+            }
+        }
+
+        // Date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+    </script>
+</body>
+</html>
