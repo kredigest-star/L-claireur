@@ -21,5 +21,8 @@ const firebaseConfig = {
     appId: "1:656301991544:web:49c283c2c9618b92542f8d"
 };
 
+const IMGBB_API_KEY = "dd7f86079613a191d43a933eadeca5c2";
+
 window.APP_CONFIG = APP_CONFIG;
 window.firebaseConfig = firebaseConfig;
+window.IMGBB_API_KEY = IMGBB_API_KEY;
