@@ -12,7 +12,10 @@
     <meta property="og:title" id="og-title" content="">
     <meta property="og:description" id="og-description" content="">
     <meta property="og:image" id="og-image" content="">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:site_name" content="L'Éclaireur">
+    <meta property="og:locale" content="fr_FR">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
@@ -159,7 +162,7 @@
             text-decoration: underline;
         }
 
-        /* ==================== SHARE SECTION AMÉLIORÉE ==================== */
+        /* Share Section */
         .article-share {
             margin-top: 3rem;
             padding: 2rem;
@@ -208,30 +211,14 @@
         .share-btn i {
             font-size: 1.25rem;
         }
-        .share-btn.facebook { 
-            background: linear-gradient(135deg, #1877F2 0%, #0d5ecf 100%); 
-        }
-        .share-btn.twitter { 
-            background: linear-gradient(135deg, #000000 0%, #333333 100%); 
-        }
-        .share-btn.whatsapp { 
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); 
-        }
-        .share-btn.linkedin { 
-            background: linear-gradient(135deg, #0A66C2 0%, #004182 100%); 
-        }
-        .share-btn.telegram { 
-            background: linear-gradient(135deg, #0088cc 0%, #006699 100%); 
-        }
-        .share-btn.email { 
-            background: linear-gradient(135deg, #666666 0%, #444444 100%); 
-        }
-        .share-btn.copy { 
-            background: linear-gradient(135deg, #333333 0%, #111111 100%); 
-        }
-        .share-btn.copy.copied {
-            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
-        }
+        .share-btn.facebook { background: linear-gradient(135deg, #1877F2 0%, #0d5ecf 100%); }
+        .share-btn.twitter { background: linear-gradient(135deg, #000000 0%, #333333 100%); }
+        .share-btn.whatsapp { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); }
+        .share-btn.linkedin { background: linear-gradient(135deg, #0A66C2 0%, #004182 100%); }
+        .share-btn.telegram { background: linear-gradient(135deg, #0088cc 0%, #006699 100%); }
+        .share-btn.email { background: linear-gradient(135deg, #666666 0%, #444444 100%); }
+        .share-btn.copy { background: linear-gradient(135deg, #333333 0%, #111111 100%); }
+        .share-btn.copy.copied { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); }
 
         /* Like Button */
         .article-actions {
@@ -547,7 +534,7 @@
             }
         }
 
-        /* ==================== MOBILE MENU ==================== */
+        /* Mobile Menu */
         #menu-btn {
             display: none;
             background: none;
@@ -709,11 +696,15 @@
         var auth = firebase.auth();
         var db = firebase.firestore();
 
+        // URL du Worker Cloudflare pour le partage avec image
+        var SHARE_WORKER_URL = 'https://leclaireur-share.kredigest.workers.dev';
+
         var currentUser = null;
         var userRole = null;
         var currentArticleId = null;
+        var currentArticleData = null;
 
-        // ==================== MOBILE MENU ====================
+        // Mobile Menu
         function toggleMobileMenu() {
             var nav = document.getElementById('main-nav');
             var icon = document.getElementById('menu-icon');
@@ -787,6 +778,7 @@
                 }
 
                 var article = doc.data();
+                currentArticleData = article;
                 
                 if (article.status !== 'published') {
                     showError('Cet article n\'est pas disponible');
@@ -811,20 +803,17 @@
             }
         }
 
-        // ==================== UPDATE META TAGS FOR SOCIAL SHARING ====================
         function updateMetaTags(article) {
             var url = window.location.href;
             var title = article.title;
             var description = article.excerpt || article.title;
             var image = article.image || '';
 
-            // Open Graph
             document.getElementById('og-url').setAttribute('content', url);
             document.getElementById('og-title').setAttribute('content', title);
             document.getElementById('og-description').setAttribute('content', description);
             document.getElementById('og-image').setAttribute('content', image);
 
-            // Twitter
             document.getElementById('twitter-url').setAttribute('content', url);
             document.getElementById('twitter-title').setAttribute('content', title);
             document.getElementById('twitter-description').setAttribute('content', description);
@@ -847,10 +836,11 @@
             var image = article.image || '';
             var likes = article.likes || 0;
 
-            var currentUrl = encodeURIComponent(window.location.href);
+            // URL du Worker Cloudflare pour le partage (avec image)
+            var shareUrl = SHARE_WORKER_URL + '/' + id;
+            var shareUrlEncoded = encodeURIComponent(shareUrl);
             var shareTitle = encodeURIComponent(article.title);
             var shareText = encodeURIComponent(article.excerpt || article.title);
-            var shareImage = encodeURIComponent(image);
 
             container.innerHTML = 
                 '<a href="index.html" class="back-link">' +
@@ -892,27 +882,27 @@
                     '<div class="article-share">' +
                         '<div class="share-title"><i class="fas fa-share-alt"></i> Partager cet article</div>' +
                         '<div class="share-buttons">' +
-                            '<a href="https://www.facebook.com/sharer/sharer.php?u=' + currentUrl + '&quote=' + shareTitle + '" target="_blank" rel="noopener" class="share-btn facebook">' +
+                            '<a href="https://www.facebook.com/sharer/sharer.php?u=' + shareUrlEncoded + '" target="_blank" rel="noopener" class="share-btn facebook">' +
                                 '<i class="fab fa-facebook-f"></i>' +
                                 '<span>Facebook</span>' +
                             '</a>' +
-                            '<a href="https://twitter.com/intent/tweet?url=' + currentUrl + '&text=' + shareTitle + '" target="_blank" rel="noopener" class="share-btn twitter">' +
+                            '<a href="https://twitter.com/intent/tweet?url=' + shareUrlEncoded + '&text=' + shareTitle + '" target="_blank" rel="noopener" class="share-btn twitter">' +
                                 '<i class="fab fa-x-twitter"></i>' +
                                 '<span>Twitter</span>' +
                             '</a>' +
-                            '<a href="https://api.whatsapp.com/send?text=' + shareTitle + '%20' + currentUrl + '" target="_blank" rel="noopener" class="share-btn whatsapp">' +
+                            '<a href="https://api.whatsapp.com/send?text=' + shareTitle + '%20' + shareUrlEncoded + '" target="_blank" rel="noopener" class="share-btn whatsapp">' +
                                 '<i class="fab fa-whatsapp"></i>' +
                                 '<span>WhatsApp</span>' +
                             '</a>' +
-                            '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + currentUrl + '" target="_blank" rel="noopener" class="share-btn linkedin">' +
+                            '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' + shareUrlEncoded + '" target="_blank" rel="noopener" class="share-btn linkedin">' +
                                 '<i class="fab fa-linkedin-in"></i>' +
                                 '<span>LinkedIn</span>' +
                             '</a>' +
-                            '<a href="https://t.me/share/url?url=' + currentUrl + '&text=' + shareTitle + '" target="_blank" rel="noopener" class="share-btn telegram">' +
+                            '<a href="https://t.me/share/url?url=' + shareUrlEncoded + '&text=' + shareTitle + '" target="_blank" rel="noopener" class="share-btn telegram">' +
                                 '<i class="fab fa-telegram-plane"></i>' +
                                 '<span>Telegram</span>' +
                             '</a>' +
-                            '<a href="mailto:?subject=' + shareTitle + '&body=' + shareText + '%0A%0ALire l\'article : ' + currentUrl + '" class="share-btn email">' +
+                            '<a href="mailto:?subject=' + shareTitle + '&body=' + shareText + '%0A%0ALire l\'article : ' + shareUrlEncoded + '" class="share-btn email">' +
                                 '<i class="fas fa-envelope"></i>' +
                                 '<span>Email</span>' +
                             '</a>' +
@@ -946,12 +936,12 @@
             updateFavoriteButton(id);
         }
 
-        // ==================== COPY LINK FUNCTION ====================
+        // Copier le lien de partage (avec Worker Cloudflare)
         function copyLink() {
-            var url = window.location.href;
+            var shareUrl = SHARE_WORKER_URL + '/' + currentArticleId;
             var btn = document.getElementById('copy-btn');
             
-            navigator.clipboard.writeText(url).then(function() {
+            navigator.clipboard.writeText(shareUrl).then(function() {
                 btn.classList.add('copied');
                 btn.innerHTML = '<i class="fas fa-check"></i><span>Copié !</span>';
                 
@@ -960,9 +950,8 @@
                     btn.innerHTML = '<i class="fas fa-link"></i><span>Copier</span>';
                 }, 2000);
             }).catch(function(err) {
-                // Fallback for older browsers
                 var textarea = document.createElement('textarea');
-                textarea.value = url;
+                textarea.value = shareUrl;
                 document.body.appendChild(textarea);
                 textarea.select();
                 document.execCommand('copy');
@@ -978,7 +967,7 @@
             });
         }
 
-        // ==================== LIKE FUNCTIONALITY ====================
+        // Like functionality
         async function toggleLike(articleId) {
             if (!currentUser) {
                 alert('Connectez-vous pour aimer cet article');
@@ -1031,7 +1020,7 @@
             }
         }
 
-        // ==================== FAVORITE FUNCTIONALITY ====================
+        // Favorite functionality
         async function toggleFavorite(articleId) {
             if (!currentUser) {
                 alert('Connectez-vous pour sauvegarder cet article');
@@ -1070,7 +1059,7 @@
             }
         }
 
-        // ==================== COMMENTS FUNCTIONALITY ====================
+        // Comments functionality
         async function loadComments(articleId) {
             var formContainer = document.getElementById('comment-form-container');
             var commentsList = document.getElementById('comments-list');
@@ -1184,7 +1173,7 @@
             }
         }
 
-        // ==================== RELATED ARTICLES ====================
+        // Related articles
         async function loadRelatedArticles(category, currentId) {
             try {
                 var snapshot = await db.collection('articles')
@@ -1199,7 +1188,6 @@
                     }
                 });
 
-                // Sort by date
                 articles.sort(function(a, b) {
                     var dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
                     var dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
@@ -1235,7 +1223,7 @@
             }
         }
 
-        // ==================== HELPER FUNCTIONS ====================
+        // Helper functions
         function showError(message) {
             document.getElementById('article-container').innerHTML = 
                 '<div class="error-message">' +
