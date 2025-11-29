@@ -52,9 +52,6 @@
             font-size: 1.125rem;
             outline: none;
         }
-        .search-header input::placeholder {
-            color: #999;
-        }
         .search-close {
             background: none;
             border: none;
@@ -62,9 +59,6 @@
             color: #999;
             cursor: pointer;
             padding: 0.5rem;
-        }
-        .search-close:hover {
-            color: #333;
         }
         .search-results {
             max-height: 60vh;
@@ -77,7 +71,6 @@
             border-bottom: 1px solid #f0f0f0;
             text-decoration: none;
             color: inherit;
-            transition: background 0.2s;
         }
         .search-result:hover {
             background: #f9f9f9;
@@ -87,10 +80,6 @@
             height: 60px;
             object-fit: cover;
             border-radius: 4px;
-            flex-shrink: 0;
-        }
-        .search-result-content {
-            flex: 1;
         }
         .search-result-category {
             font-family: 'Source Sans Pro', sans-serif;
@@ -121,11 +110,6 @@
             font-size: 3rem;
             margin-bottom: 1rem;
             display: block;
-        }
-        .search-loading {
-            padding: 2rem;
-            text-align: center;
-            color: #999;
         }
         .search-loading i {
             font-size: 2rem;
@@ -186,10 +170,6 @@
             font-family: 'Source Sans Pro', sans-serif;
             font-size: 0.8rem;
             color: #999;
-        }
-        .article-card-author {
-            font-weight: 600;
-            color: #666;
         }
         .article-card-stats {
             display: flex;
@@ -271,9 +251,6 @@
             color: #326891;
             text-decoration: none;
         }
-        .category-link:hover {
-            text-decoration: underline;
-        }
         .category-articles {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -288,10 +265,6 @@
             .category-articles {
                 grid-template-columns: 1fr;
             }
-        }
-        .category-card {
-            display: flex;
-            flex-direction: column;
         }
         .category-card-image {
             width: 100%;
@@ -310,9 +283,6 @@
         .category-card-title a {
             color: inherit;
             text-decoration: none;
-        }
-        .category-card-title a:hover {
-            text-decoration: underline;
         }
         .category-card-date {
             font-family: 'Source Sans Pro', sans-serif;
@@ -353,9 +323,6 @@
             line-height: 1;
             min-width: 2rem;
         }
-        .most-read-content {
-            flex: 1;
-        }
         .most-read-item-title {
             font-family: 'Source Sans Pro', sans-serif;
             font-size: 0.9375rem;
@@ -366,9 +333,6 @@
             color: #121212;
             text-decoration: none;
         }
-        .most-read-item-title a:hover {
-            text-decoration: underline;
-        }
         .most-read-meta {
             font-family: 'Source Sans Pro', sans-serif;
             font-size: 0.75rem;
@@ -376,14 +340,93 @@
             margin-top: 0.25rem;
         }
 
-        /* Profile Link */
-        .user-profile-link {
-            color: #326891;
-            text-decoration: none;
-            font-weight: 600;
+        /* ==================== MOBILE MENU ==================== */
+        .menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1001;
         }
-        .user-profile-link:hover {
-            text-decoration: underline;
+        .search-btn {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: #333;
+            cursor: pointer;
+            padding: 10px;
+        }
+        @media (max-width: 768px) {
+            .menu-btn {
+                display: block !important;
+            }
+            .main-nav {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: white;
+                z-index: 1000;
+                padding-top: 80px;
+                overflow-y: auto;
+            }
+            .main-nav.active {
+                display: block !important;
+            }
+            .main-nav .nav-list {
+                flex-direction: column;
+                padding: 0;
+                margin: 0;
+            }
+            .main-nav .nav-list li {
+                border-bottom: 1px solid #e5e5e5;
+            }
+            .main-nav .nav-list a {
+                display: block;
+                padding: 18px 24px;
+                font-size: 18px;
+                color: #333;
+                text-decoration: none;
+            }
+            .main-nav .nav-list a:hover {
+                background: #f5f5f5;
+            }
+            .main-nav .nav-link.active {
+                background: #326891;
+                color: white;
+            }
+            .header-right {
+                display: none;
+            }
+        }
+        @media (min-width: 769px) {
+            .menu-btn {
+                display: none !important;
+            }
+            .main-nav {
+                display: block !important;
+            }
+        }
+        .menu-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #333;
+            cursor: pointer;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .main-nav.active .menu-close-btn {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -419,8 +462,12 @@
         <div class="container">
             <div class="header-content">
                 <div class="header-left">
-                    <button class="menu-btn"><i class="fas fa-bars"></i></button>
-                    <button class="search-btn" onclick="openSearch()"><i class="fas fa-search"></i></button>
+                    <button class="menu-btn" id="menu-btn" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars" id="menu-icon"></i>
+                    </button>
+                    <button class="search-btn" onclick="openSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </div>
                 <div class="header-center">
                     <a href="index.html" class="logo">
@@ -436,7 +483,10 @@
         </div>
     </header>
 
-    <nav class="main-nav">
+    <nav class="main-nav" id="main-nav">
+        <button class="menu-close-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
         <div class="container">
             <ul class="nav-list">
                 <li><a href="index.html" class="nav-link active">Accueil</a></li>
@@ -452,7 +502,6 @@
 
     <main class="main-content">
         <div class="container">
-            <!-- Hero Section -->
             <section class="hero-section" id="hero-section">
                 <div class="loading">
                     <i class="fas fa-spinner"></i>
@@ -460,7 +509,6 @@
                 </div>
             </section>
 
-            <!-- Articles Grid -->
             <section class="news-section">
                 <div class="section-header">
                     <h2 class="section-title" id="section-title">Actualités</h2>
@@ -472,13 +520,11 @@
                 </div>
             </section>
 
-            <!-- Most Read Section -->
             <section class="most-read-section" id="most-read-section" style="display: none;">
                 <h2 class="most-read-title"><i class="fas fa-fire"></i> Les plus lus</h2>
                 <div class="most-read-list" id="most-read-list"></div>
             </section>
 
-            <!-- Category Sections (only on homepage) -->
             <div id="category-sections"></div>
         </div>
     </main>
@@ -515,27 +561,47 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/menu.js"></script>
     <script>
-        // Initialiser Firebase
+        // MOBILE MENU
+        function toggleMobileMenu() {
+            var nav = document.getElementById('main-nav');
+            var icon = document.getElementById('menu-icon');
+            if (nav.classList.contains('active')) {
+                nav.classList.remove('active');
+                icon.className = 'fas fa-bars';
+                document.body.style.overflow = '';
+            } else {
+                nav.classList.add('active');
+                icon.className = 'fas fa-times';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        document.querySelectorAll('.nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                var nav = document.getElementById('main-nav');
+                var icon = document.getElementById('menu-icon');
+                nav.classList.remove('active');
+                icon.className = 'fas fa-bars';
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Firebase Init
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        var auth = firebase.auth();
+        var db = firebase.firestore();
+        var allArticles = [];
 
-        let allArticles = [];
-
-        // Date du jour
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         });
 
-        // Récupérer la catégorie depuis l'URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedCategory = urlParams.get('cat');
+        var urlParams = new URLSearchParams(window.location.search);
+        var selectedCategory = urlParams.get('cat');
 
-        // Mettre à jour le titre et la navigation
         if (selectedCategory) {
-            const categoryNames = {
+            var categoryNames = {
                 'politique': 'Politique',
                 'monde': 'Monde',
                 'economie': 'Économie',
@@ -544,16 +610,15 @@
                 'sports': 'Sports'
             };
             document.getElementById('section-title').textContent = categoryNames[selectedCategory] || 'Actualités';
-            
-            document.querySelectorAll('.nav-link').forEach(link => {
+            document.querySelectorAll('.nav-link').forEach(function(link) {
                 link.classList.remove('active');
-                if (link.href.includes(`cat=${selectedCategory}`)) {
+                if (link.href.includes('cat=' + selectedCategory)) {
                     link.classList.add('active');
                 }
             });
         }
 
-        // ==================== SEARCH FUNCTIONS ====================
+        // SEARCH
         function openSearch() {
             document.getElementById('search-overlay').classList.add('active');
             document.getElementById('search-input').focus();
@@ -565,380 +630,179 @@
             document.body.style.overflow = '';
         }
 
-        // Close search on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeSearch();
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSearch();
+                var nav = document.getElementById('main-nav');
+                var icon = document.getElementById('menu-icon');
+                nav.classList.remove('active');
+                icon.className = 'fas fa-bars';
+                document.body.style.overflow = '';
+            }
         });
 
-        // Close search on overlay click
-        document.getElementById('search-overlay').addEventListener('click', (e) => {
+        document.getElementById('search-overlay').addEventListener('click', function(e) {
             if (e.target.id === 'search-overlay') closeSearch();
         });
 
-        // Search input handler
-        let searchTimeout;
-        document.getElementById('search-input').addEventListener('input', (e) => {
+        var searchTimeout;
+        document.getElementById('search-input').addEventListener('input', function(e) {
             clearTimeout(searchTimeout);
-            const query = e.target.value.trim();
-            
+            var query = e.target.value.trim();
             if (query.length < 2) {
-                document.getElementById('search-results').innerHTML = `
-                    <div class="search-no-results">
-                        <i class="fas fa-search"></i>
-                        <p>Tapez au moins 2 caractères</p>
-                    </div>
-                `;
+                document.getElementById('search-results').innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i><p>Tapez au moins 2 caractères</p></div>';
                 return;
             }
-
-            document.getElementById('search-results').innerHTML = `
-                <div class="search-loading">
-                    <i class="fas fa-spinner"></i>
-                </div>
-            `;
-
-            searchTimeout = setTimeout(() => searchArticles(query), 300);
+            document.getElementById('search-results').innerHTML = '<div class="search-loading"><i class="fas fa-spinner"></i></div>';
+            searchTimeout = setTimeout(function() { searchArticles(query); }, 300);
         });
 
         function searchArticles(query) {
-            const resultsContainer = document.getElementById('search-results');
-            const queryLower = query.toLowerCase();
-
-            // Filter from cached articles
-            const results = allArticles.filter(article => {
-                const titleMatch = article.title && article.title.toLowerCase().includes(queryLower);
-                const contentMatch = article.content && article.content.toLowerCase().includes(queryLower);
-                const authorMatch = (article.authorDisplayName || article.authorName || '').toLowerCase().includes(queryLower);
-                const excerptMatch = article.excerpt && article.excerpt.toLowerCase().includes(queryLower);
-                return titleMatch || contentMatch || authorMatch || excerptMatch;
+            var resultsContainer = document.getElementById('search-results');
+            var queryLower = query.toLowerCase();
+            var results = allArticles.filter(function(article) {
+                var titleMatch = article.title && article.title.toLowerCase().includes(queryLower);
+                var contentMatch = article.content && article.content.toLowerCase().includes(queryLower);
+                return titleMatch || contentMatch;
             });
-
             if (results.length === 0) {
-                resultsContainer.innerHTML = `
-                    <div class="search-no-results">
-                        <i class="fas fa-search"></i>
-                        <p>Aucun résultat pour "${query}"</p>
-                    </div>
-                `;
+                resultsContainer.innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i><p>Aucun résultat</p></div>';
                 return;
             }
-
-            resultsContainer.innerHTML = results.slice(0, 10).map(article => {
-                const date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
-                const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200';
-                
-                return `
-                    <a href="article.html?id=${article.id}" class="search-result">
-                        <img src="${image}" alt="${article.title}" class="search-result-image" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200'">
-                        <div class="search-result-content">
-                            <div class="search-result-category">${getCategoryName(article.category)}</div>
-                            <div class="search-result-title">${highlightText(article.title, query)}</div>
-                            <div class="search-result-meta">Par ${article.authorDisplayName || article.authorName || 'Auteur'} • ${date}</div>
-                        </div>
-                    </a>
-                `;
+            resultsContainer.innerHTML = results.slice(0, 10).map(function(article) {
+                var image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=200';
+                return '<a href="article.html?id=' + article.id + '" class="search-result"><img src="' + image + '" class="search-result-image"><div class="search-result-content"><div class="search-result-category">' + getCategoryName(article.category) + '</div><div class="search-result-title">' + article.title + '</div></div></a>';
             }).join('');
         }
 
-        function highlightText(text, query) {
-            if (!text) return '';
-            const regex = new RegExp(`(${query})`, 'gi');
-            return text.replace(regex, '<mark>$1</mark>');
-        }
-
-        // ==================== LOAD ARTICLES ====================
+        // LOAD ARTICLES
         async function loadArticles() {
             try {
-                // Requête simple sans orderBy pour éviter les problèmes d'index
-                let snapshot;
-                
+                var snapshot;
                 if (selectedCategory) {
-                    snapshot = await db.collection('articles')
-                        .where('status', '==', 'published')
-                        .where('category', '==', selectedCategory)
-                        .get();
+                    snapshot = await db.collection('articles').where('status', '==', 'published').where('category', '==', selectedCategory).get();
                 } else {
-                    snapshot = await db.collection('articles')
-                        .where('status', '==', 'published')
-                        .get();
+                    snapshot = await db.collection('articles').where('status', '==', 'published').get();
                 }
-                
-                const articles = [];
-                snapshot.forEach(doc => {
+                var articles = [];
+                snapshot.forEach(function(doc) {
                     articles.push({ id: doc.id, ...doc.data() });
                 });
-
-                // Trier par date côté client (plus récent en premier)
-                articles.sort((a, b) => {
-                    const dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
-                    const dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
+                articles.sort(function(a, b) {
+                    var dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
+                    var dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
                     return dateB - dateA;
                 });
-
-                allArticles = articles; // Cache pour la recherche
+                allArticles = articles;
                 displayArticles(articles);
-                
-                // Charger les sections uniquement sur la page d'accueil
                 if (!selectedCategory) {
                     loadMostRead();
                     loadCategorySections();
                 }
-
             } catch (error) {
-                console.error('Erreur chargement articles:', error);
+                console.error('Erreur:', error);
                 document.getElementById('hero-section').innerHTML = '';
-                document.getElementById('articles-container').innerHTML = `
-                    <div class="no-articles" style="grid-column: 1/-1;">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <p>Erreur lors du chargement des articles</p>
-                        <p style="font-size: 0.8rem; color: #999;">${error.message}</p>
-                    </div>
-                `;
+                document.getElementById('articles-container').innerHTML = '<div class="no-articles"><i class="fas fa-exclamation-circle"></i><p>Erreur de chargement</p></div>';
             }
         }
 
         function displayArticles(articles) {
-            const heroSection = document.getElementById('hero-section');
-            const articlesContainer = document.getElementById('articles-container');
-
+            var heroSection = document.getElementById('hero-section');
+            var articlesContainer = document.getElementById('articles-container');
             if (articles.length === 0) {
                 heroSection.innerHTML = '';
-                articlesContainer.innerHTML = `
-                    <div class="no-articles" style="grid-column: 1/-1;">
-                        <i class="fas fa-newspaper"></i>
-                        <p>Aucun article publié pour le moment</p>
-                        <p style="font-size: 0.9rem;">Revenez bientôt !</p>
-                    </div>
-                `;
+                articlesContainer.innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><i class="fas fa-newspaper"></i><p>Aucun article</p></div>';
                 return;
             }
-
-            // Article principal (Hero)
-            const heroArticle = articles[0];
-            const heroDate = heroArticle.createdAt ? formatDate(heroArticle.createdAt.toDate()) : 'Récent';
-            const heroImage = heroArticle.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200';
-            const heroLikes = heroArticle.likes || 0;
-            const heroViews = heroArticle.views || 0;
-
-            heroSection.innerHTML = `
-                <article class="hero-article" onclick="window.location.href='article.html?id=${heroArticle.id}'">
-                    <div class="hero-image">
-                        <img src="${heroImage}" alt="${heroArticle.title}" onerror="this.src='https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200'">
-                    </div>
-                    <div class="hero-content">
-                        <span class="category-tag">${getCategoryName(heroArticle.category)}</span>
-                        <h1 class="hero-title">${heroArticle.title}</h1>
-                        <p class="hero-excerpt">${heroArticle.excerpt || truncateText(heroArticle.content, 200)}</p>
-                        <div class="hero-meta">
-                            <span class="author">Par ${heroArticle.authorDisplayName || heroArticle.authorName || 'Auteur'}</span>
-                            ${heroArticle.authorProfession ? `<span class="profession">, ${heroArticle.authorProfession}</span>` : ''}
-                            <span class="date"> • ${heroDate}</span>
-                            <span style="margin-left: 1rem; color: #999;">
-                                <i class="fas fa-heart"></i> ${heroLikes} 
-                                <i class="fas fa-eye" style="margin-left: 0.5rem;"></i> ${heroViews}
-                            </span>
-                        </div>
-                    </div>
-                </article>
-            `;
-
-            // Autres articles
-            const otherArticles = articles.slice(1);
-            
-            if (otherArticles.length === 0) {
-                articlesContainer.innerHTML = `
-                    <div class="no-articles" style="grid-column: 1/-1;">
-                        <p>Plus d'articles à venir...</p>
-                    </div>
-                `;
+            var hero = articles[0];
+            var heroDate = hero.createdAt ? formatDate(hero.createdAt.toDate()) : '';
+            var heroImage = hero.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200';
+            heroSection.innerHTML = '<article class="hero-article" onclick="window.location.href=\'article.html?id=' + hero.id + '\'"><div class="hero-image"><img src="' + heroImage + '" alt="' + hero.title + '"></div><div class="hero-content"><span class="category-tag">' + getCategoryName(hero.category) + '</span><h1 class="hero-title">' + hero.title + '</h1><p class="hero-excerpt">' + (hero.excerpt || truncateText(hero.content, 200)) + '</p><div class="hero-meta"><span class="author">Par ' + (hero.authorDisplayName || hero.authorName || 'Auteur') + '</span><span class="date"> • ' + heroDate + '</span><span style="margin-left:1rem;color:#999;"><i class="fas fa-heart"></i> ' + (hero.likes || 0) + ' <i class="fas fa-eye" style="margin-left:0.5rem;"></i> ' + (hero.views || 0) + '</span></div></div></article>';
+            var others = articles.slice(1);
+            if (others.length === 0) {
+                articlesContainer.innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><p>Plus d\'articles à venir...</p></div>';
                 return;
             }
-
-            articlesContainer.innerHTML = otherArticles.map(article => {
-                const date = article.createdAt ? formatDate(article.createdAt.toDate()) : 'Récent';
-                const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600';
-                const likes = article.likes || 0;
-                const views = article.views || 0;
-                
-                return `
-                    <article class="article-card">
-                        <img src="${image}" alt="${article.title}" class="article-card-image" 
-                             onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600'">
-                        <div class="article-card-content">
-                            <div class="article-card-category">${getCategoryName(article.category)}</div>
-                            <h3 class="article-card-title">
-                                <a href="article.html?id=${article.id}">${article.title}</a>
-                            </h3>
-                            <p class="article-card-excerpt">${article.excerpt || truncateText(article.content, 100)}</p>
-                            <div class="article-card-meta">
-                                <span class="article-card-author">${article.authorDisplayName || article.authorName || 'Auteur'}</span>
-                                ${article.authorProfession ? `, ${article.authorProfession}` : ''}
-                                <span> • ${date}</span>
-                            </div>
-                            <div class="article-card-stats">
-                                <span><i class="fas fa-heart"></i> ${likes}</span>
-                                <span><i class="fas fa-eye"></i> ${views}</span>
-                            </div>
-                        </div>
-                    </article>
-                `;
+            articlesContainer.innerHTML = others.map(function(article) {
+                var date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
+                var image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600';
+                return '<article class="article-card"><img src="' + image + '" class="article-card-image"><div class="article-card-content"><div class="article-card-category">' + getCategoryName(article.category) + '</div><h3 class="article-card-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3><p class="article-card-excerpt">' + (article.excerpt || truncateText(article.content, 100)) + '</p><div class="article-card-meta"><span>' + (article.authorDisplayName || article.authorName || 'Auteur') + '</span> • ' + date + '</div><div class="article-card-stats"><span><i class="fas fa-heart"></i> ' + (article.likes || 0) + '</span><span><i class="fas fa-eye"></i> ' + (article.views || 0) + '</span></div></div></article>';
             }).join('');
         }
 
-        // ==================== MOST READ ====================
         async function loadMostRead() {
             try {
-                const snapshot = await db.collection('articles')
-                    .where('status', '==', 'published')
-                    .get();
-
+                var snapshot = await db.collection('articles').where('status', '==', 'published').get();
                 if (snapshot.empty) return;
-
-                const articles = [];
-                snapshot.forEach(doc => {
-                    articles.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Trier par vues côté client
-                articles.sort((a, b) => (b.views || 0) - (a.views || 0));
-                const topArticles = articles.slice(0, 5);
-
-                if (topArticles.length === 0) return;
-
-                const container = document.getElementById('most-read-list');
+                var articles = [];
+                snapshot.forEach(function(doc) { articles.push({ id: doc.id, ...doc.data() }); });
+                articles.sort(function(a, b) { return (b.views || 0) - (a.views || 0); });
+                var top = articles.slice(0, 5);
+                if (top.length === 0) return;
                 document.getElementById('most-read-section').style.display = 'block';
-
-                container.innerHTML = topArticles.map((article, index) => {
-                    const views = article.views || 0;
-                    return `
-                        <div class="most-read-item">
-                            <span class="most-read-number">${index + 1}</span>
-                            <div class="most-read-content">
-                                <h3 class="most-read-item-title">
-                                    <a href="article.html?id=${article.id}">${article.title}</a>
-                                </h3>
-                                <div class="most-read-meta">
-                                    ${getCategoryName(article.category)} • ${views} vues
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                document.getElementById('most-read-list').innerHTML = top.map(function(article, i) {
+                    return '<div class="most-read-item"><span class="most-read-number">' + (i + 1) + '</span><div class="most-read-content"><h3 class="most-read-item-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3><div class="most-read-meta">' + getCategoryName(article.category) + ' • ' + (article.views || 0) + ' vues</div></div></div>';
                 }).join('');
-
-            } catch (error) {
-                console.error('Error loading most read:', error);
-            }
+            } catch (error) { console.error(error); }
         }
 
-        // ==================== CATEGORY SECTIONS ====================
         async function loadCategorySections() {
-            const categories = ['politique', 'monde', 'economie', 'sciences', 'culture', 'sports'];
-            const container = document.getElementById('category-sections');
-            
-            for (const category of categories) {
+            var categories = ['politique', 'monde', 'economie', 'sciences', 'culture', 'sports'];
+            var container = document.getElementById('category-sections');
+            for (var i = 0; i < categories.length; i++) {
+                var cat = categories[i];
                 try {
-                    const snapshot = await db.collection('articles')
-                        .where('status', '==', 'published')
-                        .where('category', '==', category)
-                        .get();
-
+                    var snapshot = await db.collection('articles').where('status', '==', 'published').where('category', '==', cat).get();
                     if (snapshot.empty) continue;
-
-                    const articles = [];
-                    snapshot.forEach(doc => {
-                        articles.push({ id: doc.id, ...doc.data() });
-                    });
-
-                    // Trier par date côté client
-                    articles.sort((a, b) => {
-                        const dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
-                        const dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
+                    var articles = [];
+                    snapshot.forEach(function(doc) { articles.push({ id: doc.id, ...doc.data() }); });
+                    articles.sort(function(a, b) {
+                        var dateA = a.createdAt ? a.createdAt.toDate().getTime() : 0;
+                        var dateB = b.createdAt ? b.createdAt.toDate().getTime() : 0;
                         return dateB - dateA;
                     });
-
-                    const topArticles = articles.slice(0, 4);
-
-                    const articlesHtml = topArticles.map(article => {
-                        const date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
-                        const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=300';
-                        
-                        return `
-                            <div class="category-card">
-                                <img src="${image}" alt="${article.title}" class="category-card-image" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=300'">
-                                <h3 class="category-card-title">
-                                    <a href="article.html?id=${article.id}">${article.title}</a>
-                                </h3>
-                                <div class="category-card-date">${date}</div>
-                            </div>
-                        `;
+                    var top = articles.slice(0, 4);
+                    var html = top.map(function(article) {
+                        var date = article.createdAt ? formatDate(article.createdAt.toDate()) : '';
+                        var image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=300';
+                        return '<div class="category-card"><img src="' + image + '" class="category-card-image"><h3 class="category-card-title"><a href="article.html?id=' + article.id + '">' + article.title + '</a></h3><div class="category-card-date">' + date + '</div></div>';
                     }).join('');
-
-                    container.innerHTML += `
-                        <section class="category-section">
-                            <div class="category-header">
-                                <h2 class="category-title">${getCategoryName(category)}</h2>
-                                <a href="index.html?cat=${category}" class="category-link">Voir tout <i class="fas fa-arrow-right"></i></a>
-                            </div>
-                            <div class="category-articles">
-                                ${articlesHtml}
-                            </div>
-                        </section>
-                    `;
-
-                } catch (error) {
-                    console.error(`Error loading ${category}:`, error);
-                }
+                    container.innerHTML += '<section class="category-section"><div class="category-header"><h2 class="category-title">' + getCategoryName(cat) + '</h2><a href="index.html?cat=' + cat + '" class="category-link">Voir tout <i class="fas fa-arrow-right"></i></a></div><div class="category-articles">' + html + '</div></section>';
+                } catch (error) { console.error(error); }
             }
         }
 
-        // ==================== HELPERS ====================
-        function getCategoryName(category) {
-            const names = {
-                'politique': 'Politique',
-                'monde': 'Monde',
-                'economie': 'Économie',
-                'sciences': 'Sciences',
-                'culture': 'Culture',
-                'sports': 'Sports'
-            };
-            return names[category] || category || 'Actualités';
+        function getCategoryName(cat) {
+            var names = { 'politique': 'Politique', 'monde': 'Monde', 'economie': 'Économie', 'sciences': 'Sciences', 'culture': 'Culture', 'sports': 'Sports' };
+            return names[cat] || cat || 'Actualités';
         }
 
         function formatDate(date) {
             if (!date) return '';
-            const now = new Date();
-            const diff = now - date;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
+            var now = new Date();
+            var diff = now - date;
+            var hours = Math.floor(diff / 3600000);
+            var days = Math.floor(diff / 86400000);
             if (hours < 1) return 'À l\'instant';
-            if (hours < 24) return `Il y a ${hours}h`;
+            if (hours < 24) return 'Il y a ' + hours + 'h';
             if (days === 1) return 'Hier';
-            if (days < 7) return `Il y a ${days} jours`;
-            
-            return date.toLocaleDateString('fr-FR', { 
-                day: 'numeric', 
-                month: 'long',
-                year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
-            });
+            if (days < 7) return 'Il y a ' + days + ' jours';
+            return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
         }
 
-        function truncateText(text, maxLength) {
+        function truncateText(text, max) {
             if (!text) return '';
-            // Remove HTML tags
-            const plainText = text.replace(/<[^>]*>/g, '');
-            if (plainText.length <= maxLength) return plainText;
-            return plainText.substring(0, maxLength).trim() + '...';
+            var plain = text.replace(/<[^>]*>/g, '');
+            if (plain.length <= max) return plain;
+            return plain.substring(0, max) + '...';
         }
 
-        // Newsletter
-        document.getElementById('newsletter-form').addEventListener('submit', (e) => {
+        document.getElementById('newsletter-form').addEventListener('submit', function(e) {
             e.preventDefault();
             alert('Merci pour votre inscription !');
             e.target.reset();
         });
 
-        // ==================== INIT ====================
         loadArticles();
     </script>
 </body>
