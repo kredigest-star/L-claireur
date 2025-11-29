@@ -98,15 +98,6 @@
             height: auto;
             border-radius: 4px;
         }
-        .article-image figcaption {
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.8125rem;
-            color: #999;
-            margin-top: 0.5rem;
-            text-align: center;
-        }
-        
-        /* Article Content - NYT Style */
         .article-content {
             font-family: 'Source Serif Pro', serif;
             font-size: 1.1875rem;
@@ -131,7 +122,6 @@
             font-weight: 700;
             margin: 2.5rem 0 1.25rem 0;
             color: #121212;
-            line-height: 1.25;
         }
         .article-content h3 {
             font-family: 'Playfair Display', serif;
@@ -139,7 +129,6 @@
             font-weight: 600;
             margin: 2rem 0 1rem 0;
             color: #121212;
-            line-height: 1.3;
         }
         .article-content blockquote {
             border-left: 4px solid #326891;
@@ -148,32 +137,11 @@
             font-style: italic;
             color: #444;
             font-size: 1.3125rem;
-            line-height: 1.7;
-        }
-        .article-content ul, .article-content ol {
-            margin: 1.25rem 0 1.75rem 2rem;
-        }
-        .article-content li {
-            margin-bottom: 0.625rem;
         }
         .article-content a {
             color: #326891;
             text-decoration: underline;
-            text-decoration-color: rgba(50, 104, 145, 0.3);
-            text-underline-offset: 2px;
         }
-        .article-content a:hover {
-            text-decoration-color: #326891;
-        }
-        .article-content strong {
-            font-weight: 700;
-            color: #121212;
-        }
-        .article-content em {
-            font-style: italic;
-        }
-
-        /* Share Section */
         .article-share {
             margin-top: 3rem;
             padding: 2rem 0;
@@ -185,7 +153,6 @@
             font-size: 0.8125rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
             color: #999;
             margin-bottom: 1rem;
             text-align: center;
@@ -204,12 +171,11 @@
             justify-content: center;
             color: white;
             text-decoration: none;
-            transition: transform 0.2s, opacity 0.2s;
+            transition: transform 0.2s;
             font-size: 1.125rem;
         }
         .share-btn:hover {
             transform: scale(1.1);
-            opacity: 0.9;
         }
         .share-btn.facebook { background: #1877f2; }
         .share-btn.twitter { background: #1da1f2; }
@@ -218,51 +184,200 @@
         .share-btn.email { background: #666; }
         .share-btn.copy { background: #333; cursor: pointer; border: none; }
 
-        /* Author Box */
-        .author-box {
+        /* Like Button */
+        .article-actions {
             display: flex;
-            gap: 1.25rem;
-            padding: 2rem;
+            justify-content: center;
+            gap: 1.5rem;
             margin: 2rem 0;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            background: white;
+            cursor: pointer;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9375rem;
+            color: #666;
+            transition: all 0.2s;
+        }
+        .action-btn:hover {
+            border-color: #326891;
+            color: #326891;
+        }
+        .action-btn.liked {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+        }
+        .action-btn.favorited {
+            background: #f39c12;
+            border-color: #f39c12;
+            color: white;
+        }
+        .action-btn i {
+            font-size: 1.125rem;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #121212;
+        }
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .comments-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .comments-count {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.875rem;
+            color: #666;
+        }
+        .comment-form {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .comment-form-login {
+            text-align: center;
+            padding: 2rem;
             background: #f9f9f9;
             border-radius: 8px;
+            margin-bottom: 2rem;
         }
-        .author-box-avatar {
-            width: 80px;
-            height: 80px;
+        .comment-form-login p {
+            font-family: 'Source Sans Pro', sans-serif;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .comment-form-login a {
+            color: #326891;
+            font-weight: 600;
+        }
+        .comment-form textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: #326891;
+        }
+        .comment-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+        .comment-form button {
+            padding: 0.75rem 1.5rem;
+            background: #326891;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .comment-form button:hover {
+            background: #1d4f73;
+        }
+        .comment-form button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .comment {
+            padding: 1.5rem;
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #326891, #1d4f73);
+            background: #326891;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.75rem;
-            flex-shrink: 0;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
         }
-        .author-box-info {
-            flex: 1;
-        }
-        .author-box-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.25rem;
-            font-weight: 700;
+        .comment-author {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
             color: #121212;
-            margin-bottom: 0.25rem;
         }
-        .author-box-profession {
+        .comment-date {
             font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.9375rem;
+            font-size: 0.8125rem;
+            color: #999;
+        }
+        .comment-content {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #333;
+        }
+        .comment-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+        .comment-action {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.8125rem;
+            color: #999;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .comment-action:hover {
             color: #326891;
-            font-style: italic;
-            margin-bottom: 0.75rem;
         }
-        .author-box-bio {
+        .comment-action.delete:hover {
+            color: #e74c3c;
+        }
+        .no-comments {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
             font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.9375rem;
-            color: #666;
-            line-height: 1.5;
         }
 
         /* Related Articles */
@@ -276,7 +391,6 @@
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
-            color: #121212;
         }
         .related-grid {
             display: grid;
@@ -292,13 +406,6 @@
             }
             .article-content p:first-of-type::first-letter {
                 font-size: 4rem;
-            }
-            .author-box {
-                flex-direction: column;
-                text-align: center;
-            }
-            .author-box-avatar {
-                margin: 0 auto;
             }
         }
         .related-card {
@@ -321,14 +428,12 @@
             font-weight: 600;
             text-transform: uppercase;
             color: #326891;
-            margin-bottom: 0.25rem;
         }
         .related-card-title {
             font-family: 'Source Sans Pro', sans-serif;
             font-size: 1rem;
             font-weight: 600;
             line-height: 1.3;
-            margin-bottom: 0.25rem;
         }
         .related-card-title a {
             color: #121212;
@@ -342,8 +447,6 @@
             font-size: 0.75rem;
             color: #999;
         }
-
-        /* Back Link */
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -353,13 +456,10 @@
             color: #326891;
             text-decoration: none;
             margin-bottom: 2rem;
-            padding: 0.5rem 0;
         }
         .back-link:hover {
             text-decoration: underline;
         }
-
-        /* Loading & Error */
         .loading {
             text-align: center;
             padding: 4rem;
@@ -461,9 +561,35 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        let currentUser = null;
+        let userRole = null;
+        let currentArticleId = null;
+
         // Date du jour
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+
+        // Auth state
+        auth.onAuthStateChanged(async (user) => {
+            currentUser = user;
+            if (user) {
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        userRole = userDoc.data().role;
+                    }
+                } catch (e) {
+                    console.error('Error getting user role:', e);
+                }
+            }
+            
+            // Reload comments section if article is loaded
+            if (currentArticleId) {
+                loadComments(currentArticleId);
+                updateLikeButton(currentArticleId);
+                updateFavoriteButton(currentArticleId);
+            }
         });
 
         // Récupérer l'ID de l'article
@@ -473,6 +599,7 @@
         if (!articleId) {
             showError('Article non trouvé');
         } else {
+            currentArticleId = articleId;
             loadArticle(articleId);
         }
 
@@ -493,7 +620,13 @@
                 }
 
                 displayArticle(article, id);
+                loadComments(id);
                 loadRelatedArticles(article.category, id);
+                
+                // Increment view count
+                db.collection('articles').doc(id).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                }).catch(e => console.log('View count error:', e));
                 
                 document.title = `${article.title} | L'Éclaireur`;
 
@@ -517,6 +650,7 @@
             const authorProfession = article.authorProfession || '';
             const authorInitials = getInitials(authorName);
             const image = article.image || '';
+            const likes = article.likes || 0;
 
             const currentUrl = encodeURIComponent(window.location.href);
             const shareTitle = encodeURIComponent(article.title);
@@ -554,39 +688,54 @@
                         ${article.content}
                     </div>
 
+                    <div class="article-actions">
+                        <button class="action-btn" id="like-btn" onclick="toggleLike('${id}')">
+                            <i class="far fa-heart"></i>
+                            <span id="like-count">${likes}</span> J'aime
+                        </button>
+                        <button class="action-btn" id="favorite-btn" onclick="toggleFavorite('${id}')">
+                            <i class="far fa-bookmark"></i>
+                            Sauvegarder
+                        </button>
+                    </div>
+
                     <div class="article-share">
                         <div class="share-title">Partager cet article</div>
                         <div class="share-buttons">
-                            <a href="https://www.facebook.com/sharer/sharer.php?u=${currentUrl}" target="_blank" rel="noopener" class="share-btn facebook" title="Partager sur Facebook">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u=${currentUrl}" target="_blank" rel="noopener" class="share-btn facebook">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
-                            <a href="https://twitter.com/intent/tweet?url=${currentUrl}&text=${shareTitle}" target="_blank" rel="noopener" class="share-btn twitter" title="Partager sur Twitter">
+                            <a href="https://twitter.com/intent/tweet?url=${currentUrl}&text=${shareTitle}" target="_blank" rel="noopener" class="share-btn twitter">
                                 <i class="fab fa-twitter"></i>
                             </a>
-                            <a href="https://www.linkedin.com/shareArticle?mini=true&url=${currentUrl}&title=${shareTitle}" target="_blank" rel="noopener" class="share-btn linkedin" title="Partager sur LinkedIn">
+                            <a href="https://www.linkedin.com/shareArticle?mini=true&url=${currentUrl}&title=${shareTitle}" target="_blank" rel="noopener" class="share-btn linkedin">
                                 <i class="fab fa-linkedin-in"></i>
                             </a>
-                            <a href="https://wa.me/?text=${shareTitle}%20${currentUrl}" target="_blank" rel="noopener" class="share-btn whatsapp" title="Partager sur WhatsApp">
+                            <a href="https://wa.me/?text=${shareTitle}%20${currentUrl}" target="_blank" rel="noopener" class="share-btn whatsapp">
                                 <i class="fab fa-whatsapp"></i>
                             </a>
-                            <a href="mailto:?subject=${shareTitle}&body=${shareText}%0A%0A${currentUrl}" class="share-btn email" title="Envoyer par email">
+                            <a href="mailto:?subject=${shareTitle}&body=${shareText}%0A%0A${currentUrl}" class="share-btn email">
                                 <i class="fas fa-envelope"></i>
                             </a>
-                            <button class="share-btn copy" onclick="copyLink()" title="Copier le lien">
+                            <button class="share-btn copy" onclick="copyLink()">
                                 <i class="fas fa-link"></i>
                             </button>
                         </div>
                     </div>
-
-                    <div class="author-box">
-                        <div class="author-box-avatar">${authorInitials}</div>
-                        <div class="author-box-info">
-                            <div class="author-box-name">${authorName}</div>
-                            ${authorProfession ? `<div class="author-box-profession">${authorProfession}</div>` : ''}
-                            <div class="author-box-bio">Contributeur chez L'Éclaireur. Cet auteur s'intéresse aux questions d'actualité et partage ses analyses avec nos lecteurs.</div>
-                        </div>
-                    </div>
                 </article>
+
+                <section class="comments-section">
+                    <div class="comments-header">
+                        <h2 class="comments-title">Commentaires</h2>
+                        <span class="comments-count" id="comments-count">0 commentaires</span>
+                    </div>
+                    
+                    <div id="comment-form-container"></div>
+                    
+                    <div class="comments-list" id="comments-list">
+                        <div class="loading"><i class="fas fa-spinner"></i></div>
+                    </div>
+                </section>
 
                 <div class="related-articles" id="related-articles">
                     <h2 class="related-title">Articles similaires</h2>
@@ -595,6 +744,226 @@
                     </div>
                 </div>
             `;
+
+            // Update like/favorite buttons
+            updateLikeButton(id);
+            updateFavoriteButton(id);
+        }
+
+        // Like functionality
+        async function toggleLike(articleId) {
+            if (!currentUser) {
+                alert('Connectez-vous pour aimer cet article');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const likeRef = db.collection('articles').doc(articleId).collection('likes').doc(currentUser.uid);
+            const likeDoc = await likeRef.get();
+
+            if (likeDoc.exists) {
+                // Unlike
+                await likeRef.delete();
+                await db.collection('articles').doc(articleId).update({
+                    likes: firebase.firestore.FieldValue.increment(-1)
+                });
+            } else {
+                // Like
+                await likeRef.set({
+                    userId: currentUser.uid,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                await db.collection('articles').doc(articleId).update({
+                    likes: firebase.firestore.FieldValue.increment(1)
+                });
+            }
+
+            updateLikeButton(articleId);
+        }
+
+        async function updateLikeButton(articleId) {
+            const likeBtn = document.getElementById('like-btn');
+            const likeCount = document.getElementById('like-count');
+            
+            if (!likeBtn) return;
+
+            // Get current like count
+            const articleDoc = await db.collection('articles').doc(articleId).get();
+            const likes = articleDoc.data()?.likes || 0;
+            likeCount.textContent = likes;
+
+            if (currentUser) {
+                const likeRef = db.collection('articles').doc(articleId).collection('likes').doc(currentUser.uid);
+                const likeDoc = await likeRef.get();
+                
+                if (likeDoc.exists) {
+                    likeBtn.classList.add('liked');
+                    likeBtn.innerHTML = `<i class="fas fa-heart"></i> <span id="like-count">${likes}</span> J'aime`;
+                } else {
+                    likeBtn.classList.remove('liked');
+                    likeBtn.innerHTML = `<i class="far fa-heart"></i> <span id="like-count">${likes}</span> J'aime`;
+                }
+            }
+        }
+
+        // Favorite functionality
+        async function toggleFavorite(articleId) {
+            if (!currentUser) {
+                alert('Connectez-vous pour sauvegarder cet article');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const favRef = db.collection('users').doc(currentUser.uid).collection('favorites').doc(articleId);
+            const favDoc = await favRef.get();
+
+            if (favDoc.exists) {
+                await favRef.delete();
+            } else {
+                await favRef.set({
+                    articleId: articleId,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+
+            updateFavoriteButton(articleId);
+        }
+
+        async function updateFavoriteButton(articleId) {
+            const favBtn = document.getElementById('favorite-btn');
+            if (!favBtn || !currentUser) return;
+
+            const favRef = db.collection('users').doc(currentUser.uid).collection('favorites').doc(articleId);
+            const favDoc = await favRef.get();
+
+            if (favDoc.exists) {
+                favBtn.classList.add('favorited');
+                favBtn.innerHTML = `<i class="fas fa-bookmark"></i> Sauvegardé`;
+            } else {
+                favBtn.classList.remove('favorited');
+                favBtn.innerHTML = `<i class="far fa-bookmark"></i> Sauvegarder`;
+            }
+        }
+
+        // Comments functionality
+        async function loadComments(articleId) {
+            const formContainer = document.getElementById('comment-form-container');
+            const commentsList = document.getElementById('comments-list');
+            const commentsCount = document.getElementById('comments-count');
+
+            // Show comment form based on auth state
+            if (currentUser) {
+                formContainer.innerHTML = `
+                    <div class="comment-form">
+                        <textarea id="comment-text" placeholder="Écrivez votre commentaire..."></textarea>
+                        <div class="comment-form-actions">
+                            <button onclick="submitComment('${articleId}')">Publier</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                formContainer.innerHTML = `
+                    <div class="comment-form-login">
+                        <p><i class="fas fa-comment"></i> Connectez-vous pour laisser un commentaire</p>
+                        <a href="login.html">Se connecter</a> ou <a href="register.html">S'inscrire</a>
+                    </div>
+                `;
+            }
+
+            // Load comments
+            try {
+                const snapshot = await db.collection('articles').doc(articleId)
+                    .collection('comments')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                const count = snapshot.size;
+                commentsCount.textContent = `${count} commentaire${count !== 1 ? 's' : ''}`;
+
+                if (snapshot.empty) {
+                    commentsList.innerHTML = `
+                        <div class="no-comments">
+                            <i class="far fa-comment"></i>
+                            <p>Soyez le premier à commenter !</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                commentsList.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const comment = doc.data();
+                    const commentDate = comment.createdAt ? formatDate(comment.createdAt.toDate()) : 'Récent';
+                    const canDelete = currentUser && (currentUser.uid === comment.userId || userRole === 'admin');
+                    
+                    commentsList.innerHTML += `
+                        <div class="comment" id="comment-${doc.id}">
+                            <div class="comment-header">
+                                <div class="comment-avatar">${getInitials(comment.authorName)}</div>
+                                <div>
+                                    <div class="comment-author">${comment.authorName}</div>
+                                    <div class="comment-date">${commentDate}</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">${escapeHtml(comment.content)}</div>
+                            ${canDelete ? `
+                                <div class="comment-actions">
+                                    <button class="comment-action delete" onclick="deleteComment('${articleId}', '${doc.id}')">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+
+            } catch (error) {
+                console.error('Error loading comments:', error);
+                commentsList.innerHTML = '<div class="no-comments">Erreur lors du chargement des commentaires</div>';
+            }
+        }
+
+        async function submitComment(articleId) {
+            if (!currentUser) {
+                alert('Connectez-vous pour commenter');
+                return;
+            }
+
+            const textarea = document.getElementById('comment-text');
+            const content = textarea.value.trim();
+
+            if (!content) {
+                alert('Veuillez écrire un commentaire');
+                return;
+            }
+
+            try {
+                await db.collection('articles').doc(articleId).collection('comments').add({
+                    content: content,
+                    userId: currentUser.uid,
+                    authorName: currentUser.displayName || currentUser.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                textarea.value = '';
+                loadComments(articleId);
+
+            } catch (error) {
+                console.error('Error submitting comment:', error);
+                alert('Erreur lors de la publication du commentaire');
+            }
+        }
+
+        async function deleteComment(articleId, commentId) {
+            if (!confirm('Supprimer ce commentaire ?')) return;
+
+            try {
+                await db.collection('articles').doc(articleId).collection('comments').doc(commentId).delete();
+                loadComments(articleId);
+            } catch (error) {
+                console.error('Error deleting comment:', error);
+                alert('Erreur lors de la suppression');
+            }
         }
 
         async function loadRelatedArticles(category, currentId) {
@@ -656,15 +1025,6 @@
 
         function copyLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Lien copié dans le presse-papiers !');
-            }).catch(() => {
-                // Fallback
-                const input = document.createElement('input');
-                input.value = window.location.href;
-                document.body.appendChild(input);
-                input.select();
-                document.execCommand('copy');
-                document.body.removeChild(input);
                 alert('Lien copié !');
             });
         }
@@ -701,6 +1061,12 @@
         function getInitials(name) {
             if (!name) return '?';
             return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
     </script>
 </body>
