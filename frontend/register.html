@@ -79,16 +79,29 @@
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="js/config.js"></script>
     <script>
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const db = firebase.firestore();
 
         function showAlert(message, type) {
             const alert = document.getElementById('alert');
             alert.textContent = message;
             alert.className = 'alert alert-' + type;
             alert.style.display = 'block';
+        }
+
+        // Créer le profil utilisateur dans Firestore
+        async function createUserProfile(user, displayName) {
+            const userRef = db.collection('users').doc(user.uid);
+            await userRef.set({
+                email: user.email,
+                displayName: displayName || user.displayName || user.email.split('@')[0],
+                role: 'subscriber',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
         }
 
         document.getElementById('register-form').addEventListener('submit', async (e) => {
@@ -109,8 +122,9 @@
             btn.textContent = 'Création...';
 
             try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                await userCredential.user.updateProfile({ displayName: name });
+                const result = await auth.createUserWithEmailAndPassword(email, password);
+                await result.user.updateProfile({ displayName: name });
+                await createUserProfile(result.user, name);
                 showAlert('Compte créé avec succès !', 'success');
                 setTimeout(() => window.location.href = 'index.html', 1000);
             } catch (error) {
@@ -129,7 +143,14 @@
         document.getElementById('btn-google').addEventListener('click', async () => {
             const provider = new firebase.auth.GoogleAuthProvider();
             try {
-                await auth.signInWithPopup(provider);
+                const result = await auth.signInWithPopup(provider);
+                
+                // Vérifier si l'utilisateur existe déjà
+                const userDoc = await db.collection('users').doc(result.user.uid).get();
+                if (!userDoc.exists) {
+                    await createUserProfile(result.user);
+                }
+                
                 showAlert('Inscription réussie !', 'success');
                 setTimeout(() => window.location.href = 'index.html', 1000);
             } catch (error) {
