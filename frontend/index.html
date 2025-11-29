@@ -8,142 +8,109 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-    <div class="top-bar">
-        <div class="container">
-            <span class="date" id="current-date"></span>
-            <span class="separator">|</span>
-            <span class="edition">Édition Francophone</span>
-        </div>
-    </div>
-
-    <header class="main-header">
-        <div class="container">
-            <div class="header-content">
-                <div class="header-left">
-                    <button class="menu-btn"><i class="fas fa-bars"></i></button>
-                    <button class="search-btn"><i class="fas fa-search"></i></button>
-                </div>
-                <div class="header-center">
-                    <a href="/" class="logo">
-                        <span class="logo-text">L'Éclaireur</span>
-                    </a>
-                    <p class="tagline">La lumière sur l'actualité</p>
-                </div>
-                <div class="header-right" id="auth-buttons">
-                    <a href="login.html" class="btn-auth">Connexion</a>
-                    <a href="register.html" class="btn-subscribe">S'abonner</a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <nav class="main-nav">
-        <div class="container">
-            <ul class="nav-list">
-                <li><a href="#" class="nav-link active">Accueil</a></li>
-                <li><a href="#" class="nav-link">Politique</a></li>
-                <li><a href="#" class="nav-link">Monde</a></li>
-                <li><a href="#" class="nav-link">Économie</a></li>
-                <li><a href="#" class="nav-link">Sciences</a></li>
-                <li><a href="#" class="nav-link">Culture</a></li>
-                <li><a href="#" class="nav-link">Sports</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <main class="main-content">
-        <div class="container">
-            <section class="hero-section">
-                <article class="hero-article">
-                    <div class="hero-image">
-                        <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200" alt="Article principal">
-                    </div>
-                    <div class="hero-content">
-                        <span class="category-tag">À la Une</span>
-                        <h1 class="hero-title">Bienvenue sur L'Éclaireur, votre nouvelle source d'information</h1>
-                        <p class="hero-excerpt">Découvrez une plateforme de presse moderne, où l'information de qualité rencontre l'élégance éditoriale. Notre mission : éclairer votre compréhension du monde.</p>
-                        <div class="hero-meta">
-                            <span class="author">Par la Rédaction</span>
-                            <span>Aujourd'hui</span>
-                        </div>
-                    </div>
-                </article>
-            </section>
-
-            <section class="news-section">
-                <div class="section-header">
-                    <h2 class="section-title">Actualités</h2>
-                </div>
-                <div class="articles-grid" id="articles-container"></div>
-            </section>
-        </div>
-    </main>
-
-    <section class="newsletter-section">
-        <div class="container">
-            <div class="newsletter-content">
-                <div class="newsletter-text">
-                    <h3>Restez éclairé</h3>
-                    <p>Recevez l'essentiel de l'actualité chaque matin.</p>
-                </div>
-                <form class="newsletter-form" id="newsletter-form">
-                    <input type="email" placeholder="Votre email" required>
-                    <button type="submit">S'inscrire</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-brand">
-                <span class="footer-logo">L'Éclaireur</span>
-                <p>La lumière sur l'actualité</p>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 L'Éclaireur. Tous droits réservés.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/app.js"></script>
-    <script>
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        auth.onAuthStateChanged((user) => {
-            const authButtons = document.getElementById('auth-buttons');
-            if (user) {
-                const name = user.displayName || user.email.split('@')[0];
-                authButtons.innerHTML = `
-                    <span class="user-welcome">Bonjour, ${name}</span>
-                    <button class="btn-auth" id="btn-logout">Déconnexion</button>
-                `;
-                document.getElementById('btn-logout').addEventListener('click', () => {
-                    auth.signOut().then(() => {
-                        window.location.reload();
-                    });
-                });
+    <style>
+        .article-card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+        .article-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .article-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        .article-card-content {
+            padding: 1.25rem;
+        }
+        .article-card-category {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #326891;
+            margin-bottom: 0.5rem;
+        }
+        .article-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 0.75rem;
+            color: #121212;
+        }
+        .article-card-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .article-card-title a:hover {
+            text-decoration: underline;
+        }
+        .article-card-excerpt {
+            font-family: 'Source Serif Pro', serif;
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        .article-card-meta {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.8rem;
+            color: #999;
+        }
+        .article-card-author {
+            font-weight: 600;
+            color: #666;
+        }
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        @media (max-width: 992px) {
+            .articles-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
-        });
-    </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L'Éclaireur | Journal d'information</title>
-    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+Pro:wght@400;600&family=Source+Serif+Pro:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+        }
+        @media (max-width: 576px) {
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .no-articles {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        .no-articles i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .hero-article {
+            cursor: pointer;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <div class="top-bar">
@@ -179,40 +146,36 @@
         <div class="container">
             <ul class="nav-list">
                 <li><a href="index.html" class="nav-link active">Accueil</a></li>
-                <li><a href="#" class="nav-link">Politique</a></li>
-                <li><a href="#" class="nav-link">Monde</a></li>
-                <li><a href="#" class="nav-link">Économie</a></li>
-                <li><a href="#" class="nav-link">Sciences</a></li>
-                <li><a href="#" class="nav-link">Culture</a></li>
-                <li><a href="#" class="nav-link">Sports</a></li>
+                <li><a href="index.html?cat=politique" class="nav-link">Politique</a></li>
+                <li><a href="index.html?cat=monde" class="nav-link">Monde</a></li>
+                <li><a href="index.html?cat=economie" class="nav-link">Économie</a></li>
+                <li><a href="index.html?cat=sciences" class="nav-link">Sciences</a></li>
+                <li><a href="index.html?cat=culture" class="nav-link">Culture</a></li>
+                <li><a href="index.html?cat=sports" class="nav-link">Sports</a></li>
             </ul>
         </div>
     </nav>
 
     <main class="main-content">
         <div class="container">
-            <section class="hero-section">
-                <article class="hero-article">
-                    <div class="hero-image">
-                        <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200" alt="Article principal">
-                    </div>
-                    <div class="hero-content">
-                        <span class="category-tag">À la Une</span>
-                        <h1 class="hero-title">Bienvenue sur L'Éclaireur, votre nouvelle source d'information</h1>
-                        <p class="hero-excerpt">Découvrez une plateforme de presse moderne, où l'information de qualité rencontre l'élégance éditoriale. Notre mission : éclairer votre compréhension du monde.</p>
-                        <div class="hero-meta">
-                            <span class="author">Par la Rédaction</span>
-                            <span>Aujourd'hui</span>
-                        </div>
-                    </div>
-                </article>
+            <!-- Hero Section - Article principal -->
+            <section class="hero-section" id="hero-section">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Chargement...</p>
+                </div>
             </section>
 
+            <!-- Articles Grid -->
             <section class="news-section">
                 <div class="section-header">
-                    <h2 class="section-title">Actualités</h2>
+                    <h2 class="section-title" id="section-title">Actualités</h2>
                 </div>
-                <div class="articles-grid" id="articles-container"></div>
+                <div class="articles-grid" id="articles-container">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                </div>
             </section>
         </div>
     </main>
@@ -249,9 +212,199 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/app.js"></script>
     <script>
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Date du jour
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+
+        // Récupérer la catégorie depuis l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedCategory = urlParams.get('cat');
+
+        // Mettre à jour le titre et la navigation
+        if (selectedCategory) {
+            const categoryNames = {
+                'politique': 'Politique',
+                'monde': 'Monde',
+                'economie': 'Économie',
+                'sciences': 'Sciences',
+                'culture': 'Culture',
+                'sports': 'Sports'
+            };
+            document.getElementById('section-title').textContent = categoryNames[selectedCategory] || 'Actualités';
+            
+            // Activer le lien de navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.href.includes(`cat=${selectedCategory}`)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Charger les articles
+        async function loadArticles() {
+            try {
+                let query = db.collection('articles')
+                    .where('status', '==', 'published')
+                    .orderBy('createdAt', 'desc');
+
+                // Filtrer par catégorie si sélectionnée
+                if (selectedCategory) {
+                    query = db.collection('articles')
+                        .where('status', '==', 'published')
+                        .where('category', '==', selectedCategory)
+                        .orderBy('createdAt', 'desc');
+                }
+
+                const snapshot = await query.get();
+                const articles = [];
+                
+                snapshot.forEach(doc => {
+                    articles.push({ id: doc.id, ...doc.data() });
+                });
+
+                displayArticles(articles);
+            } catch (error) {
+                console.error('Erreur chargement articles:', error);
+                document.getElementById('hero-section').innerHTML = '';
+                document.getElementById('articles-container').innerHTML = `
+                    <div class="no-articles" style="grid-column: 1/-1;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Erreur lors du chargement des articles</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Afficher les articles
+        function displayArticles(articles) {
+            const heroSection = document.getElementById('hero-section');
+            const articlesContainer = document.getElementById('articles-container');
+
+            if (articles.length === 0) {
+                heroSection.innerHTML = '';
+                articlesContainer.innerHTML = `
+                    <div class="no-articles" style="grid-column: 1/-1;">
+                        <i class="fas fa-newspaper"></i>
+                        <p>Aucun article publié pour le moment</p>
+                        <p style="font-size: 0.9rem;">Revenez bientôt !</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Article principal (le plus récent)
+            const heroArticle = articles[0];
+            const heroDate = heroArticle.createdAt ? formatDate(heroArticle.createdAt.toDate()) : 'Récent';
+            const heroImage = heroArticle.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1200';
+
+            heroSection.innerHTML = `
+                <article class="hero-article" onclick="window.location.href='article.html?id=${heroArticle.id}'">
+                    <div class="hero-image">
+                        <img src="${heroImage}" alt="${heroArticle.title}">
+                    </div>
+                    <div class="hero-content">
+                        <span class="category-tag">${getCategoryName(heroArticle.category)}</span>
+                        <h1 class="hero-title">${heroArticle.title}</h1>
+                        <p class="hero-excerpt">${heroArticle.excerpt || truncateText(heroArticle.content, 200)}</p>
+                        <div class="hero-meta">
+                            <span class="author">Par ${heroArticle.authorDisplayName || heroArticle.authorName}</span>
+                            ${heroArticle.authorProfession ? `<span class="profession">, ${heroArticle.authorProfession}</span>` : ''}
+                            <span class="date"> • ${heroDate}</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+
+            // Autres articles
+            const otherArticles = articles.slice(1);
+            
+            if (otherArticles.length === 0) {
+                articlesContainer.innerHTML = `
+                    <div class="no-articles" style="grid-column: 1/-1;">
+                        <p>Plus d'articles à venir...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            articlesContainer.innerHTML = otherArticles.map(article => {
+                const date = article.createdAt ? formatDate(article.createdAt.toDate()) : 'Récent';
+                const image = article.image || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600';
+                
+                return `
+                    <article class="article-card">
+                        <img src="${image}" alt="${article.title}" class="article-card-image" 
+                             onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600'">
+                        <div class="article-card-content">
+                            <div class="article-card-category">${getCategoryName(article.category)}</div>
+                            <h3 class="article-card-title">
+                                <a href="article.html?id=${article.id}">${article.title}</a>
+                            </h3>
+                            <p class="article-card-excerpt">${article.excerpt || truncateText(article.content, 100)}</p>
+                            <div class="article-card-meta">
+                                <span class="article-card-author">${article.authorDisplayName || article.authorName}</span>
+                                ${article.authorProfession ? `, ${article.authorProfession}` : ''}
+                                <span> • ${date}</span>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        // Helpers
+        function getCategoryName(category) {
+            const names = {
+                'politique': 'Politique',
+                'monde': 'Monde',
+                'economie': 'Économie',
+                'sciences': 'Sciences',
+                'culture': 'Culture',
+                'sports': 'Sports'
+            };
+            return names[category] || category;
+        }
+
+        function formatDate(date) {
+            const now = new Date();
+            const diff = now - date;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+            if (hours < 1) return 'À l\'instant';
+            if (hours < 24) return `Il y a ${hours}h`;
+            if (days === 1) return 'Hier';
+            if (days < 7) return `Il y a ${days} jours`;
+            
+            return date.toLocaleDateString('fr-FR', { 
+                day: 'numeric', 
+                month: 'long',
+                year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+            });
+        }
+
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength).trim() + '...';
+        }
+
+        // Newsletter
+        document.getElementById('newsletter-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Merci pour votre inscription !');
+            e.target.reset();
+        });
+
+        // Charger les articles au démarrage
+        loadArticles();
     </script>
 </body>
 </html>
