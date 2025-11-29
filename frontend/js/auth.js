@@ -1,134 +1,131 @@
-// Auth & Roles Management
-const AUTH = {
-    user: null,
-    role: 'visitor',
-    
-    init: function() {
-        firebase.auth().onAuthStateChanged(async (user) => {
-            if (user) {
-                this.user = user;
-                await this.loadUserRole(user.uid);
-                this.updateUI();
-            } else {
-                this.user = null;
-                this.role = 'visitor';
-                this.updateUI();
-            }
-        });
-    },
+// Auth.js - Gestion de l'authentification et des rôles
 
-    loadUserRole: async function(uid) {
-        try {
-            const db = firebase.firestore();
-            const doc = await db.collection('users').doc(uid).get();
-            if (doc.exists) {
-                this.role = doc.data().role || 'subscriber';
-            } else {
-                // Créer le document utilisateur s'il n'existe pas
-                await db.collection('users').doc(uid).set({
-                    email: this.user.email,
-                    displayName: this.user.displayName || this.user.email.split('@')[0],
-                    role: 'subscriber',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                this.role = 'subscriber';
-            }
-        } catch (error) {
-            console.error('Erreur chargement rôle:', error);
-            this.role = 'subscriber';
-        }
-    },
+let currentUserData = null;
 
-    updateUI: function() {
-        const authButtons = document.getElementById('auth-buttons');
-        if (!authButtons) return;
-
-        if (this.user) {
-            const name = this.user.displayName || this.user.email.split('@')[0];
-            let menuItems = '';
-            
-            // Menu selon le rôle
-            if (this.role === 'admin') {
-                menuItems = `
-                    <a href="admin.html" class="btn-role">Admin</a>
-                    <a href="editor.html" class="btn-role">Éditeur</a>
-                `;
-            } else if (this.role === 'editor') {
-                menuItems = `
-                    <a href="editor.html" class="btn-role">Éditeur</a>
-                `;
-            }
-
-            authButtons.innerHTML = `
-                ${menuItems}
-                <span class="user-welcome">Bonjour, ${name}</span>
-                <span class="user-role-badge role-${this.role}">${this.getRoleName()}</span>
-                <button class="btn-auth" id="btn-logout">Déconnexion</button>
-            `;
-            
-            document.getElementById('btn-logout').addEventListener('click', () => {
-                firebase.auth().signOut().then(() => {
-                    window.location.href = 'index.html';
-                });
-            });
-        } else {
-            authButtons.innerHTML = `
-                <a href="login.html" class="btn-auth">Connexion</a>
-                <a href="register.html" class="btn-subscribe">S'abonner</a>
-            `;
-        }
-    },
-
-    getRoleName: function() {
-        const names = {
-            'admin': 'Admin',
-            'editor': 'Éditeur',
-            'subscriber': 'Abonné',
-            'visitor': 'Visiteur'
-        };
-        return names[this.role] || 'Visiteur';
-    },
-
-    // Vérifications de permissions
-    canComment: function() {
-        return ['subscriber', 'editor', 'admin'].includes(this.role);
-    },
-
-    canWriteArticle: function() {
-        return ['editor', 'admin'].includes(this.role);
-    },
-
-    canPublish: function() {
-        return this.role === 'admin';
-    },
-
-    canManageUsers: function() {
-        return this.role === 'admin';
-    },
-
-    canDeleteAny: function() {
-        return this.role === 'admin';
-    },
-
-    requireRole: function(requiredRole, redirectUrl = 'index.html') {
-        const roleHierarchy = ['visitor', 'subscriber', 'editor', 'admin'];
-        const userLevel = roleHierarchy.indexOf(this.role);
-        const requiredLevel = roleHierarchy.indexOf(requiredRole);
-        
-        if (userLevel < requiredLevel) {
-            alert('Accès non autorisé');
-            window.location.href = redirectUrl;
-            return false;
-        }
-        return true;
-    }
-};
-
-// Initialiser au chargement
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof firebase !== 'undefined') {
-        AUTH.init();
+// Initialiser l'auth listener
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        await loadUserRole(user);
+        updateUI(user);
+    } else {
+        currentUserData = null;
+        updateUI(null);
     }
 });
 
-window.AUTH = AUTH;
+// Charger le rôle de l'utilisateur depuis Firestore
+async function loadUserRole(user) {
+    try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        
+        if (userDoc.exists) {
+            currentUserData = userDoc.data();
+        } else {
+            // Créer le profil si inexistant
+            currentUserData = {
+                email: user.email,
+                displayName: user.displayName || '',
+                role: 'subscriber',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            await db.collection('users').doc(user.uid).set(currentUserData);
+        }
+    } catch (error) {
+        console.error('Erreur chargement rôle:', error);
+        currentUserData = { role: 'subscriber' };
+    }
+}
+
+// Mettre à jour l'interface selon l'état de connexion
+function updateUI(user) {
+    const authButtons = document.getElementById('auth-buttons');
+    if (!authButtons) return;
+
+    if (user && currentUserData) {
+        const displayName = currentUserData.displayName || user.displayName || user.email.split('@')[0];
+        const role = currentUserData.role || 'subscriber';
+        
+        let roleButtons = '';
+        
+        // Bouton Admin pour les admins
+        if (role === 'admin') {
+            roleButtons += `<a href="admin.html" class="btn-auth" style="background: #326891; color: white;">Admin</a>`;
+        }
+        
+        // Bouton Éditeur pour les éditeurs et admins
+        if (role === 'admin' || role === 'editor') {
+            roleButtons += `<a href="editor.html" class="btn-auth" style="background: #27ae60; color: white;">Éditeur</a>`;
+        }
+
+        authButtons.innerHTML = `
+            ${roleButtons}
+            <a href="profile.html" class="user-profile-link" title="Mon profil">
+                <span class="user-welcome">Bonjour, ${displayName}</span>
+            </a>
+            <span class="user-role-badge role-${role}">${getRoleName(role)}</span>
+            <button class="btn-auth" onclick="logout()">Déconnexion</button>
+        `;
+    } else {
+        authButtons.innerHTML = `
+            <a href="login.html" class="btn-auth">Connexion</a>
+            <a href="register.html" class="btn-subscribe">S'abonner</a>
+        `;
+    }
+}
+
+// Obtenir le nom du rôle en français
+function getRoleName(role) {
+    const names = {
+        'admin': 'Admin',
+        'editor': 'Éditeur',
+        'subscriber': 'Abonné',
+        'visitor': 'Visiteur'
+    };
+    return names[role] || 'Visiteur';
+}
+
+// Déconnexion
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = 'index.html';
+    }).catch((error) => {
+        console.error('Erreur déconnexion:', error);
+        alert('Erreur lors de la déconnexion');
+    });
+}
+
+// Vérifier les permissions
+
+function canComment() {
+    return currentUserData && ['subscriber', 'editor', 'admin'].includes(currentUserData.role);
+}
+
+function canWriteArticle() {
+    return currentUserData && ['editor', 'admin'].includes(currentUserData.role);
+}
+
+function canPublish() {
+    return currentUserData && currentUserData.role === 'admin';
+}
+
+function canManageUsers() {
+    return currentUserData && currentUserData.role === 'admin';
+}
+
+function canDeleteAny() {
+    return currentUserData && currentUserData.role === 'admin';
+}
+
+// Vérifier si l'utilisateur a un rôle minimum requis
+function requireRole(minRole) {
+    const roleHierarchy = ['visitor', 'subscriber', 'editor', 'admin'];
+    const userRoleIndex = roleHierarchy.indexOf(currentUserData?.role || 'visitor');
+    const requiredRoleIndex = roleHierarchy.indexOf(minRole);
+    return userRoleIndex >= requiredRoleIndex;
+}
+
+// Obtenir les initiales d'un nom
+function getInitials(name) {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+}
