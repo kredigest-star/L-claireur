@@ -344,9 +344,9 @@
             margin-top: 0.25rem;
         }
 
-        /* ==================== MOBILE MENU - IMPORTANT ==================== */
+        /* ==================== MOBILE MENU ==================== */
         #menu-btn {
-            display: none !important;
+            display: none;
             background: none;
             border: none;
             font-size: 1.75rem;
@@ -354,8 +354,6 @@
             cursor: pointer;
             padding: 8px;
             z-index: 1001;
-            align-items: center;
-            justify-content: center;
         }
 
         .search-btn {
@@ -367,14 +365,60 @@
             padding: 8px;
         }
 
+        /* Mobile menu buttons */
+        .mobile-menu-buttons {
+            display: none;
+            padding: 15px 20px;
+            border-top: 1px solid #e5e5e5;
+            background: #f9f9f9;
+        }
+        .mobile-menu-buttons a {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .mobile-menu-buttons .btn-admin {
+            background: #e74c3c;
+            color: white;
+        }
+        .mobile-menu-buttons .btn-editor {
+            background: #3498db;
+            color: white;
+        }
+        .mobile-menu-buttons .btn-login {
+            background: #326891;
+            color: white;
+        }
+        .mobile-menu-buttons .btn-profile {
+            background: #27ae60;
+            color: white;
+        }
+        .mobile-menu-buttons .btn-subscribe {
+            background: white;
+            color: #326891;
+            border: 2px solid #326891;
+        }
+        .mobile-menu-buttons .btn-logout {
+            background: #95a5a6;
+            color: white;
+        }
+
         /* MOBILE */
         @media (max-width: 768px) {
             #menu-btn {
                 display: flex !important;
+                align-items: center;
+                justify-content: center;
             }
 
             .main-nav {
-                display: none !important;
+                display: none;
                 position: fixed;
                 top: 0;
                 left: 0;
@@ -382,7 +426,7 @@
                 bottom: 0;
                 background: white;
                 z-index: 1000;
-                padding-top: 70px;
+                padding-top: 60px;
                 overflow-y: auto;
             }
 
@@ -423,6 +467,10 @@
             .main-nav .nav-link.active {
                 background: #326891;
                 color: white !important;
+            }
+
+            .main-nav.active .mobile-menu-buttons {
+                display: block;
             }
 
             .header-right {
@@ -466,12 +514,16 @@
             .menu-close-btn {
                 display: none !important;
             }
+
+            .mobile-menu-buttons {
+                display: none !important;
+            }
         }
 
         /* Close button inside mobile menu */
         .menu-close-btn {
             position: absolute;
-            top: 15px;
+            top: 12px;
             right: 15px;
             background: none;
             border: none;
@@ -492,18 +544,20 @@
             display: none;
             padding: 15px 20px;
             border-bottom: 1px solid #e5e5e5;
-            background: #f9f9f9;
+            background: #326891;
+            color: white;
         }
 
         .main-nav.active .mobile-menu-header {
-            display: block;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .mobile-menu-header h3 {
             margin: 0;
             font-family: 'Playfair Display', serif;
             font-size: 1.25rem;
-            color: #333;
         }
     </style>
 </head>
@@ -539,9 +593,8 @@
         <div class="container">
             <div class="header-content">
                 <div class="header-left">
-                    <button id="menu-btn" onclick="toggleMobileMenu()" style="display:none; background:none; border:none; font-size:1.75rem; color:#333; cursor:pointer; padding:8px;">
-    <i class="fas fa-bars" id="menu-icon"></i>
-</button>
+                    <button id="menu-btn" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars" id="menu-icon"></i>
                     </button>
                     <button class="search-btn" onclick="openSearch()">
                         <i class="fas fa-search"></i>
@@ -562,11 +615,11 @@
     </header>
 
     <nav class="main-nav" id="main-nav">
-        <button class="menu-close-btn" onclick="toggleMobileMenu()">
-            <i class="fas fa-times"></i>
-        </button>
         <div class="mobile-menu-header">
-            <h3>Menu</h3>
+            <h3>L'Éclaireur</h3>
+            <button class="menu-close-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         <div class="container">
             <ul class="nav-list">
@@ -579,6 +632,8 @@
                 <li><a href="index.html?cat=sports" class="nav-link">Sports</a></li>
             </ul>
         </div>
+        <!-- Mobile Menu Buttons - Filled by JavaScript -->
+        <div class="mobile-menu-buttons" id="mobile-menu-buttons"></div>
     </nav>
 
     <main class="main-content">
@@ -641,8 +696,14 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
     <script>
+        // ==================== FIREBASE INIT ====================
+        firebase.initializeApp(firebaseConfig);
+        var auth = firebase.auth();
+        var db = firebase.firestore();
+        var allArticles = [];
+        var currentUserRole = null;
+
         // ==================== MOBILE MENU ====================
         function toggleMobileMenu() {
             var nav = document.getElementById('main-nav');
@@ -670,11 +731,58 @@
             });
         });
 
-        // ==================== FIREBASE INIT ====================
-        firebase.initializeApp(firebaseConfig);
-        var auth = firebase.auth();
-        var db = firebase.firestore();
-        var allArticles = [];
+        // ==================== AUTH STATE ====================
+        auth.onAuthStateChanged(async function(user) {
+            var authButtons = document.getElementById('auth-buttons');
+            var mobileButtons = document.getElementById('mobile-menu-buttons');
+            
+            if (user) {
+                try {
+                    var userDoc = await db.collection('users').doc(user.uid).get();
+                    var userData = userDoc.exists ? userDoc.data() : { role: 'subscriber' };
+                    currentUserRole = userData.role;
+                    var displayName = userData.displayName || user.email.split('@')[0];
+                    
+                    // Desktop buttons
+                    var desktopHtml = '';
+                    if (userData.role === 'admin') {
+                        desktopHtml += '<a href="admin.html" class="btn-admin" style="background:#e74c3c;color:white;padding:8px 16px;border-radius:4px;margin-right:8px;text-decoration:none;font-weight:600;">★ Admin</a>';
+                    }
+                    if (userData.role === 'admin' || userData.role === 'editor') {
+                        desktopHtml += '<a href="editor.html" class="btn-editor" style="background:#3498db;color:white;padding:8px 16px;border-radius:4px;margin-right:8px;text-decoration:none;font-weight:600;">✎ Éditeur</a>';
+                    }
+                    desktopHtml += '<a href="profile.html" class="btn-auth" style="display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-user-circle"></i> ' + displayName + '</a>';
+                    authButtons.innerHTML = desktopHtml;
+                    
+                    // Mobile buttons
+                    var mobileHtml = '';
+                    if (userData.role === 'admin') {
+                        mobileHtml += '<a href="admin.html" class="btn-admin"><i class="fas fa-cog"></i> Administration</a>';
+                    }
+                    if (userData.role === 'admin' || userData.role === 'editor') {
+                        mobileHtml += '<a href="editor.html" class="btn-editor"><i class="fas fa-pen"></i> Écrire un article</a>';
+                    }
+                    mobileHtml += '<a href="profile.html" class="btn-profile"><i class="fas fa-user"></i> Mon Profil</a>';
+                    mobileHtml += '<a href="#" class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>';
+                    mobileButtons.innerHTML = mobileHtml;
+                    
+                } catch (error) {
+                    console.error('Error getting user data:', error);
+                }
+            } else {
+                // Not logged in - Desktop
+                authButtons.innerHTML = '<a href="login.html" class="btn-auth">Connexion</a><a href="register.html" class="btn-subscribe">S\'abonner</a>';
+                
+                // Not logged in - Mobile
+                mobileButtons.innerHTML = '<a href="login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Connexion</a><a href="register.html" class="btn-subscribe"><i class="fas fa-user-plus"></i> S\'abonner</a>';
+            }
+        });
+
+        function logout() {
+            auth.signOut().then(function() {
+                window.location.href = 'index.html';
+            });
+        }
 
         // Date du jour
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('fr-FR', { 
@@ -809,7 +917,7 @@
             } catch (error) {
                 console.error('Erreur:', error);
                 document.getElementById('hero-section').innerHTML = '';
-                document.getElementById('articles-container').innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><i class="fas fa-exclamation-circle"></i><p>Erreur de chargement</p><p style="font-size:0.8rem;color:#999;">' + error.message + '</p></div>';
+                document.getElementById('articles-container').innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><i class="fas fa-exclamation-circle"></i><p>Erreur de chargement</p></div>';
             }
         }
 
@@ -819,7 +927,7 @@
 
             if (articles.length === 0) {
                 heroSection.innerHTML = '';
-                articlesContainer.innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><i class="fas fa-newspaper"></i><p>Aucun article publié pour le moment</p><p style="font-size:0.9rem;">Revenez bientôt !</p></div>';
+                articlesContainer.innerHTML = '<div class="no-articles" style="grid-column:1/-1;"><i class="fas fa-newspaper"></i><p>Aucun article publié pour le moment</p></div>';
                 return;
             }
 
@@ -972,17 +1080,6 @@
 
         // ==================== INIT ====================
         loadArticles();
-        // Force menu button visibility on mobile
-function checkMobileMenu() {
-    var menuBtn = document.getElementById('menu-btn');
-    if (window.innerWidth <= 768) {
-        menuBtn.style.display = 'flex';
-    } else {
-        menuBtn.style.display = 'none';
-    }
-}
-checkMobileMenu();
-window.addEventListener('resize', checkMobileMenu);
     </script>
 </body>
 </html>
